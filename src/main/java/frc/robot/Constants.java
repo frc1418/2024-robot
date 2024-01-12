@@ -35,7 +35,6 @@ public final class Constants {
     public static final int FRONT_RIGHT_SPEED_ID = 4;
     public static final AnalogInput FRONT_RIGHT_ENCODER = new AnalogInput(0);
     public static final Translation2d FRONT_RIGHT_LOC = new Translation2d(0.238125, -0.238125);
-
     
 
     public static final int BACK_LEFT_ANGLE_ID = 8;
@@ -58,5 +57,9 @@ public final class Constants {
   public final static class DriverConstants {
     public final static double speedMultiplier = 3;
     public final static double angleMultiplier = 3;
-}
+  }
+
+  public final static class WheelConstants {
+    public final static double ROTATIONS_TO_METERS = 0.33/8.33;
+  }
 }
