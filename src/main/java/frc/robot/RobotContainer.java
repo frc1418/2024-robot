@@ -81,7 +81,7 @@ public class RobotContainer {
 
     private SwerveDriveOdometry driveOdometry = new SwerveDriveOdometry(DrivetrainConstants.SWERVE_KINEMATICS, gyro.getRotation2d(), positions);
 
-    private Odometry odometry = new Odometry(gyro, null, null);
+    private Odometry odometry = new Odometry(gyro, driveOdometry, null);
 
     
 
@@ -108,6 +108,7 @@ public class RobotContainer {
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
+  
   private void configureBindings() {
       Joystick leftJoystick = new Joystick(0);
       Joystick rightJoystick = new Joystick(1);
@@ -118,7 +119,8 @@ public class RobotContainer {
         if (robot.isTeleopEnabled()){
           //drive
           swerveDrive.drive(
-            limitX.calculate(applyDeadband(-leftJoystick.getX(), DrivetrainConstants.DRIFT_DEADBAND))*DriverConstants.speedMultiplier,
+            // limitX.calculate(applyDeadband(-leftJoystick.getX(), DrivetrainConstants.DRIFT_DEADBAND))*DriverConstants.speedMultiplier,
+            0.5,
             limitY.calculate(applyDeadband(-leftJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND))*DriverConstants.speedMultiplier,
             applyDeadband(-rightJoystick.getX(), DrivetrainConstants.ROTATION_DEADBAND)*DriverConstants.angleMultiplier);
         }

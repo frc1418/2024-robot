@@ -48,9 +48,6 @@ public class Odometry {
         // Get the rotation of the robot from the gyro.
         var gyroAngle = gyro.getRotation2d();
 
-        // Update the pose
-        pose = odometry.update(gyroAngle, newPositions);
-
         modulePositions = newPositions;
 
         inclineAngle.setDouble(getInclineAngle().getDegrees());

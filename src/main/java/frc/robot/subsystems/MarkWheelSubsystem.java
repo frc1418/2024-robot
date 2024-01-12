@@ -12,6 +12,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -20,6 +23,13 @@ public class MarkWheelSubsystem extends SubsystemBase{
     private CANSparkMax angleMotor;
     private CANSparkMax speedMotor;
     private AnalogEncoder turningEncoder;
+
+    // private final NetworkTableInstance ntInstance = NetworkTableInstance.getDefault();
+    // private final NetworkTable table = ntInstance.getTable("/components/drivetrain");
+
+    // private final NetworkTableEntry ntSpeedTarget = table.getEntry("speedTarget");
+    // private final NetworkTableEntry ntVelocity = table.getEntry("wheelvelocity");
+
   
     private double targetSpeed = 0;
 
@@ -42,22 +52,26 @@ public class MarkWheelSubsystem extends SubsystemBase{
         speedPIDController.setP(0);
         speedPIDController.setI(0);
         speedPIDController.setD(0);
-        speedPIDController.setFF(0);
+        speedPIDController.setFF(0.05);
 
+        // this.anglePidController = new PIDController(0.5, 0, 0);
         this.anglePidController = new PIDController(0, 0, 0);
         anglePidController.enableContinuousInput(0, 1);
         anglePidController.setTolerance(1.0/360);
+
+        // ntSpeedTarget.setDouble(0);
+        // ntVelocity.setDouble(0);
     }
 
     public double getEncoderPosition(){
         return turningEncoder.getAbsolutePosition();
     }
 
-
 	public SwerveModulePosition getSwerveModulePosition() {
         return new SwerveModulePosition(
             speedMotor.getEncoder().getPosition(), Rotation2d.fromRotations(getEncoderPosition()));
 	}
+
 
     public void drive(SwerveModuleState state)
     {
@@ -66,8 +80,11 @@ public class MarkWheelSubsystem extends SubsystemBase{
         ));
 
         targetSpeed = optimizedState.speedMetersPerSecond;
+        speedMotor.set(0.1);
+        // speedPIDController.setReference(targetSpeed, ControlType.kVelocity);
 
-        speedPIDController.setReference(targetSpeed, ControlType.kVelocity);
+        // ntSpeedTarget.setDouble(targetSpeed);
+        // ntVelocity.setDouble(speedMotor.getEncoder().getVelocity());
 
         Rotation2d angle = optimizedState.angle;
         setAngle(angle);
@@ -87,4 +104,8 @@ public class MarkWheelSubsystem extends SubsystemBase{
         angleMotor.set(angleSetpoint);
     }
     
+    public CANSparkMax getSpeedMotor()
+    {
+        return speedMotor;
+    }
 }

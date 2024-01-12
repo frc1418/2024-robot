@@ -5,6 +5,9 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.common.Odometry;
@@ -16,7 +19,25 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     private MarkWheelSubsystem frontLeft;
     private MarkWheelSubsystem frontRight;
 
-    private PIDController rotationController = new PIDController(0, 0, 0); // TODO: Tune PID
+    private final NetworkTableInstance ntInstance = NetworkTableInstance.getDefault();
+    private final NetworkTable table = ntInstance.getTable("/components/drivetrain");
+
+    private final NetworkTableEntry ntBackRightAngleEncoder = table.getEntry("backRightAngleEncoder");
+    private final NetworkTableEntry ntBackLeftAngleEncoder = table.getEntry("backLeftAngleEncoder");
+    private final NetworkTableEntry ntFrontRightAngleEncoder = table.getEntry("frontRightAngleEncoder");
+    private final NetworkTableEntry ntFrontLeftAngleEncoder = table.getEntry("frontLeftAngleEncoder");
+
+    private final NetworkTableEntry ntIsFieldCentric = table.getEntry("isFieldCentric");
+
+    private final NetworkTable odometryTable = ntInstance.getTable("/common/Odometry");
+    private final NetworkTableEntry ntOdometryPose = odometryTable.getEntry("odometryPose");
+    private final NetworkTableEntry ntVelocityBackRight = table.getEntry("wheelvelocitybackright");
+    private final NetworkTableEntry ntVelocityBackLeft = table.getEntry("wheelvelocitybackleft");
+    private final NetworkTableEntry ntVelocityFrontRight = table.getEntry("wheelvelocityfrontright");
+    private final NetworkTableEntry ntVelocityFrontLeft = table.getEntry("wheelvelocityfrontleft");
+
+    private PIDController rotationController = new PIDController(0., 0, 0); 
+    // private PIDController rotationController = new PIDController(0.04, 0, 0); 
 
     
     private SwerveDriveKinematics kinematics;
@@ -37,6 +58,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         this.kinematics = kinematics;
         this.odometry = odometry;
 
+        this.ntIsFieldCentric.setBoolean(fieldCentric);
     }
 
     public void drive(double x, double y, double rot) {
@@ -80,6 +102,19 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         odometry.update(getPositions());
+
+        ntOdometryPose.setString(odometry.getPose().toString());
+
+        // ntBackLeftAngleEncoder.setDouble(backLeft.getEncoderPosition());
+        ntBackRightAngleEncoder.setDouble(backRight.getEncoderPosition());
+        // ntFrontLeftAngleEncoder.setDouble(frontLeft.getEncoderPosition());
+        // ntFrontRightAngleEncoder.setDouble(frontRight.getEncoderPosition());
+
+        ntVelocityBackRight.setDouble(backRight.getSpeedMotor().getEncoder().getVelocity());
+        ntVelocityBackLeft.setDouble(backLeft.getSpeedMotor().getEncoder().getVelocity());
+        ntVelocityFrontRight.setDouble(frontRight.getSpeedMotor().getEncoder().getVelocity());
+        ntVelocityFrontLeft.setDouble(frontLeft.getSpeedMotor().getEncoder().getVelocity());
+
     }
 
     public SwerveModulePosition[] getPositions() {

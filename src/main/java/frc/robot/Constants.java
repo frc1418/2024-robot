@@ -48,8 +48,13 @@ public final class Constants {
     public static final AnalogInput FRONT_LEFT_ENCODER = new AnalogInput(1);
     public static final Translation2d FRONT_LEFT_LOC = new Translation2d(0.238125, 0.238125);
     
-	  public static final SwerveDriveKinematics SWERVE_KINEMATICS = null;
+    public final static SwerveDriveKinematics SWERVE_KINEMATICS = new SwerveDriveKinematics(
+      FRONT_LEFT_LOC,
+      FRONT_RIGHT_LOC,
+      BACK_LEFT_LOC,
+      BACK_RIGHT_LOC);
   }
+  
   public final static class DriverConstants {
     public final static double speedMultiplier = 3;
     public final static double angleMultiplier = 3;
