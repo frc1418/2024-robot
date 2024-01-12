@@ -17,6 +17,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.WheelConstants;
 
 public class MarkWheelSubsystem extends SubsystemBase{
 
@@ -49,10 +50,14 @@ public class MarkWheelSubsystem extends SubsystemBase{
         this.location = location;
 
         this.speedPIDController = this.speedMotor.getPIDController();
-        speedPIDController.setP(0);
+        speedPIDController.setP(0.005);
         speedPIDController.setI(0);
         speedPIDController.setD(0);
-        speedPIDController.setFF(0.05);
+        speedPIDController.setFF(0.26);
+
+        this.speedMotor.getEncoder().setPosition(0);
+        this.speedMotor.getEncoder().setPositionConversionFactor(WheelConstants.ROTATIONS_TO_METERS);
+        this.speedMotor.getEncoder().setVelocityConversionFactor(this.speedMotor.getEncoder().getPositionConversionFactor()/60.0);
 
         // this.anglePidController = new PIDController(0.5, 0, 0);
         this.anglePidController = new PIDController(0, 0, 0);
@@ -75,13 +80,12 @@ public class MarkWheelSubsystem extends SubsystemBase{
 
     public void drive(SwerveModuleState state)
     {
-        SwerveModuleState optimizedState = SwerveModuleState.optimize(state, Rotation2d.fromRotations(
-            getEncoderPosition()
-        ));
+        SwerveModuleState optimizedState = state; //SwerveModuleState.optimize(state, Rotation2d.fromRotations(
+            // getEncoderPosition()));
 
         targetSpeed = optimizedState.speedMetersPerSecond;
-        speedMotor.set(0.1);
-        // speedPIDController.setReference(targetSpeed, ControlType.kVelocity);
+        System.out.println("TARGET SPEED: " + targetSpeed);
+        speedPIDController.setReference(targetSpeed, ControlType.kVelocity);
 
         // ntSpeedTarget.setDouble(targetSpeed);
         // ntVelocity.setDouble(speedMotor.getEncoder().getVelocity());
