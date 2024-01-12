@@ -3,16 +3,18 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.common.Odometry;
 
 public class SwerveDriveSubsystem extends SubsystemBase {
     
-    private WheelSubsystem backRight;
-    private WheelSubsystem backLeft;
-    private WheelSubsystem frontLeft;
-    private WheelSubsystem frontRight;
+    private MarkWheelSubsystem backRight;
+    private MarkWheelSubsystem backLeft;
+    private MarkWheelSubsystem frontLeft;
+    private MarkWheelSubsystem frontRight;
 
     private PIDController rotationController = new PIDController(0, 0, 0); // TODO: Tune PID
 
@@ -24,7 +26,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
     private double lockedRot = 0;
 
-    public SwerveDriveSubsystem(WheelSubsystem backRight, WheelSubsystem backLeft, WheelSubsystem frontRight, WheelSubsystem frontLeft,
+    public SwerveDriveSubsystem(MarkWheelSubsystem backRight, MarkWheelSubsystem backLeft, MarkWheelSubsystem frontRight, MarkWheelSubsystem frontLeft,
             SwerveDriveKinematics kinematics, Odometry odometry) {
 
         this.backRight = backRight;
@@ -68,11 +70,24 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         SwerveModuleState backLeftState = moduleStates[2];
         SwerveModuleState backRightState = moduleStates[3];
 
-        //TODO: Make wheel subsystem drive method
         frontLeft.drive(frontLeftState);
         frontRight.drive(frontRightState);
         backLeft.drive(backLeftState);
         backRight.drive(backRightState);
 
+    }
+
+    @Override
+    public void periodic() {
+        odometry.update(getPositions());
+    }
+
+    public SwerveModulePosition[] getPositions() {
+        return new SwerveModulePosition[] {
+            frontLeft.getSwerveModulePosition(),
+            frontRight.getSwerveModulePosition(),
+            backLeft.getSwerveModulePosition(),
+            backRight.getSwerveModulePosition()
+        };
     }
 }

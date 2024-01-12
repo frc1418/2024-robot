@@ -1,0 +1,90 @@
+package frc.robot.subsystems;
+
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkAbsoluteEncoder;
+
+import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.ControlType;
+
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.AnalogEncoder;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+public class MarkWheelSubsystem extends SubsystemBase{
+
+    private CANSparkMax angleMotor;
+    private CANSparkMax speedMotor;
+    private AnalogEncoder turningEncoder;
+  
+    private double targetSpeed = 0;
+
+    private SparkPIDController speedPIDController;
+    private PIDController anglePidController;
+    
+    Translation2d location;
+
+    double angleSetpoint = 0;
+
+    
+    public MarkWheelSubsystem(CANSparkMax angleMotor, CANSparkMax speedMotor, AnalogEncoder turningEncoder, Translation2d location) {
+
+        this.angleMotor = angleMotor;
+        this.speedMotor = speedMotor;
+        this.turningEncoder =  turningEncoder;
+        this.location = location;
+
+        this.speedPIDController = this.speedMotor.getPIDController();
+        speedPIDController.setP(0);
+        speedPIDController.setI(0);
+        speedPIDController.setD(0);
+        speedPIDController.setFF(0);
+
+        this.anglePidController = new PIDController(0, 0, 0);
+        anglePidController.enableContinuousInput(0, 1);
+        anglePidController.setTolerance(1.0/360);
+    }
+
+    public double getEncoderPosition(){
+        return turningEncoder.getAbsolutePosition();
+    }
+
+
+	public SwerveModulePosition getSwerveModulePosition() {
+        return new SwerveModulePosition(
+            speedMotor.getEncoder().getPosition(), Rotation2d.fromRotations(getEncoderPosition()));
+	}
+
+    public void drive(SwerveModuleState state)
+    {
+        SwerveModuleState optimizedState = SwerveModuleState.optimize(state, Rotation2d.fromRotations(
+            getEncoderPosition()
+        ));
+
+        targetSpeed = optimizedState.speedMetersPerSecond;
+
+        speedPIDController.setReference(targetSpeed, ControlType.kVelocity);
+
+        Rotation2d angle = optimizedState.angle;
+        setAngle(angle);
+    }
+
+    public void setAngle(Rotation2d angle){
+
+        double pidOutput = anglePidController.calculate(getEncoderPosition(), angle.getRotations());
+        double clampPidOutput = MathUtil.clamp(pidOutput, -1, 1);
+
+        if(!anglePidController.atSetpoint())
+            angleSetpoint = clampPidOutput;
+        else
+            angleSetpoint = 0;
+
+        
+        angleMotor.set(angleSetpoint);
+    }
+    
+}

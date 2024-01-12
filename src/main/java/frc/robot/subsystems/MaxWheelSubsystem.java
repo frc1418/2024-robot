@@ -13,10 +13,9 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 
-import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class WheelSubsystem extends SubsystemBase{
+public class MaxWheelSubsystem extends SubsystemBase{
 
     private CANSparkMax angleMotor;
     private CANSparkMax speedMotor;
@@ -32,7 +31,7 @@ public class WheelSubsystem extends SubsystemBase{
     double angleSetpoint = 0;
 
     
-    public WheelSubsystem(CANSparkMax angleMotor, CANSparkMax speedMotor, Translation2d location) {
+    public MaxWheelSubsystem(CANSparkMax angleMotor, CANSparkMax speedMotor, Translation2d location) {
 
         this.angleMotor = angleMotor;
         this.speedMotor = speedMotor;
@@ -40,6 +39,10 @@ public class WheelSubsystem extends SubsystemBase{
         this.location = location;
 
         this.speedPIDController = this.speedMotor.getPIDController();
+        speedPIDController.setP(0);
+        speedPIDController.setI(0);
+        speedPIDController.setD(0);
+        speedPIDController.setFF(0);
 
         this.anglePidController = new PIDController(0, 0, 0);
         anglePidController.enableContinuousInput(0, 1);

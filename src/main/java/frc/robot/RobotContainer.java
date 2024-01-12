@@ -4,19 +4,20 @@
 
 package frc.robot;
 
+import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.DrivetrainConstants;
-import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
-import frc.robot.commands.ExampleCommand;
 import frc.robot.common.Odometry;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.MarkWheelSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
-import frc.robot.subsystems.WheelSubsystem;
+import frc.robot.subsystems.MaxWheelSubsystem;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.AnalogEncoder;
@@ -56,17 +57,17 @@ public class RobotContainer {
     private CANSparkMax frontLeftSpeedMotor = new CANSparkMax(DrivetrainConstants.FRONT_LEFT_SPEED_ID, MotorType.kBrushless);
     private AnalogEncoder frontLeftEncoder = new AnalogEncoder(DrivetrainConstants.FRONT_LEFT_ENCODER);
 
-    private WheelSubsystem backRightWheel = new WheelSubsystem (
-        backRightAngleMotor, backRightSpeedMotor,
+    private MarkWheelSubsystem backRightWheel = new MarkWheelSubsystem (
+        backRightAngleMotor, backRightSpeedMotor, backRightEncoder,
         DrivetrainConstants.BACK_RIGHT_LOC);
-    public WheelSubsystem backLeftWheel = new WheelSubsystem (
-      backLeftAngleMotor, backLeftSpeedMotor,
+    public MarkWheelSubsystem backLeftWheel = new MarkWheelSubsystem (
+      backLeftAngleMotor, backLeftSpeedMotor, backLeftEncoder,
       DrivetrainConstants.BACK_LEFT_LOC);
-    private WheelSubsystem frontRightWheel = new WheelSubsystem (
-      frontRightAngleMotor, frontRightSpeedMotor,
+    private MarkWheelSubsystem frontRightWheel = new MarkWheelSubsystem (
+      frontRightAngleMotor, frontRightSpeedMotor, frontRightEncoder,
       DrivetrainConstants.FRONT_RIGHT_LOC);
-    private WheelSubsystem frontLeftWheel = new WheelSubsystem (
-      frontLeftAngleMotor, frontLeftSpeedMotor,
+    private MarkWheelSubsystem frontLeftWheel = new MarkWheelSubsystem (
+      frontLeftAngleMotor, frontLeftSpeedMotor, frontLeftEncoder,
       DrivetrainConstants.FRONT_LEFT_LOC);
 
     AHRS gyro = new AHRS(SPI.Port.kMXP);
@@ -88,6 +89,9 @@ public class RobotContainer {
       backRightWheel, backLeftWheel, frontRightWheel, frontLeftWheel,
       DrivetrainConstants.SWERVE_KINEMATICS, odometry);
 
+    SlewRateLimiter limitX = new SlewRateLimiter(6);
+    SlewRateLimiter limitY = new SlewRateLimiter(6);
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer(RobotBase robot) {
     this.robot  = robot;
@@ -105,12 +109,34 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    new Trigger(m_exampleSubsystem::exampleCondition)
-        .onTrue(new ExampleCommand(m_exampleSubsystem));
+      Joystick leftJoystick = new Joystick(0);
+      Joystick rightJoystick = new Joystick(1);
+      Joystick altJoystick = new Joystick(2);
 
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-    // cancelling on release.
+
+      swerveDrive.setDefaultCommand(new RunCommand(() -> {
+        if (robot.isTeleopEnabled()){
+          //drive
+          swerveDrive.drive(
+            limitX.calculate(applyDeadband(-leftJoystick.getX(), DrivetrainConstants.DRIFT_DEADBAND))*DriverConstants.speedMultiplier,
+            limitY.calculate(applyDeadband(-leftJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND))*DriverConstants.speedMultiplier,
+            applyDeadband(-rightJoystick.getX(), DrivetrainConstants.ROTATION_DEADBAND)*DriverConstants.angleMultiplier);
+        }
+        else 
+        {
+          swerveDrive.drive(0,0,0);
+        }
+        
+      }, swerveDrive));
+  }
+
+  public double applyDeadband(double input, double deadband) {
+
+    
+    if (Math.abs(input) < deadband) 
+      return 0;
+    else return 
+      input;
   }
 
   /**
@@ -121,24 +147,5 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     return Autos.exampleAuto(m_exampleSubsystem);
-  }
-
-  private void configureButtonBindings(){
-    Joystick leftJoystick = new Joystick(0);
-    Joystick righJoystick = new Joystick(1);
-    Joystick altJoystick = new Joystick(2);
-
-
-    swerveDrive.setDefaultCommand(new RunCommand(() -> {
-      if (robot.isTeleopEnabled()){
-// do stuff
-      }
-      else 
-      {
-        swerveDrive.drive(0,0,0);
-
-      }
-      
-    }, swerveDrive));
-  }
+  } 
 }
