@@ -22,29 +22,36 @@ public final class Constants {
   }
 
   public final static class DrivetrainConstants{
-    public static final int BACK_RIGHT_ANGLE_ID = 0;
-    public static final int BACK_RIGHT_SPEED_ID = 0;
-    public static final AnalogInput BACK_RIGHT_ENCODER = null;
-    public static final Translation2d BACK_RIGHT_LOC = new Translation2d(0, 0);
+    public static final double DRIFT_DEADBAND = 0.1;
+    public static final double ROTATION_DEADBAND = 0.002;
+
+    public static final int BACK_RIGHT_ANGLE_ID = 5;
+    public static final int BACK_RIGHT_SPEED_ID = 6;
+    public static final AnalogInput BACK_RIGHT_ENCODER = new AnalogInput(3);
+    public static final Translation2d BACK_RIGHT_LOC = new Translation2d(-0.238125, -0.238125);
 
 
-    public static final int FRONT_RIGHT_ANGLE_ID = 0;
-    public static final int FRONT_RIGHT_SPEED_ID = 0;
-    public static final AnalogInput FRONT_RIGHT_ENCODER = null;
-    public static final Translation2d FRONT_RIGHT_LOC = new Translation2d(0, 0);
+    public static final int FRONT_RIGHT_ANGLE_ID = 3;
+    public static final int FRONT_RIGHT_SPEED_ID = 4;
+    public static final AnalogInput FRONT_RIGHT_ENCODER = new AnalogInput(0);
+    public static final Translation2d FRONT_RIGHT_LOC = new Translation2d(0.238125, -0.238125);
 
     
 
-    public static final int BACK_LEFT_ANGLE_ID = 1;
-    public static final int BACK_LEFT_SPEED_ID = 0;
-    public static final int BACK_LEFT_ENCODER = 1;
-    public static final Translation2d BACK_LEFT_LOC = new Translation2d(0, 0);
+    public static final int BACK_LEFT_ANGLE_ID = 8;
+    public static final int BACK_LEFT_SPEED_ID = 7;
+    public static final AnalogInput BACK_LEFT_ENCODER = new AnalogInput(2);
+    public static final Translation2d BACK_LEFT_LOC = new Translation2d(-0.238125, 0.238125);
     
-    public static final int FRONT_LEFT_ANGLE_ID = 0;
-    public static final int FRONT_LEFT_SPEED_ID = 0;
-    public static final AnalogInput FRONT_LEFT_ENCODER = null;
-    public static final Translation2d FRONT_LEFT_LOC = new Translation2d(0, 0);
+    public static final int FRONT_LEFT_ANGLE_ID = 1;
+    public static final int FRONT_LEFT_SPEED_ID = 2;
+    public static final AnalogInput FRONT_LEFT_ENCODER = new AnalogInput(1);
+    public static final Translation2d FRONT_LEFT_LOC = new Translation2d(0.238125, 0.238125);
     
 	  public static final SwerveDriveKinematics SWERVE_KINEMATICS = null;
   }
+  public final static class DriverConstants {
+    public final static double speedMultiplier = 3;
+    public final static double angleMultiplier = 3;
+}
 }
