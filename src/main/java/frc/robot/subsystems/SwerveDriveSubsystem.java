@@ -8,8 +8,11 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.common.Odometry;
 
 public class SwerveDriveSubsystem extends SubsystemBase {
@@ -31,10 +34,10 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
     private final NetworkTable odometryTable = ntInstance.getTable("/common/Odometry");
     private final NetworkTableEntry ntOdometryPose = odometryTable.getEntry("odometryPose");
-    private final NetworkTableEntry ntVelocityBackRight = table.getEntry("wheelvelocitybackright");
-    private final NetworkTableEntry ntVelocityBackLeft = table.getEntry("wheelvelocitybackleft");
-    private final NetworkTableEntry ntVelocityFrontRight = table.getEntry("wheelvelocityfrontright");
-    private final NetworkTableEntry ntVelocityFrontLeft = table.getEntry("wheelvelocityfrontleft");
+    // private final NetworkTableEntry ntVelocityBackRight = table.getEntry("wheelvelocitybackright");
+    // private final NetworkTableEntry ntVelocityBackLeft = table.getEntry("wheelvelocitybackleft");
+    // private final NetworkTableEntry ntVelocityFrontRight = table.getEntry("wheelvelocityfrontright");
+    // private final NetworkTableEntry ntVelocityFrontLeft = table.getEntry("wheelvelocityfrontleft");
 
     private PIDController rotationController = new PIDController(0., 0, 0); 
     // private PIDController rotationController = new PIDController(0.04, 0, 0); 
@@ -105,15 +108,18 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
         ntOdometryPose.setString(odometry.getPose().toString());
 
-        // ntBackLeftAngleEncoder.setDouble(backLeft.getEncoderPosition());
+        ntBackLeftAngleEncoder.setDouble(backLeft.getEncoderPosition());
         ntBackRightAngleEncoder.setDouble(backRight.getEncoderPosition());
-        // ntFrontLeftAngleEncoder.setDouble(frontLeft.getEncoderPosition());
-        // ntFrontRightAngleEncoder.setDouble(frontRight.getEncoderPosition());
+        ntFrontLeftAngleEncoder.setDouble(frontLeft.getEncoderPosition());
+        ntFrontRightAngleEncoder.setDouble(frontRight.getEncoderPosition());
 
-        ntVelocityBackRight.setDouble(backRight.getSpeedMotor().getEncoder().getVelocity());
-        ntVelocityBackLeft.setDouble(backLeft.getSpeedMotor().getEncoder().getVelocity());
-        ntVelocityFrontRight.setDouble(frontRight.getSpeedMotor().getEncoder().getVelocity());
-        ntVelocityFrontLeft.setDouble(frontLeft.getSpeedMotor().getEncoder().getVelocity());
+
+
+
+        // ntVelocityBackRight.setDouble(backRight.getSpeedMotor().getEncoder().getVelocity());
+        // ntVelocityBackLeft.setDouble(backLeft.getSpeedMotor().getEncoder().getVelocity());
+        // ntVelocityFrontRight.setDouble(frontRight.getSpeedMotor().getEncoder().getVelocity());
+        // ntVelocityFrontLeft.setDouble(frontLeft.getSpeedMotor().getEncoder().getVelocity());
 
     }
 
