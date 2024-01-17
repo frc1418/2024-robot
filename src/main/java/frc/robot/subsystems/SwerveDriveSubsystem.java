@@ -65,11 +65,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     }
 
     public void drive(double x, double y, double rot) {
-
-        System.out.println("LOCKED ROT: " + lockedRot);
-        System.out.println("HEADING: " + odometry.getHeading());
-        System.out.println("ROTATION: " + rot);
-
         if(rot == 0){
             rot = rotationController.calculate(odometry.getHeading(), lockedRot);
         }
