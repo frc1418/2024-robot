@@ -39,7 +39,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     private final NetworkTableEntry ntVelocityFrontRight = table.getEntry("wheelvelocityfrontright");
     private final NetworkTableEntry ntVelocityFrontLeft = table.getEntry("wheelvelocityfrontleft");
 
-    // private PIDController rotationController = new PIDController(0., 0, 0); 
+    // private PIDController rotationController = new PIDController(0, 0, 0); 
     private PIDController rotationController = new PIDController(0.04, 0, 0); 
 
     
@@ -65,6 +65,11 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     }
 
     public void drive(double x, double y, double rot) {
+
+        System.out.println("LOCKED ROT: " + lockedRot);
+        System.out.println("HEADING: " + odometry.getHeading());
+        System.out.println("ROTATION: " + rot);
+
         if(rot == 0){
             rot = rotationController.calculate(odometry.getHeading(), lockedRot);
         }
@@ -114,10 +119,10 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
 
 
-        ntVelocityBackRight.setDouble(backRight.getSpeedMotor().getEncoder().getVelocity());
-        ntVelocityBackLeft.setDouble(backLeft.getSpeedMotor().getEncoder().getVelocity());
-        ntVelocityFrontRight.setDouble(frontRight.getSpeedMotor().getEncoder().getVelocity());
-        ntVelocityFrontLeft.setDouble(frontLeft.getSpeedMotor().getEncoder().getVelocity());
+        ntVelocityBackRight.setDouble(backRight.getSpeed());
+        ntVelocityBackLeft.setDouble(backLeft.getSpeed());
+        ntVelocityFrontRight.setDouble(frontRight.getSpeed());
+        ntVelocityFrontLeft.setDouble(frontLeft.getSpeed());
 
     }
 

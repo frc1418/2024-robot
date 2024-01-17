@@ -93,9 +93,9 @@ public class MaxWheelSubsystem extends SubsystemBase{
         angleMotor.set(angleSetpoint);
     }
 
-    public CANSparkMax getSpeedMotor()
+    public double getSpeed()
     {
-        return speedMotor;
+        return speedMotor.getEncoder().getVelocity();
     }
 
     public SparkAbsoluteEncoder getTurningEncoder(){

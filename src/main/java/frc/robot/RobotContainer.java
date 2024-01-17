@@ -93,6 +93,7 @@ public class RobotContainer {
     this.robot  = robot;
     // Configure the trigger bindings
     configureBindings();
+    configureObjects();
   }
 
   /**
