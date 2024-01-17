@@ -8,16 +8,19 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.common.Odometry;
 
 public class SwerveDriveSubsystem extends SubsystemBase {
     
-    private MarkWheelSubsystem backRight;
-    private MarkWheelSubsystem backLeft;
-    private MarkWheelSubsystem frontLeft;
-    private MarkWheelSubsystem frontRight;
+    private MaxWheelSubsystem backRight;
+    private MaxWheelSubsystem backLeft;
+    private MaxWheelSubsystem frontLeft;
+    private MaxWheelSubsystem frontRight;
 
     private final NetworkTableInstance ntInstance = NetworkTableInstance.getDefault();
     private final NetworkTable table = ntInstance.getTable("/components/drivetrain");
@@ -36,8 +39,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     private final NetworkTableEntry ntVelocityFrontRight = table.getEntry("wheelvelocityfrontright");
     private final NetworkTableEntry ntVelocityFrontLeft = table.getEntry("wheelvelocityfrontleft");
 
-    private PIDController rotationController = new PIDController(0., 0, 0); 
-    // private PIDController rotationController = new PIDController(0.04, 0, 0); 
+    // private PIDController rotationController = new PIDController(0., 0, 0); 
+    private PIDController rotationController = new PIDController(0.04, 0, 0); 
 
     
     private SwerveDriveKinematics kinematics;
@@ -47,7 +50,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
     private double lockedRot = 0;
 
-    public SwerveDriveSubsystem(MarkWheelSubsystem backRight, MarkWheelSubsystem backLeft, MarkWheelSubsystem frontRight, MarkWheelSubsystem frontLeft,
+    public SwerveDriveSubsystem(MaxWheelSubsystem backRight, MaxWheelSubsystem backLeft, MaxWheelSubsystem frontRight, MaxWheelSubsystem frontLeft,
             SwerveDriveKinematics kinematics, Odometry odometry) {
 
         this.backRight = backRight;
@@ -62,20 +65,22 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     }
 
     public void drive(double x, double y, double rot) {
-
+        System.out.println("ROTATION: " + rot);
         if(rot == 0){
             rot = rotationController.calculate(odometry.getHeading(), lockedRot);
         }
         else{
             lockedRot = odometry.getHeading();
         }
+        System.out.println("LOCKED ROT: " + lockedRot);
+        System.out.println("HEADING: " + odometry.getHeading());
+
 
         ChassisSpeeds speeds = new ChassisSpeeds(x, y, rot);
 
         if (fieldCentric) {
             speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, odometry.getRotation2d());
         }
-    
         drive(speeds);
     }
 
@@ -105,10 +110,13 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
         ntOdometryPose.setString(odometry.getPose().toString());
 
-        // ntBackLeftAngleEncoder.setDouble(backLeft.getEncoderPosition());
+        ntBackLeftAngleEncoder.setDouble(backLeft.getEncoderPosition());
         ntBackRightAngleEncoder.setDouble(backRight.getEncoderPosition());
-        // ntFrontLeftAngleEncoder.setDouble(frontLeft.getEncoderPosition());
-        // ntFrontRightAngleEncoder.setDouble(frontRight.getEncoderPosition());
+        ntFrontLeftAngleEncoder.setDouble(frontLeft.getEncoderPosition());
+        ntFrontRightAngleEncoder.setDouble(frontRight.getEncoderPosition());
+
+
+
 
         ntVelocityBackRight.setDouble(backRight.getSpeedMotor().getEncoder().getVelocity());
         ntVelocityBackLeft.setDouble(backLeft.getSpeedMotor().getEncoder().getVelocity());
@@ -124,5 +132,9 @@ public class SwerveDriveSubsystem extends SubsystemBase {
             backLeft.getSwerveModulePosition(),
             backRight.getSwerveModulePosition()
         };
+    }
+    
+    public void resetLockRot() {
+        lockedRot = odometry.getHeading();
     }
 }
