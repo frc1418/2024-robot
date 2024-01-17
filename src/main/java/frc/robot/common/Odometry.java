@@ -21,9 +21,8 @@ public class Odometry {
 
     private final NetworkTableInstance ntInstance = NetworkTableInstance.getDefault();
     private final NetworkTable table = ntInstance.getTable("/components/Odometry");
+    private final NetworkTableEntry heading = table.getEntry("heading");
 
-    private final NetworkTableEntry inclineAngle = table.getEntry("inclineAngle");
-    private final NetworkTableEntry inclineDirection = table.getEntry("inclineDirection");
 
     private final NetworkTableEntry pitch = table.getEntry("pitch");
     private final NetworkTableEntry roll = table.getEntry("roll");
@@ -38,21 +37,20 @@ public class Odometry {
         this.modulePositions = modulePositions;
         this.pose = new Pose2d();
 
-        inclineAngle.setDefaultDouble(0);
-        inclineDirection.setDefaultDouble(0);
         pitch.setDefaultDouble(0);
         roll.setDefaultDouble(0);
+        zeroHeading();
     }
 
     public void update(SwerveModulePosition[] newPositions) {
         // Get the rotation of the robot from the gyro.
         var gyroAngle = gyro.getRotation2d();
 
+        pose = odometry.update(gyroAngle, newPositions);
+
         modulePositions = newPositions;
 
-        inclineAngle.setDouble(getInclineAngle().getDegrees());
-        inclineDirection.setDouble(getInclineDirection().getDegrees());
-
+        heading.setDouble(gyro.getRotation2d().getDegrees());
         pitch.setDouble(getPitch().getDegrees());
         roll.setDouble(getRoll().getDegrees());
     }
@@ -83,6 +81,10 @@ public class Odometry {
     }
     public Rotation2d getRotation2d() {
         return gyro.getRotation2d();
+    }
+
+    public AHRS getGyro() {
+        return gyro;
     }
 
     public Rotation2d getPitch() {
