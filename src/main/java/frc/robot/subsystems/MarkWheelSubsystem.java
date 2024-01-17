@@ -84,7 +84,6 @@ public class MarkWheelSubsystem extends SubsystemBase{
             // getEncoderPosition()));
 
         targetSpeed = optimizedState.speedMetersPerSecond;
-        System.out.println("TARGET SPEED: " + targetSpeed);
         speedPIDController.setReference(targetSpeed, ControlType.kVelocity);
 
         // ntSpeedTarget.setDouble(targetSpeed);
