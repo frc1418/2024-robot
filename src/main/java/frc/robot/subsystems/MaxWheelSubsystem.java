@@ -98,7 +98,7 @@ public class MaxWheelSubsystem extends SubsystemBase{
         return speedMotor;
     }
 
-    public SparkAbsoluteEncoder getEncoder(){
+    public SparkAbsoluteEncoder getTurningEncoder(){
         return turningEncoder;
     }
 

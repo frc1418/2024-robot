@@ -31,12 +31,6 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
-/**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
- * subsystems, commands, and trigger mappings) should be declared here.
- */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
@@ -111,36 +105,36 @@ public class RobotContainer {
    * joysticks}.
    */
   
+  public void configureObjects() {
+    frontLeftWheel.getTurningEncoder().setInverted(true);
+    frontRightWheel.getTurningEncoder().setInverted(true);
+    backLeftWheel.getTurningEncoder().setInverted(true);
+    backRightWheel.getTurningEncoder().setInverted(true);
+
+    backRightWheel.getTurningEncoder().setZeroOffset(DrivetrainConstants.BACK_RIGHT_ENCODER_OFFSET);
+    backLeftWheel.getTurningEncoder().setZeroOffset(DrivetrainConstants.BACK_LEFT_ENCODER_OFFSET);
+    frontRightWheel.getTurningEncoder().setZeroOffset(DrivetrainConstants.FRONT_RIGHT_ENCODER_OFFSET);
+    frontLeftWheel.getTurningEncoder().setZeroOffset(DrivetrainConstants.FRONT_LEFT_ENCODER_OFFSET);
+
+    frontLeftWheel.getTurningEncoder().setInverted(true);
+    frontRightWheel.getTurningEncoder().setInverted(true);
+    backLeftWheel.getTurningEncoder().setInverted(true);
+    backRightWheel.getTurningEncoder().setInverted(true);
+
+    coastDrive();
+  }
+
   private void configureBindings() {
     Joystick leftJoystick = new Joystick(0);
     Joystick rightJoystick = new Joystick(1);
     Joystick altJoystick = new Joystick(2);
 
-    frontLeftWheel.getEncoder().setInverted(true);
-    frontRightWheel.getEncoder().setInverted(true);
-    backLeftWheel.getEncoder().setInverted(true);
-    backRightWheel.getEncoder().setInverted(true);
-
-    backRightWheel.getEncoder().setZeroOffset(DrivetrainConstants.BACK_RIGHT_ENCODER_OFFSET);
-    backLeftWheel.getEncoder().setZeroOffset(DrivetrainConstants.BACK_LEFT_ENCODER_OFFSET);
-    frontRightWheel.getEncoder().setZeroOffset(DrivetrainConstants.FRONT_RIGHT_ENCODER_OFFSET);
-    frontLeftWheel.getEncoder().setZeroOffset(DrivetrainConstants.FRONT_LEFT_ENCODER_OFFSET);
-
-    frontLeftWheel.getEncoder().setInverted(true);
-    frontRightWheel.getEncoder().setInverted(true);
-    backLeftWheel.getEncoder().setInverted(true);
-    backRightWheel.getEncoder().setInverted(true);
-
-    coastDrive();
-
     swerveDrive.setDefaultCommand(new RunCommand(() -> {
       if (robot.isTeleopEnabled()){
-        //drive
         swerveDrive.drive(
           limitY.calculate(applyDeadband(-leftJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND))*DriverConstants.speedMultiplier,
           limitX.calculate(applyDeadband(-leftJoystick.getX(), DrivetrainConstants.DRIFT_DEADBAND))*DriverConstants.speedMultiplier,
           applyDeadband(-rightJoystick.getX(), DrivetrainConstants.ROTATION_DEADBAND)*DriverConstants.angleMultiplier);
-          // 0,0,0);
       }
       else 
       {
