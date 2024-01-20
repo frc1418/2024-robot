@@ -27,8 +27,10 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class RobotContainer {
@@ -130,6 +132,13 @@ public class RobotContainer {
     Joystick rightJoystick = new Joystick(1);
     Joystick altJoystick = new Joystick(2);
 
+    JoystickButton turtleButton = new JoystickButton(rightJoystick, 1);
+
+    JoystickButton fieldCentricButton = new JoystickButton(rightJoystick, 2);
+
+    JoystickButton resetFieldCentricButton = new JoystickButton(leftJoystick, 2);
+
+
     swerveDrive.setDefaultCommand(new RunCommand(() -> {
       if (robot.isTeleopEnabled()){
         swerveDrive.drive(
@@ -143,7 +152,21 @@ public class RobotContainer {
       }
       
     }, swerveDrive));
-  }
+
+    fieldCentricButton.onTrue(new InstantCommand((
+      ) -> {
+        swerveDrive.toggleFieldCentric();
+      }, swerveDrive));
+
+    resetFieldCentricButton.onTrue(new InstantCommand((
+    ) -> {
+      swerveDrive.resetFieldCentric();
+    }, swerveDrive));
+
+    turtleButton.whileTrue(new RunCommand((
+    ) -> {
+      swerveDrive.turtle();
+    }, swerveDrive));  }
 
   public double applyDeadband(double input, double deadband) {
     if (Math.abs(input) < deadband) 

@@ -62,11 +62,13 @@ public final class Constants {
       FRONT_RIGHT_LOC,
       BACK_LEFT_LOC,
       BACK_RIGHT_LOC);
+
+    public static final double ROTATION_SPEED_CAP = 5;
   }
   
   public final static class DriverConstants {
     public final static double speedMultiplier = 3;
-    public final static double angleMultiplier = 3;
+    public final static double angleMultiplier = 4;
   }
 
   public final static class WheelConstants {
