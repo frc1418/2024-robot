@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -46,7 +47,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     private SwerveDriveKinematics kinematics;
     private Odometry odometry;
 
-    public boolean fieldCentric = false;
+    public boolean fieldCentric = true;
 
     private double lockedRot = 0;
 
@@ -65,11 +66,16 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     }
 
     public void drive(double x, double y, double rot) {
+
         if(rot == 0){
             rot = rotationController.calculate(odometry.getHeading(), lockedRot);
+
         }
         else{
             lockedRot = odometry.getHeading();
+        }
+        if (rot > DrivetrainConstants.ROTATION_SPEED_CAP) {
+            rot = DrivetrainConstants.ROTATION_SPEED_CAP;
         }
 
         ChassisSpeeds speeds = new ChassisSpeeds(x, y, rot);
@@ -97,7 +103,14 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         frontRight.drive(frontRightState);
         backLeft.drive(backLeftState);
         backRight.drive(backRightState);
+    }
 
+    public void turtle() {
+        frontRight.setAngle(Rotation2d.fromDegrees(-45));
+        backLeft.setAngle(Rotation2d.fromDegrees(-45));
+        
+        backRight.setAngle(Rotation2d.fromDegrees(45));
+        frontLeft.setAngle(Rotation2d.fromDegrees(45));
     }
 
     @Override
@@ -119,6 +132,16 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         ntVelocityFrontRight.setDouble(frontRight.getSpeed());
         ntVelocityFrontLeft.setDouble(frontLeft.getSpeed());
 
+    }
+
+    public void toggleFieldCentric() {
+        fieldCentric = !fieldCentric;
+        ntIsFieldCentric.setBoolean(fieldCentric);
+    }
+
+    public void resetFieldCentric() {
+        odometry.zeroHeading();
+        resetLockRot();
     }
 
     public SwerveModulePosition[] getPositions() {
