@@ -12,6 +12,8 @@ import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.MarkWheelSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.subsystems.MaxWheelSubsystem;
+import frc.robot.subsystems.ShooterWheelSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
@@ -39,53 +41,50 @@ public class RobotContainer {
 
     private final RobotBase robot;
 
-    private CANSparkMax backRightAngleMotor = new CANSparkMax(DrivetrainConstants.BACK_RIGHT_ANGLE_ID, MotorType.kBrushless);
-    private CANSparkMax backRightSpeedMotor = new CANSparkMax(DrivetrainConstants.BACK_RIGHT_SPEED_ID, MotorType.kBrushless);
+    // private CANSparkMax backRightAngleMotor = new CANSparkMax(DrivetrainConstants.BACK_RIGHT_ANGLE_ID, MotorType.kBrushless);
+    private CANSparkMax bottomRightSpeedMotor = new CANSparkMax(DrivetrainConstants.BOTTOM_RIGHT_SPEED_ID, MotorType.kBrushless);
     // private AnalogEncoder backRightEncoder = new AnalogEncoder(DrivetrainConstants.BACK_RIGHT_ENCODER);
 
-    private CANSparkMax frontRightAngleMotor = new CANSparkMax(DrivetrainConstants.FRONT_RIGHT_ANGLE_ID, MotorType.kBrushless);
-    private CANSparkMax frontRightSpeedMotor = new CANSparkMax(DrivetrainConstants.FRONT_RIGHT_SPEED_ID, MotorType.kBrushless);
+    // private CANSparkMax frontRightAngleMotor = new CANSparkMax(DrivetrainConstants.FRONT_RIGHT_ANGLE_ID, MotorType.kBrushless);
+    private CANSparkMax topRightSpeedMotor = new CANSparkMax(DrivetrainConstants.TOP_RIGHT_SPEED_ID, MotorType.kBrushless);
     // private AnalogEncoder frontRightEncoder = new AnalogEncoder(DrivetrainConstants.FRONT_RIGHT_ENCODER);
 
-    private CANSparkMax backLeftAngleMotor = new CANSparkMax(DrivetrainConstants.BACK_LEFT_ANGLE_ID, MotorType.kBrushless);
-    private CANSparkMax backLeftSpeedMotor = new CANSparkMax(DrivetrainConstants.BACK_LEFT_SPEED_ID, MotorType.kBrushless);
+    // private CANSparkMax backLeftAngleMotor = new CANSparkMax(DrivetrainConstants.BACK_LEFT_ANGLE_ID, MotorType.kBrushless);
+    private CANSparkMax bottomLeftSpeedMotor = new CANSparkMax(DrivetrainConstants.BOTTOM_LEFT_SPEED_ID, MotorType.kBrushless);
     // private AnalogEncoder backLeftEncoder = new AnalogEncoder(DrivetrainConstants.BACK_LEFT_ENCODER);
 
-    private CANSparkMax frontLeftAngleMotor = new CANSparkMax(DrivetrainConstants.FRONT_LEFT_ANGLE_ID, MotorType.kBrushless);
-    private CANSparkMax frontLeftSpeedMotor = new CANSparkMax(DrivetrainConstants.FRONT_LEFT_SPEED_ID, MotorType.kBrushless);
+    // private CANSparkMax frontLeftAngleMotor = new CANSparkMax(DrivetrainConstants.FRONT_LEFT_ANGLE_ID, MotorType.kBrushless);
+    private CANSparkMax topLeftSpeedMotor = new CANSparkMax(DrivetrainConstants.TOP_LEFT_SPEED_ID, MotorType.kBrushless);
     // private AnalogEncoder frontLeftEncoder = new AnalogEncoder(DrivetrainConstants.FRONT_LEFT_ENCODER);
 
-    private MaxWheelSubsystem backRightWheel = new MaxWheelSubsystem (
-        backRightAngleMotor, backRightSpeedMotor,
-        DrivetrainConstants.BACK_RIGHT_LOC);
-    public MaxWheelSubsystem backLeftWheel = new MaxWheelSubsystem (
-      backLeftAngleMotor, backLeftSpeedMotor,
-      DrivetrainConstants.BACK_LEFT_LOC);
-    private MaxWheelSubsystem frontRightWheel = new MaxWheelSubsystem (
-      frontRightAngleMotor, frontRightSpeedMotor,
-      DrivetrainConstants.FRONT_RIGHT_LOC);
-    private MaxWheelSubsystem frontLeftWheel = new MaxWheelSubsystem (
-      frontLeftAngleMotor, frontLeftSpeedMotor,
-      DrivetrainConstants.FRONT_LEFT_LOC);
+
+
+    private ShooterWheelSubsystem bottomRightWheel = new ShooterWheelSubsystem(bottomRightSpeedMotor);
+    private ShooterWheelSubsystem bottomLeftWheel = new ShooterWheelSubsystem(bottomLeftSpeedMotor);
+    private ShooterWheelSubsystem topRightWheel = new ShooterWheelSubsystem(topRightSpeedMotor);
+    private ShooterWheelSubsystem topLeftWheel = new ShooterWheelSubsystem(topLeftSpeedMotor);
+
+
+
 
     AHRS gyro = new AHRS(SPI.Port.kMXP);
     
-     private SwerveModulePosition[] positions = new SwerveModulePosition[] {
-      frontLeftWheel.getSwerveModulePosition(),
-      frontRightWheel.getSwerveModulePosition(),
-      backLeftWheel.getSwerveModulePosition(),
-      backRightWheel.getSwerveModulePosition()
-    };
+    //  private SwerveModulePosition[] positions = new SwerveModulePosition[] {
+    //   frontLeftWheel.getSwerveModulePosition(),
+    //   frontRightWheel.getSwerveModulePosition(),
+    //   backLeftWheel.getSwerveModulePosition(),
+    //   backRightWheel.getSwerveModulePosition()
+    // };
 
-    private SwerveDriveOdometry driveOdometry = new SwerveDriveOdometry(DrivetrainConstants.SWERVE_KINEMATICS, gyro.getRotation2d(), positions);
+    // private SwerveDriveOdometry driveOdometry = new SwerveDriveOdometry(DrivetrainConstants.SWERVE_KINEMATICS, gyro.getRotation2d(), positions);
 
-    private Odometry odometry = new Odometry(gyro, driveOdometry, positions);
+    // private Odometry odometry = new Odometry(gyro, driveOdometry, positions);
 
-    
+    private ShooterSubsystem shooter = new ShooterSubsystem(bottomLeftWheel, bottomRightWheel, topLeftWheel, topRightWheel);
 
-    private SwerveDriveSubsystem swerveDrive = new SwerveDriveSubsystem(
-      backRightWheel, backLeftWheel, frontRightWheel, frontLeftWheel,
-      DrivetrainConstants.SWERVE_KINEMATICS, odometry);
+    // private SwerveDriveSubsystem swerveDrive = new SwerveDriveSubsystem(
+    //   backRightWheel, backLeftWheel, frontRightWheel, frontLeftWheel,
+    //   DrivetrainConstants.SWERVE_KINEMATICS, odometry);
 
     SlewRateLimiter limitX = new SlewRateLimiter(6);
     SlewRateLimiter limitY = new SlewRateLimiter(6);
@@ -109,20 +108,6 @@ public class RobotContainer {
    */
   
   public void configureObjects() {
-    frontLeftWheel.getTurningEncoder().setInverted(true);
-    frontRightWheel.getTurningEncoder().setInverted(true);
-    backLeftWheel.getTurningEncoder().setInverted(true);
-    backRightWheel.getTurningEncoder().setInverted(true);
-
-    backRightWheel.getTurningEncoder().setZeroOffset(DrivetrainConstants.BACK_RIGHT_ENCODER_OFFSET);
-    backLeftWheel.getTurningEncoder().setZeroOffset(DrivetrainConstants.BACK_LEFT_ENCODER_OFFSET);
-    frontRightWheel.getTurningEncoder().setZeroOffset(DrivetrainConstants.FRONT_RIGHT_ENCODER_OFFSET);
-    frontLeftWheel.getTurningEncoder().setZeroOffset(DrivetrainConstants.FRONT_LEFT_ENCODER_OFFSET);
-
-    frontLeftWheel.getTurningEncoder().setInverted(true);
-    frontRightWheel.getTurningEncoder().setInverted(true);
-    backLeftWheel.getTurningEncoder().setInverted(true);
-    backRightWheel.getTurningEncoder().setInverted(true);
 
     coastDrive();
   }
@@ -139,34 +124,30 @@ public class RobotContainer {
     JoystickButton resetFieldCentricButton = new JoystickButton(leftJoystick, 2);
 
 
-    swerveDrive.setDefaultCommand(new RunCommand(() -> {
+    shooter.setDefaultCommand(new RunCommand(() -> {
       if (robot.isTeleopEnabled()){
-        swerveDrive.drive(
-          limitY.calculate(applyDeadband(-leftJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND))*DriverConstants.speedMultiplier,
-          limitX.calculate(applyDeadband(-leftJoystick.getX(), DrivetrainConstants.DRIFT_DEADBAND))*DriverConstants.speedMultiplier,
-          applyDeadband(-rightJoystick.getX(), DrivetrainConstants.ROTATION_DEADBAND)*DriverConstants.angleMultiplier);
+        shooter.shoot(
+          limitY.calculate(applyDeadband(-leftJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND)));
       }
       else 
       {
-        swerveDrive.drive(0,0,0);
+        shooter.shoot(0);
       }
       
-    }, swerveDrive));
+    }, shooter));
 
-    fieldCentricButton.onTrue(new InstantCommand((
-      ) -> {
-        swerveDrive.toggleFieldCentric();
-      }, swerveDrive));
+    // fieldCentricButton.onTrue(new InstantCommand((
+    //   ) -> {
+    //     swerveDrive.toggleFieldCentric();
+    //   }, swerveDrive));
 
-    resetFieldCentricButton.onTrue(new InstantCommand((
-    ) -> {
-      swerveDrive.resetFieldCentric();
-    }, swerveDrive));
+    // resetFieldCentricButton.onTrue(swerveDrive.toggleFieldCentric());
 
-    turtleButton.whileTrue(new RunCommand((
-    ) -> {
-      swerveDrive.turtle();
-    }, swerveDrive));  }
+    // turtleButton.whileTrue(new RunCommand((
+    // ) -> {
+    //   swerveDrive.turtle();
+    // }, swerveDrive));  
+  }
 
   public double applyDeadband(double input, double deadband) {
     if (Math.abs(input) < deadband) 
@@ -176,23 +157,23 @@ public class RobotContainer {
   }
 
   public void coastDrive() {
-    frontLeftAngleMotor.setIdleMode(IdleMode.kCoast);
-    frontRightAngleMotor.setIdleMode(IdleMode.kCoast);
-    backLeftAngleMotor.setIdleMode(IdleMode.kCoast);
-    backRightAngleMotor.setIdleMode(IdleMode.kCoast);
+    // frontLeftAngleMotor.setIdleMode(IdleMode.kCoast);
+    // frontRightAngleMotor.setIdleMode(IdleMode.kCoast);
+    // backLeftAngleMotor.setIdleMode(IdleMode.kCoast);
+    // backRightAngleMotor.setIdleMode(IdleMode.kCoast);
 
-    frontLeftSpeedMotor.setIdleMode(IdleMode.kCoast);
-    frontRightSpeedMotor.setIdleMode(IdleMode.kCoast);
-    backLeftSpeedMotor.setIdleMode(IdleMode.kCoast);
-    backRightSpeedMotor.setIdleMode(IdleMode.kCoast);
+    topLeftSpeedMotor.setIdleMode(IdleMode.kCoast);
+    topRightSpeedMotor.setIdleMode(IdleMode.kCoast);
+    bottomLeftSpeedMotor.setIdleMode(IdleMode.kCoast);
+    bottomRightSpeedMotor.setIdleMode(IdleMode.kCoast);
   }
 
   public Odometry getOdometry() {
-    return odometry;
+    return null;
   }
 
   public SwerveDriveSubsystem getSwerveDriveSubsystem() {
-    return swerveDrive;
+    return null;
   }
 
   /**
