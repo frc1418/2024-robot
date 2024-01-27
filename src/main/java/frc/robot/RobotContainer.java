@@ -126,8 +126,14 @@ public class RobotContainer {
 
     shooter.setDefaultCommand(new RunCommand(() -> {
       if (robot.isTeleopEnabled()){
-        shooter.shoot(
-          limitY.calculate(applyDeadband(-leftJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND)));
+        if (leftJoystick.getThrottle() < 0) {
+          shooter.shoot(
+            limitY.calculate(applyDeadband(-leftJoystick.getThrottle(), DrivetrainConstants.DRIFT_DEADBAND)));
+        }
+        else {
+          shooter.shoot(
+            limitY.calculate(applyDeadband(-leftJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND)));        
+        }
       }
       else 
       {
