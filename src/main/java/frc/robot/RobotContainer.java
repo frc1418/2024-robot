@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -138,6 +139,9 @@ public class RobotContainer {
 
     JoystickButton resetFieldCentricButton = new JoystickButton(leftJoystick, 2);
 
+    Trigger squareButton = new JoystickButton(controller, PS4Controller.Button.kSquare.value); // Creates a new JoystickButton object for the `Y` button on exampleController
+
+
 
 
     swerveDrive.setDefaultCommand(new RunCommand(() -> {
@@ -155,8 +159,9 @@ public class RobotContainer {
       
     }, swerveDrive));
 
-    fieldCentricButton.onTrue(new InstantCommand((
+    squareButton.onTrue(new InstantCommand((
       ) -> {
+        System.out.println("hyieg");
         swerveDrive.toggleFieldCentric();
       }, swerveDrive));
 
