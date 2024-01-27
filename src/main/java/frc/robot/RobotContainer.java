@@ -24,6 +24,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -130,21 +131,22 @@ public class RobotContainer {
   private void configureBindings() {
     Joystick leftJoystick = new Joystick(0);
     Joystick rightJoystick = new Joystick(1);
-    Joystick altJoystick = new Joystick(2);
+    PS4Controller controller = new PS4Controller(2);
 
-    JoystickButton turtleButton = new JoystickButton(rightJoystick, 1);
-
+    JoystickButton turtleButton = new JoystickButton(rightJoystick, 1); 
     JoystickButton fieldCentricButton = new JoystickButton(rightJoystick, 2);
 
     JoystickButton resetFieldCentricButton = new JoystickButton(leftJoystick, 2);
 
 
+
     swerveDrive.setDefaultCommand(new RunCommand(() -> {
       if (robot.isTeleopEnabled()){
         swerveDrive.drive(
-          limitY.calculate(applyDeadband(-leftJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND))*DriverConstants.speedMultiplier,
-          limitX.calculate(applyDeadband(-leftJoystick.getX(), DrivetrainConstants.DRIFT_DEADBAND))*DriverConstants.speedMultiplier,
-          applyDeadband(-rightJoystick.getX(), DrivetrainConstants.ROTATION_DEADBAND)*DriverConstants.angleMultiplier);
+          // limitY.calculate(applyDeadband(-leftJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND))*DriverConstants.speedMultiplier,
+          // limitX.calculate(applyDeadband(-leftJoystick.getX(), DrivetrainConstants.DRIFT_DEADBAND))*DriverConstants.speedMultiplier,
+          // applyDeadband(-rightJoystick.getX(), DrivetrainConstants.ROTATION_DEADBAND)*DriverConstants.angleMultiplier);
+        controller.getLeftX(), controller.getLeftY(), controller.getRightX());
       }
       else 
       {
