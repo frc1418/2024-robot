@@ -28,9 +28,13 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
   public void shoot(double speed) {
-    // bottomLeftWheel.spin(speed);
+    //Forward is counter-clockwise
+    bottomLeftWheel.spin(speed);
+    //Forward is clockwise
     bottomRightWheel.spin(-speed);
-    // topLeftWheel.spin(-speed);
+    //Forward is clockwise
+    topLeftWheel.spin(-speed);
+    //Forward is counte-clockwise
     topRightWheel.spin(speed);
   }
 
