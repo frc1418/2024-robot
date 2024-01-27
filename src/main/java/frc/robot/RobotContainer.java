@@ -141,12 +141,12 @@ public class RobotContainer {
 
 
     swerveDrive.setDefaultCommand(new RunCommand(() -> {
+      System.out.println(controller.getR2Axis());
       if (robot.isTeleopEnabled()){
         swerveDrive.drive(
-          // limitY.calculate(applyDeadband(-leftJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND))*DriverConstants.speedMultiplier,
-          // limitX.calculate(applyDeadband(-leftJoystick.getX(), DrivetrainConstants.DRIFT_DEADBAND))*DriverConstants.speedMultiplier,
-          // applyDeadband(-rightJoystick.getX(), DrivetrainConstants.ROTATION_DEADBAND)*DriverConstants.angleMultiplier);
-        controller.getLeftX(), controller.getLeftY(), controller.getRightX());
+          limitY.calculate(applyDeadband(-controller.getLeftY(), DrivetrainConstants.DRIFT_DEADBAND))*DriverConstants.speedMultiplier,
+          limitX.calculate(applyDeadband(-controller.getLeftX(), DrivetrainConstants.DRIFT_DEADBAND))*DriverConstants.speedMultiplier,
+          applyDeadband(-controller.getR2Axis(), DrivetrainConstants.ROTATION_DEADBAND)*DriverConstants.angleMultiplier);
       }
       else 
       {
