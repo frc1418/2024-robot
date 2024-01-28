@@ -135,17 +135,17 @@ public class RobotContainer {
     PS4Controller controller = new PS4Controller(2);
 
     JoystickButton turtleButton = new JoystickButton(rightJoystick, 1); 
-    JoystickButton fieldCentricButton = new JoystickButton(rightJoystick, 2);
+    // JoystickButton fieldCentricButton = new JoystickButton(rightJoystick, 2);
 
-    JoystickButton resetFieldCentricButton = new JoystickButton(leftJoystick, 2);
+    // JoystickButton resetFieldCentricButton = new JoystickButton(leftJoystick, 2);
 
-    Trigger squareButton = new JoystickButton(controller, PS4Controller.Button.kSquare.value); // Creates a new JoystickButton object for the `Y` button on exampleController
+    Trigger fieldCentricButton = new JoystickButton(controller, PS4Controller.Button.kSquare.value);
+    Trigger resetFieldCentricButton = new JoystickButton(controller, PS4Controller.Button.kCross.value); 
 
 
 
 
     swerveDrive.setDefaultCommand(new RunCommand(() -> {
-      System.out.println(controller.getR2Axis());
       if (robot.isTeleopEnabled()){
         swerveDrive.drive(
           limitY.calculate(applyDeadband(-controller.getLeftY(), DrivetrainConstants.DRIFT_DEADBAND))*DriverConstants.speedMultiplier,
@@ -159,9 +159,8 @@ public class RobotContainer {
       
     }, swerveDrive));
 
-    squareButton.onTrue(new InstantCommand((
+    fieldCentricButton.onTrue(new InstantCommand((
       ) -> {
-        System.out.println("hyieg");
         swerveDrive.toggleFieldCentric();
       }, swerveDrive));
 
