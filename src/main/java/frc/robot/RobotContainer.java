@@ -153,10 +153,7 @@ public class RobotContainer {
       
     }, swerveDrive));
 
-    fieldCentricButton.onTrue(new InstantCommand((
-      ) -> {
-        swerveDrive.toggleFieldCentric();
-      }, swerveDrive));
+    fieldCentricButton.onTrue(swerveDrive.toggleFieldCentric());
 
     resetFieldCentricButton.onTrue(new InstantCommand((
     ) -> {
