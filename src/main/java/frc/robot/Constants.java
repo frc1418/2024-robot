@@ -79,4 +79,18 @@ public final class Constants {
   public final static class WheelConstants {
     public final static double ROTATIONS_TO_METERS = 0.33/8.33;
   }
+
+      public enum LimelightDirections {
+        GRID_SIDE(180), SUBSTATION_SIDE(0);
+
+        private int angle;
+        LimelightDirections(int angle){
+            this.angle = angle;
+        }
+
+        public int angle(){
+            return angle;
+        }
+
+    }
 }
