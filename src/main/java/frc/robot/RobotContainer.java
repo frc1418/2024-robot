@@ -57,12 +57,14 @@ public class RobotContainer {
     private CANSparkMax topLeftSpeedMotor = new CANSparkMax(DrivetrainConstants.TOP_LEFT_SPEED_ID, MotorType.kBrushless);
     // private AnalogEncoder frontLeftEncoder = new AnalogEncoder(DrivetrainConstants.FRONT_LEFT_ENCODER);
 
+    private CANSparkMax topWheelMotor = new CANSparkMax(DrivetrainConstants.TOP_WHEEL_SPEED_ID, MotorType.kBrushless);
 
 
     private ShooterWheelSubsystem bottomRightWheel = new ShooterWheelSubsystem(bottomRightSpeedMotor);
     private ShooterWheelSubsystem bottomLeftWheel = new ShooterWheelSubsystem(bottomLeftSpeedMotor);
     private ShooterWheelSubsystem topRightWheel = new ShooterWheelSubsystem(topRightSpeedMotor);
     private ShooterWheelSubsystem topLeftWheel = new ShooterWheelSubsystem(topLeftSpeedMotor);
+    private ShooterWheelSubsystem topWheel = new ShooterWheelSubsystem(topWheelMotor);
 
 
 
@@ -80,7 +82,7 @@ public class RobotContainer {
 
     // private Odometry odometry = new Odometry(gyro, driveOdometry, positions);
 
-    private ShooterSubsystem shooter = new ShooterSubsystem(bottomLeftWheel, bottomRightWheel, topLeftWheel, topRightWheel);
+    private ShooterSubsystem shooter = new ShooterSubsystem(bottomLeftWheel, bottomRightWheel, topLeftWheel, topRightWheel, topWheel);
 
     // private SwerveDriveSubsystem swerveDrive = new SwerveDriveSubsystem(
     //   backRightWheel, backLeftWheel, frontRightWheel, frontLeftWheel,
@@ -128,16 +130,18 @@ public class RobotContainer {
       if (robot.isTeleopEnabled()){
         if (leftJoystick.getThrottle() < 0) {
           shooter.shoot(
-            limitY.calculate(applyDeadband(-leftJoystick.getThrottle(), DrivetrainConstants.DRIFT_DEADBAND)));
+            limitY.calculate(applyDeadband(-leftJoystick.getThrottle(), DrivetrainConstants.DRIFT_DEADBAND)),
+            limitY.calculate(applyDeadband(-rightJoystick.getThrottle(), DrivetrainConstants.DRIFT_DEADBAND)));
         }
         else {
           shooter.shoot(
-            limitY.calculate(applyDeadband(-leftJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND)));        
+            limitY.calculate(applyDeadband(-leftJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND)),
+             limitY.calculate(applyDeadband(-rightJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND)));        
         }
       }
       else 
       {
-        shooter.shoot(0);
+        shooter.shoot(0, 0);
       }
       
     }, shooter));
@@ -172,6 +176,7 @@ public class RobotContainer {
     topRightSpeedMotor.setIdleMode(IdleMode.kCoast);
     bottomLeftSpeedMotor.setIdleMode(IdleMode.kCoast);
     bottomRightSpeedMotor.setIdleMode(IdleMode.kCoast);
+    topWheelMotor.setIdleMode(IdleMode.kCoast);
   }
 
   public Odometry getOdometry() {

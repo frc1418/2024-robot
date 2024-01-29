@@ -13,29 +13,35 @@ public class ShooterSubsystem extends SubsystemBase {
     private ShooterWheelSubsystem bottomRightWheel;
     private ShooterWheelSubsystem topLeftWheel;
     private ShooterWheelSubsystem topRightWheel;
+    private ShooterWheelSubsystem topWheel;
 
 
     public ShooterSubsystem(
         ShooterWheelSubsystem bottomLeftWheel, 
         ShooterWheelSubsystem bottomRightWheel, 
         ShooterWheelSubsystem topLeftWheel, 
-        ShooterWheelSubsystem topRightWheel) 
+        ShooterWheelSubsystem topRightWheel,
+        ShooterWheelSubsystem topWheel)
+        
     {
         this.bottomLeftWheel = bottomLeftWheel;
         this.bottomRightWheel = bottomRightWheel;
         this.topLeftWheel = topLeftWheel;
         this.topRightWheel = topRightWheel;
+        this.topWheel = topWheel;
     }
 
-  public void shoot(double speed) {
+  public void shoot(double speed1, double speed2) {
     //Forward is counter-clockwise
-    bottomLeftWheel.spin(speed);
+    bottomLeftWheel.spin(speed1);
     //Forward is clockwise
-    bottomRightWheel.spin(-speed);
+    bottomRightWheel.spin(-speed1);
     //Forward is clockwise
-    topLeftWheel.spin(-speed);
-    //Forward is counte-clockwise
-    topRightWheel.spin(speed);
+    topLeftWheel.spin(-speed1);
+    //Forward is counter-clockwise
+    topRightWheel.spin(speed1);
+    
+    topWheel.spin(speed2);
   }
 
   /**
