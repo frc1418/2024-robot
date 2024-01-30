@@ -12,6 +12,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.common.Odometry;
@@ -73,8 +74,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         else{
             lockedRot = odometry.getHeading();
         }
-        if (rot > DrivetrainConstants.ROTATION_SPEED_CAP) {
-            rot = DrivetrainConstants.ROTATION_SPEED_CAP;
+        if (Math.abs(rot) > DrivetrainConstants.ROTATION_SPEED_CAP) {
+            rot = DrivetrainConstants.ROTATION_SPEED_CAP*Math.signum(rot);
         }
 
         ChassisSpeeds speeds = new ChassisSpeeds(x, y, rot);
@@ -133,9 +134,11 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
     }
 
-    public void toggleFieldCentric() {
-        fieldCentric = !fieldCentric;
-        ntIsFieldCentric.setBoolean(fieldCentric);
+    public Command toggleFieldCentric() {
+        return runOnce(() -> {
+            fieldCentric = !fieldCentric;
+            ntIsFieldCentric.setBoolean(fieldCentric);
+        });
     }
 
     public void resetFieldCentric() {
