@@ -125,27 +125,40 @@ public class RobotContainer {
 
     JoystickButton resetFieldCentricButton = new JoystickButton(leftJoystick, 2);
 
+    JoystickButton intakeButton = new JoystickButton(rightJoystick, 3);
+
+    JoystickButton releaseButton = new JoystickButton(rightJoystick, 4);
+
 
     shooter.setDefaultCommand(new RunCommand(() -> {
       if (robot.isTeleopEnabled()){
-        if (leftJoystick.getThrottle() < 0) {
           shooter.shoot(
-            limitY.calculate(applyDeadband(-leftJoystick.getThrottle(), DrivetrainConstants.DRIFT_DEADBAND)),
-            limitY.calculate(applyDeadband(-rightJoystick.getThrottle(), DrivetrainConstants.DRIFT_DEADBAND)));
-        }
-        else {
-          shooter.shoot(
-            limitY.calculate(applyDeadband(-leftJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND)),
-             limitY.calculate(applyDeadband(-rightJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND)));        
-        }
+            limitY.calculate(applyDeadband(-leftJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND)));
       }
       else 
       {
-        shooter.shoot(0, 0);
+        shooter.shoot(0);
       }
       
     }, shooter));
 
+    intakeButton.whileTrue(new RunCommand((
+    ) -> {
+      shooter.intake(0.1);
+    }, shooter));
+    intakeButton.onFalse(new RunCommand((
+    ) -> {
+      shooter.intake(0);
+    }, shooter));
+
+    releaseButton.whileTrue(new RunCommand((
+    ) -> {
+      shooter.intake(-0.1);
+    }, shooter));
+    releaseButton.onFalse(new RunCommand((
+    ) -> {
+      shooter.intake(0);
+    }, shooter));
     // fieldCentricButton.onTrue(new InstantCommand((
     //   ) -> {
     //     swerveDrive.toggleFieldCentric();

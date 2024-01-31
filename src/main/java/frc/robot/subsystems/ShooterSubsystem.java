@@ -31,24 +31,22 @@ public class ShooterSubsystem extends SubsystemBase {
         this.topWheel = topWheel;
     }
 
-  public void shoot(double speed1, double speed2) {
+  public void shoot(double speed) {
     //Forward is counter-clockwise
-    bottomLeftWheel.spin(speed1);
+    bottomLeftWheel.spin(speed);
     //Forward is clockwise
-    bottomRightWheel.spin(-speed1);
+    bottomRightWheel.spin(-speed);
     //Forward is clockwise
-    topLeftWheel.spin(-speed1);
+    topLeftWheel.spin(-speed);
     //Forward is counter-clockwise
-    topRightWheel.spin(speed1);
-    
-    topWheel.spin(speed2);
+    topRightWheel.spin(speed); 
   }
 
-  /**
-   * An example method querying a boolean state of the subsystem (for example, a digital sensor).
-   *
-   * @return value of some boolean subsystem state, such as a digital sensor.
-   */
+
+  public void intake(double speed) {
+    topWheel.spin(speed);
+  }
+
   public boolean exampleCondition() {
     // Query some boolean state, such as a digital sensor.
     return false;
