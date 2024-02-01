@@ -133,7 +133,7 @@ public class RobotContainer {
     shooter.setDefaultCommand(new RunCommand(() -> {
       if (robot.isTeleopEnabled()){
           shooter.shoot(
-            limitY.calculate(applyDeadband(-leftJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND)));
+           -(Math.ceil(leftJoystick.getThrottle()*10)/10+Math.ceil(rightJoystick.getThrottle()*10)/100));
       }
       else 
       {
@@ -146,7 +146,7 @@ public class RobotContainer {
     ) -> {
       shooter.intake(0.1);
     }, shooter));
-    intakeButton.onFalse(new RunCommand((
+    intakeButton.onFalse(new InstantCommand((
     ) -> {
       shooter.intake(0);
     }, shooter));
@@ -155,7 +155,7 @@ public class RobotContainer {
     ) -> {
       shooter.intake(-0.1);
     }, shooter));
-    releaseButton.onFalse(new RunCommand((
+    releaseButton.onFalse(new InstantCommand((
     ) -> {
       shooter.intake(0);
     }, shooter));
@@ -189,7 +189,7 @@ public class RobotContainer {
     topRightSpeedMotor.setIdleMode(IdleMode.kCoast);
     bottomLeftSpeedMotor.setIdleMode(IdleMode.kCoast);
     bottomRightSpeedMotor.setIdleMode(IdleMode.kCoast);
-    topWheelMotor.setIdleMode(IdleMode.kCoast);
+    topWheelMotor.setIdleMode(IdleMode.kBrake);
   }
 
   public Odometry getOdometry() {

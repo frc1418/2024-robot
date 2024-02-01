@@ -40,6 +40,8 @@ public class ShooterSubsystem extends SubsystemBase {
     topLeftWheel.spin(-speed);
     //Forward is counter-clockwise
     topRightWheel.spin(speed); 
+
+    System.out.println(speed);
   }
 
 
