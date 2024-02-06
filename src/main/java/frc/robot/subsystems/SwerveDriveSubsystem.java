@@ -38,10 +38,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     private final NetworkTableEntry ntVelocityFrontRight = table.getEntry("wheelvelocityfrontright");
     private final NetworkTableEntry ntVelocityFrontLeft = table.getEntry("wheelvelocityfrontleft");
 
-    // private PIDController rotationController = new PIDController(0, 0, 0); 
     private PIDController rotationController = new PIDController(0.04, 0, 0); 
 
-    
     private SwerveDriveKinematics kinematics;
     private Odometry odometry;
 

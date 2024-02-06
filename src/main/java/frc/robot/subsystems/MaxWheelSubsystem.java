@@ -24,7 +24,6 @@ public class MaxWheelSubsystem extends SubsystemBase{
     private PIDController anglePidController;
     
     double angleSetpoint = 0;
-
     
     public MaxWheelSubsystem(CANSparkMax angleMotor, CANSparkMax speedMotor) {
 
@@ -94,6 +93,4 @@ public class MaxWheelSubsystem extends SubsystemBase{
     public SparkAbsoluteEncoder getTurningEncoder(){
         return turningEncoder;
     }
-
-    
 }
