@@ -119,9 +119,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         ntFrontLeftAngleEncoder.setDouble(frontLeft.getEncoderPosition());
         ntFrontRightAngleEncoder.setDouble(frontRight.getEncoderPosition());
 
-
-
-
         ntVelocityBackRight.setDouble(backRight.getSpeed());
         ntVelocityBackLeft.setDouble(backLeft.getSpeed());
         ntVelocityFrontRight.setDouble(frontRight.getSpeed());
