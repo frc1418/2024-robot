@@ -9,20 +9,15 @@ import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.commands.Autos;
 import frc.robot.common.Odometry;
 import frc.robot.subsystems.ExampleSubsystem;
-import frc.robot.subsystems.MarkWheelSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.subsystems.MaxWheelSubsystem;
-
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.SPI;
@@ -76,7 +71,6 @@ public class RobotContainer {
     private SwerveDriveOdometry driveOdometry = new SwerveDriveOdometry(DrivetrainConstants.SWERVE_KINEMATICS, gyro.getRotation2d(), positions);
 
     private Odometry odometry = new Odometry(gyro, driveOdometry, positions);
-
 
     private SwerveDriveSubsystem swerveDrive = new SwerveDriveSubsystem(
       backRightWheel, backLeftWheel, frontRightWheel, frontLeftWheel,
