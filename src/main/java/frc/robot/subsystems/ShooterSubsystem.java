@@ -4,24 +4,24 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.Command;
+import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ShooterSubsystem extends SubsystemBase {
 
-    private ShooterWheelSubsystem bottomLeftWheel;
-    private ShooterWheelSubsystem bottomRightWheel;
-    private ShooterWheelSubsystem topLeftWheel;
-    private ShooterWheelSubsystem topRightWheel;
-    private ShooterWheelSubsystem topWheel;
+    private CANSparkMax bottomLeftWheel;
+    private CANSparkMax bottomRightWheel;
+    private CANSparkMax topLeftWheel;
+    private CANSparkMax topRightWheel;
+    private CANSparkMax topWheel;
 
 
     public ShooterSubsystem(
-        ShooterWheelSubsystem bottomLeftWheel, 
-        ShooterWheelSubsystem bottomRightWheel, 
-        ShooterWheelSubsystem topLeftWheel, 
-        ShooterWheelSubsystem topRightWheel,
-        ShooterWheelSubsystem topWheel)
+        CANSparkMax bottomLeftWheel, 
+        CANSparkMax bottomRightWheel, 
+        CANSparkMax topLeftWheel, 
+        CANSparkMax topRightWheel,
+        CANSparkMax topWheel)
         
     {
         this.bottomLeftWheel = bottomLeftWheel;
@@ -33,20 +33,20 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public void shoot(double speed) {
     //Forward is counter-clockwise
-    bottomLeftWheel.spin(speed);
+    bottomLeftWheel.set(speed);
     //Forward is clockwise
-    bottomRightWheel.spin(-speed);
+    bottomRightWheel.set(-speed);
     //Forward is clockwise
-    topLeftWheel.spin(-speed);
+    topLeftWheel.set(-speed);
     //Forward is counter-clockwise
-    topRightWheel.spin(speed); 
+    topRightWheel.set(speed); 
 
     System.out.println(speed);
   }
 
 
   public void intake(double speed) {
-    topWheel.spin(speed);
+    topWheel.set(speed);
   }
 
   public boolean exampleCondition() {

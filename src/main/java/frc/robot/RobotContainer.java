@@ -42,32 +42,22 @@ public class RobotContainer {
     private final RobotBase robot;
 
     // private CANSparkMax backRightAngleMotor = new CANSparkMax(DrivetrainConstants.BACK_RIGHT_ANGLE_ID, MotorType.kBrushless);
-    private CANSparkMax bottomRightSpeedMotor = new CANSparkMax(DrivetrainConstants.BOTTOM_RIGHT_SPEED_ID, MotorType.kBrushless);
+    private CANSparkMax bottomRightMotor = new CANSparkMax(DrivetrainConstants.BOTTOM_RIGHT_SPEED_ID, MotorType.kBrushless);
     // private AnalogEncoder backRightEncoder = new AnalogEncoder(DrivetrainConstants.BACK_RIGHT_ENCODER);
 
     // private CANSparkMax frontRightAngleMotor = new CANSparkMax(DrivetrainConstants.FRONT_RIGHT_ANGLE_ID, MotorType.kBrushless);
-    private CANSparkMax topRightSpeedMotor = new CANSparkMax(DrivetrainConstants.TOP_RIGHT_SPEED_ID, MotorType.kBrushless);
+    private CANSparkMax topRightMotor = new CANSparkMax(DrivetrainConstants.TOP_RIGHT_SPEED_ID, MotorType.kBrushless);
     // private AnalogEncoder frontRightEncoder = new AnalogEncoder(DrivetrainConstants.FRONT_RIGHT_ENCODER);
 
     // private CANSparkMax backLeftAngleMotor = new CANSparkMax(DrivetrainConstants.BACK_LEFT_ANGLE_ID, MotorType.kBrushless);
-    private CANSparkMax bottomLeftSpeedMotor = new CANSparkMax(DrivetrainConstants.BOTTOM_LEFT_SPEED_ID, MotorType.kBrushless);
+    private CANSparkMax bottomLeftMotor = new CANSparkMax(DrivetrainConstants.BOTTOM_LEFT_SPEED_ID, MotorType.kBrushless);
     // private AnalogEncoder backLeftEncoder = new AnalogEncoder(DrivetrainConstants.BACK_LEFT_ENCODER);
 
     // private CANSparkMax frontLeftAngleMotor = new CANSparkMax(DrivetrainConstants.FRONT_LEFT_ANGLE_ID, MotorType.kBrushless);
-    private CANSparkMax topLeftSpeedMotor = new CANSparkMax(DrivetrainConstants.TOP_LEFT_SPEED_ID, MotorType.kBrushless);
+    private CANSparkMax topLeftMotor = new CANSparkMax(DrivetrainConstants.TOP_LEFT_SPEED_ID, MotorType.kBrushless);
     // private AnalogEncoder frontLeftEncoder = new AnalogEncoder(DrivetrainConstants.FRONT_LEFT_ENCODER);
 
     private CANSparkMax topWheelMotor = new CANSparkMax(DrivetrainConstants.TOP_WHEEL_SPEED_ID, MotorType.kBrushless);
-
-
-    private ShooterWheelSubsystem bottomRightWheel = new ShooterWheelSubsystem(bottomRightSpeedMotor);
-    private ShooterWheelSubsystem bottomLeftWheel = new ShooterWheelSubsystem(bottomLeftSpeedMotor);
-    private ShooterWheelSubsystem topRightWheel = new ShooterWheelSubsystem(topRightSpeedMotor);
-    private ShooterWheelSubsystem topLeftWheel = new ShooterWheelSubsystem(topLeftSpeedMotor);
-    private ShooterWheelSubsystem topWheel = new ShooterWheelSubsystem(topWheelMotor);
-
-
-
 
     AHRS gyro = new AHRS(SPI.Port.kMXP);
     
@@ -82,7 +72,7 @@ public class RobotContainer {
 
     // private Odometry odometry = new Odometry(gyro, driveOdometry, positions);
 
-    private ShooterSubsystem shooter = new ShooterSubsystem(bottomLeftWheel, bottomRightWheel, topLeftWheel, topRightWheel, topWheel);
+    private ShooterSubsystem shooter = new ShooterSubsystem(bottomLeftMotor, bottomRightMotor, topLeftMotor, topRightMotor, topWheelMotor);
 
     // private SwerveDriveSubsystem swerveDrive = new SwerveDriveSubsystem(
     //   backRightWheel, backLeftWheel, frontRightWheel, frontLeftWheel,
@@ -185,10 +175,10 @@ public class RobotContainer {
     // backLeftAngleMotor.setIdleMode(IdleMode.kCoast);
     // backRightAngleMotor.setIdleMode(IdleMode.kCoast);
 
-    topLeftSpeedMotor.setIdleMode(IdleMode.kCoast);
-    topRightSpeedMotor.setIdleMode(IdleMode.kCoast);
-    bottomLeftSpeedMotor.setIdleMode(IdleMode.kCoast);
-    bottomRightSpeedMotor.setIdleMode(IdleMode.kCoast);
+    topLeftMotor.setIdleMode(IdleMode.kCoast);
+    topRightMotor.setIdleMode(IdleMode.kCoast);
+    bottomLeftMotor.setIdleMode(IdleMode.kCoast);
+    bottomRightMotor.setIdleMode(IdleMode.kCoast);
     topWheelMotor.setIdleMode(IdleMode.kBrake);
   }
 
