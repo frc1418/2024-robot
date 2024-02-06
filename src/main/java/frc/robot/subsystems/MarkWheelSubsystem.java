@@ -37,17 +37,13 @@ public class MarkWheelSubsystem extends SubsystemBase{
     private SparkPIDController speedPIDController;
     private PIDController anglePidController;
     
-    Translation2d location;
-
     double angleSetpoint = 0;
-
     
-    public MarkWheelSubsystem(CANSparkMax angleMotor, CANSparkMax speedMotor, AnalogEncoder turningEncoder, Translation2d location) {
+    public MarkWheelSubsystem(CANSparkMax angleMotor, CANSparkMax speedMotor, AnalogEncoder turningEncoder) {
 
         this.angleMotor = angleMotor;
         this.speedMotor = speedMotor;
         this.turningEncoder =  turningEncoder;
-        this.location = location;
 
         this.speedPIDController = this.speedMotor.getPIDController();
         speedPIDController.setP(0.005);

@@ -27,17 +27,14 @@ public class MaxWheelSubsystem extends SubsystemBase{
     private SparkPIDController speedPIDController;
     private PIDController anglePidController;
     
-    Translation2d location;
-
     double angleSetpoint = 0;
 
     
-    public MaxWheelSubsystem(CANSparkMax angleMotor, CANSparkMax speedMotor, Translation2d location) {
+    public MaxWheelSubsystem(CANSparkMax angleMotor, CANSparkMax speedMotor) {
 
         this.angleMotor = angleMotor;
         this.speedMotor = speedMotor;
         this.turningEncoder =  angleMotor.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
-        this.location = location;
 
         this.speedPIDController = this.speedMotor.getPIDController();
         speedPIDController.setP(0);

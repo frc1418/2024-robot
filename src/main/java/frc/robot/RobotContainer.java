@@ -56,17 +56,13 @@ public class RobotContainer {
     // private AnalogEncoder frontLeftEncoder = new AnalogEncoder(DrivetrainConstants.FRONT_LEFT_ENCODER);
 
     private MaxWheelSubsystem backRightWheel = new MaxWheelSubsystem (
-        backRightAngleMotor, backRightSpeedMotor,
-        DrivetrainConstants.BACK_RIGHT_LOC);
+        backRightAngleMotor, backRightSpeedMotor);
     public MaxWheelSubsystem backLeftWheel = new MaxWheelSubsystem (
-      backLeftAngleMotor, backLeftSpeedMotor,
-      DrivetrainConstants.BACK_LEFT_LOC);
+      backLeftAngleMotor, backLeftSpeedMotor);
     private MaxWheelSubsystem frontRightWheel = new MaxWheelSubsystem (
-      frontRightAngleMotor, frontRightSpeedMotor,
-      DrivetrainConstants.FRONT_RIGHT_LOC);
+      frontRightAngleMotor, frontRightSpeedMotor);
     private MaxWheelSubsystem frontLeftWheel = new MaxWheelSubsystem (
-      frontLeftAngleMotor, frontLeftSpeedMotor,
-      DrivetrainConstants.FRONT_LEFT_LOC);
+      frontLeftAngleMotor, frontLeftSpeedMotor);
 
     AHRS gyro = new AHRS(SPI.Port.kMXP);
     
@@ -81,7 +77,6 @@ public class RobotContainer {
 
     private Odometry odometry = new Odometry(gyro, driveOdometry, positions);
 
-    
 
     private SwerveDriveSubsystem swerveDrive = new SwerveDriveSubsystem(
       backRightWheel, backLeftWheel, frontRightWheel, frontLeftWheel,
