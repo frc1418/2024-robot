@@ -11,7 +11,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.Constants.WheelConstants;
 
-public class MaxWheelSubsystem {
+public class MaxWheelModule {
 
     private CANSparkMax angleMotor;
     private CANSparkMax speedMotor;
@@ -24,7 +24,7 @@ public class MaxWheelSubsystem {
     
     double angleSetpoint = 0;
     
-    public MaxWheelSubsystem(CANSparkMax angleMotor, CANSparkMax speedMotor) {
+    public MaxWheelModule(CANSparkMax angleMotor, CANSparkMax speedMotor) {
 
         this.angleMotor = angleMotor;
         this.speedMotor = speedMotor;

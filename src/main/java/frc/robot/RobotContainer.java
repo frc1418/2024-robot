@@ -10,7 +10,7 @@ import frc.robot.commands.Autos;
 import frc.robot.common.Odometry;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
-import frc.robot.subsystems.MaxWheelSubsystem;
+import frc.robot.subsystems.MaxWheelModule;
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -50,13 +50,13 @@ public class RobotContainer {
     private CANSparkMax frontLeftSpeedMotor = new CANSparkMax(DrivetrainConstants.FRONT_LEFT_SPEED_ID, MotorType.kBrushless);
     // private AnalogEncoder frontLeftEncoder = new AnalogEncoder(DrivetrainConstants.FRONT_LEFT_ENCODER);
 
-    private MaxWheelSubsystem backRightWheel = new MaxWheelSubsystem (
+    private MaxWheelModule backRightWheel = new MaxWheelModule (
         backRightAngleMotor, backRightSpeedMotor);
-    public MaxWheelSubsystem backLeftWheel = new MaxWheelSubsystem (
+    public MaxWheelModule backLeftWheel = new MaxWheelModule (
       backLeftAngleMotor, backLeftSpeedMotor);
-    private MaxWheelSubsystem frontRightWheel = new MaxWheelSubsystem (
+    private MaxWheelModule frontRightWheel = new MaxWheelModule (
       frontRightAngleMotor, frontRightSpeedMotor);
-    private MaxWheelSubsystem frontLeftWheel = new MaxWheelSubsystem (
+    private MaxWheelModule frontLeftWheel = new MaxWheelModule (
       frontLeftAngleMotor, frontLeftSpeedMotor);
 
     AHRS gyro = new AHRS(SPI.Port.kMXP);
