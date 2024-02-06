@@ -12,7 +12,6 @@ import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.MarkWheelSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.subsystems.MaxWheelSubsystem;
-import frc.robot.subsystems.ShooterWheelSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
 import com.kauailabs.navx.frc.AHRS;
