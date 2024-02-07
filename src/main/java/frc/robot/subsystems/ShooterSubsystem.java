@@ -35,9 +35,9 @@ public class ShooterSubsystem extends SubsystemBase {
     //Forward is counter-clockwise
     bottomLeftWheel.set(speed);
     //Forward is clockwise
-    bottomRightWheel.set(-speed);
+    bottomRightWheel.set(speed);
     //Forward is clockwise
-    topLeftWheel.set(-speed);
+    topLeftWheel.set(speed);
     //Forward is counter-clockwise
     topRightWheel.set(speed); 
 
