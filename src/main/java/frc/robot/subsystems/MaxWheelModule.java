@@ -2,21 +2,16 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkAbsoluteEncoder;
-import com.revrobotics.SparkMaxAbsoluteEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.WheelConstants;
 
-public class MaxWheelSubsystem extends SubsystemBase{
+public class MaxWheelModule {
 
     private CANSparkMax angleMotor;
     private CANSparkMax speedMotor;
@@ -27,17 +22,13 @@ public class MaxWheelSubsystem extends SubsystemBase{
     private SparkPIDController speedPIDController;
     private PIDController anglePidController;
     
-    Translation2d location;
-
     double angleSetpoint = 0;
-
     
-    public MaxWheelSubsystem(CANSparkMax angleMotor, CANSparkMax speedMotor, Translation2d location) {
+    public MaxWheelModule(CANSparkMax angleMotor, CANSparkMax speedMotor) {
 
         this.angleMotor = angleMotor;
         this.speedMotor = speedMotor;
         this.turningEncoder =  angleMotor.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
-        this.location = location;
 
         this.speedPIDController = this.speedMotor.getPIDController();
         speedPIDController.setP(0);
@@ -101,6 +92,4 @@ public class MaxWheelSubsystem extends SubsystemBase{
     public SparkAbsoluteEncoder getTurningEncoder(){
         return turningEncoder;
     }
-
-    
 }

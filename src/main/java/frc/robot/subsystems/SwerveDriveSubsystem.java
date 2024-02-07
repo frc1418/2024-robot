@@ -9,9 +9,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DrivetrainConstants;
@@ -41,10 +38,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     private final NetworkTableEntry ntVelocityFrontRight = table.getEntry("wheelvelocityfrontright");
     private final NetworkTableEntry ntVelocityFrontLeft = table.getEntry("wheelvelocityfrontleft");
 
-    // private PIDController rotationController = new PIDController(0, 0, 0); 
     private PIDController rotationController = new PIDController(0.04, 0, 0); 
 
-    
     private SwerveDriveKinematics kinematics;
     private Odometry odometry;
 
@@ -123,9 +118,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         ntBackRightAngleEncoder.setDouble(backRight.getEncoderPosition());
         ntFrontLeftAngleEncoder.setDouble(frontLeft.getEncoderPosition());
         ntFrontRightAngleEncoder.setDouble(frontRight.getEncoderPosition());
-
-
-
 
         ntVelocityBackRight.setDouble(backRight.getSpeed());
         ntVelocityBackLeft.setDouble(backLeft.getSpeed());
