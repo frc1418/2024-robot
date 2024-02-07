@@ -16,10 +16,10 @@ import frc.robot.common.Odometry;
 
 public class SwerveDriveSubsystem extends SubsystemBase {
     
-    private MaxWheelSubsystem backRight;
-    private MaxWheelSubsystem backLeft;
-    private MaxWheelSubsystem frontLeft;
-    private MaxWheelSubsystem frontRight;
+    private MaxWheelModule backRight;
+    private MaxWheelModule backLeft;
+    private MaxWheelModule frontLeft;
+    private MaxWheelModule frontRight;
 
     private final NetworkTableInstance ntInstance = NetworkTableInstance.getDefault();
     private final NetworkTable table = ntInstance.getTable("/components/drivetrain");
@@ -47,7 +47,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
     private double lockedRot = 0;
 
-    public SwerveDriveSubsystem(MaxWheelSubsystem backRight, MaxWheelSubsystem backLeft, MaxWheelSubsystem frontRight, MaxWheelSubsystem frontLeft,
+    public SwerveDriveSubsystem(MaxWheelModule backRight, MaxWheelModule backLeft, MaxWheelModule frontRight, MaxWheelModule frontLeft,
             SwerveDriveKinematics kinematics, Odometry odometry) {
 
         this.backRight = backRight;

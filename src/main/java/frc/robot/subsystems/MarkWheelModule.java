@@ -14,7 +14,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.AnalogEncoder;
 import frc.robot.Constants.WheelConstants;
 
-public class MarkWheelSubsystem {
+public class MarkWheelModule {
 
     private CANSparkMax angleMotor;
     private CANSparkMax speedMotor;
@@ -34,7 +34,7 @@ public class MarkWheelSubsystem {
     
     double angleSetpoint = 0;
     
-    public MarkWheelSubsystem(CANSparkMax angleMotor, CANSparkMax speedMotor, AnalogEncoder turningEncoder) {
+    public MarkWheelModule(CANSparkMax angleMotor, CANSparkMax speedMotor, AnalogEncoder turningEncoder) {
 
         this.angleMotor = angleMotor;
         this.speedMotor = speedMotor;
