@@ -39,6 +39,8 @@ public class RobotContainer {
 
     private final RobotBase robot;
 
+    //Constructing the swerve wheel modules
+
     private CANSparkMax backRightAngleMotor = new CANSparkMax(DrivetrainConstants.BACK_RIGHT_ANGLE_ID, MotorType.kBrushless);
     private CANSparkMax backRightSpeedMotor = new CANSparkMax(DrivetrainConstants.BACK_RIGHT_SPEED_ID, MotorType.kBrushless);
     // private AnalogEncoder backRightEncoder = new AnalogEncoder(DrivetrainConstants.BACK_RIGHT_ENCODER);
@@ -73,9 +75,11 @@ public class RobotContainer {
       backRightWheel.getSwerveModulePosition()
     };
 
+    //Constructing the intake subsystem
     private CANSparkMax intakeMotor = new CANSparkMax(IntakeConstants.INTAKE_MOTOR_ID, MotorType.kBrushless);
     private IntakeSubsystem intakeSubsystem = new IntakeSubsystem(intakeMotor);
 
+    //Constructing the shooter subsystem
     private CANSparkMax bottomLeftShooter = new CANSparkMax(ShooterConstants.BOTTOM_LEFT_SHOOTER_ID, MotorType.kBrushless);
     private CANSparkMax bottomRightShooter = new CANSparkMax(ShooterConstants.BOTTOM_RIGHT_SHOOTER_ID, MotorType.kBrushless);
     private CANSparkMax topLeftShooter = new CANSparkMax(ShooterConstants.TOP_LEFT_SHOOTER_ID, MotorType.kBrushless);
@@ -99,6 +103,7 @@ public class RobotContainer {
     this.robot  = robot;
     // Configure the trigger bindings
     configureBindings();
+    //Configure the motors and sensors
     configureObjects();
   }
 
@@ -139,6 +144,7 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
+    //Constructs input devices
     Joystick leftJoystick = new Joystick(0);
     Joystick rightJoystick = new Joystick(1);
     Joystick altJoystick = new Joystick(2);
@@ -156,7 +162,7 @@ public class RobotContainer {
     JoystickButton feedOutButton = new JoystickButton(rightJoystick, 4);
 
 
-
+    //Constructs commands and binds them
     swerveDrive.setDefaultCommand(new RunCommand(() -> {
       if (robot.isTeleopEnabled()){
         swerveDrive.drive(

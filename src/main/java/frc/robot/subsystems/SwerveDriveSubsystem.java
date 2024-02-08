@@ -62,6 +62,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         this.ntIsFieldCentric.setBoolean(fieldCentric);
     }
 
+    //Initial drive method, maintains rotation and passes into ChassisSpeeds
     public void drive(double x, double y, double rot) {
 
         if(rot == 0){
@@ -81,14 +82,15 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         }
         drive(speeds);
     }
-
+    
+    // Second method passing to moduleStates
     public void drive(ChassisSpeeds speeds){
-        // Convert to module states
         SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(speeds);
 
         drive(moduleStates);
     }
 
+    //Final drive method, passing states to each module
     public void drive (SwerveModuleState[] moduleStates){
         SwerveModuleState frontLeftState = moduleStates[0];
         SwerveModuleState frontRightState = moduleStates[1];
@@ -101,6 +103,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         backRight.drive(backRightState);
     }
 
+    //Locks the robot's angles to prevent movement
     public void turtle() {
         frontRight.setAngle(Rotation2d.fromDegrees(-45));
         backLeft.setAngle(Rotation2d.fromDegrees(-45));
@@ -109,6 +112,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         frontLeft.setAngle(Rotation2d.fromDegrees(45));
     }
 
+    //Updates the network tables and odometry
     @Override
     public void periodic() {
         odometry.update(getPositions());
