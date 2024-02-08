@@ -6,9 +6,11 @@ package frc.robot;
 
 import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.DrivetrainConstants;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.commands.Autos;
 import frc.robot.common.Odometry;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.subsystems.MaxWheelModule;
 import com.kauailabs.navx.frc.AHRS;
@@ -67,6 +69,9 @@ public class RobotContainer {
       backLeftWheel.getSwerveModulePosition(),
       backRightWheel.getSwerveModulePosition()
     };
+
+    private CANSparkMax intakeMotor = new CANSparkMax(IntakeConstants.INTAKE_MOTOR_ID, MotorType.kBrushless);
+    private IntakeSubsystem intakeSubsystem = new IntakeSubsystem(intakeMotor);
 
     private SwerveDriveOdometry driveOdometry = new SwerveDriveOdometry(DrivetrainConstants.SWERVE_KINEMATICS, gyro.getRotation2d(), positions);
 
@@ -127,6 +132,8 @@ public class RobotContainer {
 
     JoystickButton resetFieldCentricButton = new JoystickButton(leftJoystick, 2);
 
+    JoystickButton intakeButton = new JoystickButton(leftJoystick, 1);
+
 
     swerveDrive.setDefaultCommand(new RunCommand(() -> {
       if (robot.isTeleopEnabled()){
@@ -144,15 +151,18 @@ public class RobotContainer {
 
     fieldCentricButton.onTrue(swerveDrive.toggleFieldCentric());
 
-    resetFieldCentricButton.onTrue(new InstantCommand((
-    ) -> {
+    resetFieldCentricButton.onTrue(new InstantCommand(() -> {
       swerveDrive.resetFieldCentric();
     }, swerveDrive));
 
-    turtleButton.whileTrue(new RunCommand((
-    ) -> {
+    turtleButton.whileTrue(new RunCommand(() -> {
       swerveDrive.turtle();
-    }, swerveDrive));  }
+    }, swerveDrive));
+
+    intakeButton.whileTrue(new RunCommand(() -> {
+      intakeSubsystem.intake(limitX.calculate((applyDeadband(-leftJoystick.getThrottle(), IntakeConstants.INTAKE_DEADBAND))));
+    }, intakeSubsystem));
+  }
 
   public double applyDeadband(double input, double deadband) {
     if (Math.abs(input) < deadband) 

@@ -55,6 +55,11 @@ public final class Constants {
 
     public static final double ROTATION_SPEED_CAP = 5;
   }
+
+  public final static class IntakeConstants {
+    public final static int INTAKE_MOTOR_ID = 14;
+    public static final double INTAKE_DEADBAND = 0.1;
+  }
   
   public final static class DriverConstants {
     public final static double speedMultiplier = 3;
