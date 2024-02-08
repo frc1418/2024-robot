@@ -11,6 +11,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.common.Odometry;
 
@@ -69,8 +70,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         else{
             lockedRot = odometry.getHeading();
         }
-        if (Math.abs(rot) > DrivetrainConstants.ROTATION_SPEED_CAP) {
-            rot = DrivetrainConstants.ROTATION_SPEED_CAP*Math.signum(rot);
+        if (Math.abs(rot) > DriverConstants.ROTATION_SPEED_CAP) {
+            rot = DriverConstants.ROTATION_SPEED_CAP*Math.signum(rot);
         }
 
         ChassisSpeeds speeds = new ChassisSpeeds(x, y, rot);

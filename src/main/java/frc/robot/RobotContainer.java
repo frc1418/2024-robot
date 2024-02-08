@@ -7,12 +7,15 @@ package frc.robot;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.Autos;
 import frc.robot.common.Odometry;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.subsystems.MaxWheelModule;
+import frc.robot.subsystems.ShooterSubsystem;
+
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -73,6 +76,13 @@ public class RobotContainer {
     private CANSparkMax intakeMotor = new CANSparkMax(IntakeConstants.INTAKE_MOTOR_ID, MotorType.kBrushless);
     private IntakeSubsystem intakeSubsystem = new IntakeSubsystem(intakeMotor);
 
+    private CANSparkMax bottomLeftShooter = new CANSparkMax(ShooterConstants.BOTTOM_LEFT_SHOOTER_ID, MotorType.kBrushless);
+    private CANSparkMax bottomRightShooter = new CANSparkMax(ShooterConstants.BOTTOM_RIGHT_SHOOTER_ID, MotorType.kBrushless);
+    private CANSparkMax topLeftShooter = new CANSparkMax(ShooterConstants.TOP_LEFT_SHOOTER_ID, MotorType.kBrushless);
+    private CANSparkMax topRightShooter = new CANSparkMax(ShooterConstants.TOP_RIGHT_SHOOTER_ID, MotorType.kBrushless);
+    private CANSparkMax topShooter = new CANSparkMax(ShooterConstants.TOP_SHOOTER_ID, MotorType.kBrushless);
+    private ShooterSubsystem shooter = new ShooterSubsystem(bottomLeftShooter, bottomRightShooter, topLeftShooter, topRightShooter, topShooter);
+
     private SwerveDriveOdometry driveOdometry = new SwerveDriveOdometry(DrivetrainConstants.SWERVE_KINEMATICS, gyro.getRotation2d(), positions);
 
     private Odometry odometry = new Odometry(gyro, driveOdometry, positions);
@@ -103,6 +113,9 @@ public class RobotContainer {
    */
   
   public void configureObjects() {
+    resetMotors();
+
+    //Configuring the swerve modules
     frontLeftWheel.getTurningEncoder().setInverted(true);
     frontRightWheel.getTurningEncoder().setInverted(true);
     backLeftWheel.getTurningEncoder().setInverted(true);
@@ -117,6 +130,10 @@ public class RobotContainer {
     frontRightWheel.getTurningEncoder().setInverted(true);
     backLeftWheel.getTurningEncoder().setInverted(true);
     backRightWheel.getTurningEncoder().setInverted(true);
+
+    //Configuring shooter motors
+    topLeftShooter.setInverted(true);
+    bottomRightShooter.setInverted(true);
 
     coastDrive();
   }
@@ -133,6 +150,11 @@ public class RobotContainer {
     JoystickButton resetFieldCentricButton = new JoystickButton(leftJoystick, 2);
 
     JoystickButton intakeButton = new JoystickButton(leftJoystick, 1);
+
+    JoystickButton feedInButton = new JoystickButton(rightJoystick, 3);
+
+    JoystickButton feedOutButton = new JoystickButton(rightJoystick, 4);
+
 
 
     swerveDrive.setDefaultCommand(new RunCommand(() -> {
@@ -162,6 +184,24 @@ public class RobotContainer {
     intakeButton.whileTrue(new RunCommand(() -> {
       intakeSubsystem.intake(limitX.calculate((applyDeadband(-leftJoystick.getThrottle(), IntakeConstants.INTAKE_DEADBAND))));
     }, intakeSubsystem));
+
+    feedInButton.whileTrue(new RunCommand((
+    ) -> {
+      shooter.feed(0.1);
+    }, shooter));
+    feedInButton.onFalse(new InstantCommand((
+    ) -> {
+      shooter.feed(0);
+    }, shooter));
+
+    feedOutButton.whileTrue(new RunCommand((
+    ) -> {
+      shooter.feed(-0.1);
+    }, shooter));
+    feedInButton.onFalse(new InstantCommand((
+    ) -> {
+      shooter.feed(0);
+    }, shooter));
   }
 
   public double applyDeadband(double input, double deadband) {
@@ -169,6 +209,25 @@ public class RobotContainer {
       return 0;
     else return 
       input;
+  }
+
+  public void resetMotors() {
+    backLeftAngleMotor.restoreFactoryDefaults();
+    backRightAngleMotor.restoreFactoryDefaults();
+    frontLeftAngleMotor.restoreFactoryDefaults();
+    frontRightAngleMotor.restoreFactoryDefaults();
+
+    backLeftSpeedMotor.restoreFactoryDefaults();
+    backRightSpeedMotor.restoreFactoryDefaults();
+    frontLeftSpeedMotor.restoreFactoryDefaults();
+    frontRightSpeedMotor.restoreFactoryDefaults();
+
+    intakeMotor.restoreFactoryDefaults();
+
+    bottomLeftShooter.restoreFactoryDefaults();
+    bottomRightShooter.restoreFactoryDefaults();
+    topLeftShooter.restoreFactoryDefaults();
+    topRightShooter.restoreFactoryDefaults();
   }
 
   public void coastDrive() {
