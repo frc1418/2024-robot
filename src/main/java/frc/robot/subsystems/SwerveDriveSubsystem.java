@@ -138,9 +138,11 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         });
     }
 
-    public void resetFieldCentric() {
-        odometry.zeroHeading();
-        resetLockRot();
+    public Command resetFieldCentric() {
+        return runOnce(() -> {
+            odometry.zeroHeading();
+            resetLockRot();
+        });
     }
 
     public SwerveModulePosition[] getPositions() {

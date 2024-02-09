@@ -20,18 +20,4 @@ public class IntakeSubsystem extends SubsystemBase {
   public void intake(double speed) {
     intakeMotor.set(speed);
   }
-
-  public Command exampleMethodCommand() {
-    // Inline construction of command goes here.
-    // Subsystem::RunOnce implicitly requires `this` subsystem.
-    return runOnce(
-        () -> {
-          /* one-time action goes here */
-        });
-  }
-
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-  }
 }

@@ -34,7 +34,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
+  // The robot's subsystems and commands are defined here
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
     private final RobotBase robot;
@@ -106,16 +106,6 @@ public class RobotContainer {
     //Configure the motors and sensors
     configureObjects();
   }
-
-  /**
-   * Use this method to define your trigger->command mappings. Triggers can be created via the
-   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
-   * predicate, or via the named factories in {@link
-   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
-   * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-   * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-   * joysticks}.
-   */
   
   public void configureObjects() {
     resetMotors();
@@ -177,11 +167,17 @@ public class RobotContainer {
       
     }, swerveDrive));
 
+    shooter.setDefaultCommand(new RunCommand(() -> {
+      shooter.feed(0);
+    }, shooter));
+
+    intakeSubsystem.setDefaultCommand(new RunCommand(() -> {
+      intakeSubsystem.intake(0);
+    }, intakeSubsystem));
+
     fieldCentricButton.onTrue(swerveDrive.toggleFieldCentric());
 
-    resetFieldCentricButton.onTrue(new InstantCommand(() -> {
-      swerveDrive.resetFieldCentric();
-    }, swerveDrive));
+    resetFieldCentricButton.onTrue(swerveDrive.resetFieldCentric());
 
     turtleButton.whileTrue(new RunCommand(() -> {
       swerveDrive.turtle();
@@ -191,22 +187,13 @@ public class RobotContainer {
       intakeSubsystem.intake(limitX.calculate((applyDeadband(-leftJoystick.getThrottle(), IntakeConstants.INTAKE_DEADBAND))));
     }, intakeSubsystem));
 
-    feedInButton.whileTrue(new RunCommand((
-    ) -> {
+    feedInButton.whileTrue(new RunCommand(() -> {
       shooter.feed(0.1);
-    }, shooter));
-    feedInButton.onFalse(new InstantCommand((
-    ) -> {
-      shooter.feed(0);
     }, shooter));
 
     feedOutButton.whileTrue(new RunCommand((
     ) -> {
       shooter.feed(-0.1);
-    }, shooter));
-    feedInButton.onFalse(new InstantCommand((
-    ) -> {
-      shooter.feed(0);
     }, shooter));
   }
 
