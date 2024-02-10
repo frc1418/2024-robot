@@ -25,6 +25,7 @@ public class PivotSubsystem extends SubsystemBase {
 
     private final NetworkTableEntry ntPivotPosition = table.getEntry("pivotPosition");
     private final NetworkTableEntry ntTargetPivotPosition = table.getEntry("targetPivotPosition");
+    private final NetworkTableEntry ntLockPivotPosition = table.getEntry("lockPivotPosition");
 
     private PIDController pivotPidController = new PIDController(0, 0, 0);
     private ArmFeedforward armFeedforward = new ArmFeedforward(0, 0, 0);
@@ -63,6 +64,7 @@ public class PivotSubsystem extends SubsystemBase {
     public void periodic() {
         ntPivotPosition.setDouble(pivotEncoder.getPosition());
         ntTargetPivotPosition.setDouble(targetPos);
+        ntLockPivotPosition.setDouble(lockPos);
     }
 
     public void setTargetPos(double targetPos) {
