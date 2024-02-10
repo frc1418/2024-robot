@@ -60,12 +60,15 @@ public final class Constants {
     public final static int TOP_RIGHT_SHOOTER_ID = 11;
     public final static int BOTTOM_RIGHT_SHOOTER_ID = 12;
     public final static int TOP_SHOOTER_ID = 13;
-
     public static final double SHOOTER_DEADBAND = 0.1;
+
+    
+    public final static int PIVOT_MOTOR_ID = 14;
+    public final static double PIVOT_OFFSET = 0;
   }
 
   public static final class IntakeConstants {
-    public final static int INTAKE_MOTOR_ID = 14;
+    public final static int INTAKE_MOTOR_ID = 15;
     public static final double INTAKE_DEADBAND = 0.1;
   }
 
