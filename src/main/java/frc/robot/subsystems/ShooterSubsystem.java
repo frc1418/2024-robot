@@ -11,38 +11,21 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ShooterSubsystem extends SubsystemBase {
 
-  private CANSparkMax bottomLeftWheel;
-  private CANSparkMax bottomRightWheel;
-  private CANSparkMax topLeftWheel;
-  private CANSparkMax topRightWheel;
-  private CANSparkMax topWheel;
+  private CANSparkMax leftWheel;
+  private CANSparkMax rightWheel;
 
   public ShooterSubsystem(
-    CANSparkMax bottomLeftWheel, 
-    CANSparkMax bottomRightWheel, 
-    CANSparkMax topLeftWheel, 
-    CANSparkMax topRightWheel,
-    CANSparkMax topWheel) 
+    CANSparkMax leftWheel, 
+    CANSparkMax rightWheel)  
   {
-    this.bottomLeftWheel = bottomLeftWheel;
-    this.bottomRightWheel = bottomRightWheel;
-    this.topLeftWheel = topLeftWheel;
-    this.topRightWheel = topRightWheel;
-    this.topWheel = topWheel;
+    this.leftWheel = leftWheel;
+    this.rightWheel = rightWheel;
   }
 
   public void shoot(double speed) {
-    //Forward is counter-clockwise
-    bottomLeftWheel.set(speed);
     //Forward is clockwise
-    bottomRightWheel.set(speed);
-    //Forward is clockwise
-    topLeftWheel.set(speed);
+    leftWheel.set(speed);
     //Forward is counter-clockwise
-    topRightWheel.set(speed);
-  }
-
-  public void feed(double speed) {
-    topWheel.set(speed);
+    rightWheel.set(speed);
   }
 }

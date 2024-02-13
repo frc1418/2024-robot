@@ -11,6 +11,7 @@ import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.Autos;
 import frc.robot.common.Odometry;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.FeedSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.subsystems.MaxWheelModule;
@@ -79,12 +80,13 @@ public class RobotContainer {
     };
 
     //Constructing the shooter subsystem
-    private CANSparkMax bottomLeftShooter = new CANSparkMax(ShooterConstants.BOTTOM_LEFT_SHOOTER_ID, MotorType.kBrushless);
-    private CANSparkMax bottomRightShooter = new CANSparkMax(ShooterConstants.BOTTOM_RIGHT_SHOOTER_ID, MotorType.kBrushless);
-    private CANSparkMax topLeftShooter = new CANSparkMax(ShooterConstants.TOP_LEFT_SHOOTER_ID, MotorType.kBrushless);
-    private CANSparkMax topRightShooter = new CANSparkMax(ShooterConstants.TOP_RIGHT_SHOOTER_ID, MotorType.kBrushless);
-    private CANSparkMax topShooter = new CANSparkMax(ShooterConstants.TOP_SHOOTER_ID, MotorType.kBrushless);
-    private ShooterSubsystem shooter = new ShooterSubsystem(bottomLeftShooter, bottomRightShooter, topLeftShooter, topRightShooter, topShooter);
+    private CANSparkMax leftShooter = new CANSparkMax(ShooterConstants.LEFT_SHOOTER_ID, MotorType.kBrushless);
+    private CANSparkMax rightShooter = new CANSparkMax(ShooterConstants.RIGHT_SHOOTER_ID, MotorType.kBrushless);
+    private ShooterSubsystem shooter = new ShooterSubsystem(leftShooter, rightShooter);
+
+    //Configuring the feed subsystem
+    private CANSparkMax feedMotor = new CANSparkMax(ShooterConstants.TOP_SHOOTER_ID, MotorType.kBrushless);
+    private FeedSubsystem feedSubsystem = new FeedSubsystem(feedMotor);
 
     //Constructing the pivot subsystem
     private CANSparkMax pivotMotor = new CANSparkMax(ShooterConstants.PIVOT_MOTOR_ID, MotorType.kBrushless);
@@ -104,9 +106,8 @@ public class RobotContainer {
 
     SlewRateLimiter limitX = new SlewRateLimiter(6);
     SlewRateLimiter limitY = new SlewRateLimiter(6);
-    SlewRateLimiter limitP = new SlewRateLimiter(6);
     SlewRateLimiter limitI = new SlewRateLimiter(6);
-    SlewRateLimiter limitS = new SlewRateLimiter(6);
+    SlewRateLimiter limitS = new SlewRateLimiter(2);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer(RobotBase robot) {
@@ -137,8 +138,8 @@ public class RobotContainer {
     backRightWheel.getTurningEncoder().setInverted(true);
 
     //Configuring shooter motors
-    topLeftShooter.setInverted(true);
-    bottomRightShooter.setInverted(true);
+    leftShooter.setInverted(true);
+    feedMotor.setInverted(true);
 
     coastDrive();
   }
@@ -149,7 +150,7 @@ public class RobotContainer {
     Joystick rightJoystick = new Joystick(1);
     Joystick altJoystick = new Joystick(2);
 
-    JoystickButton turtleButton = new JoystickButton(leftJoystick, 3);
+    JoystickButton turtleButton = new JoystickButton(rightJoystick, 3);
 
     JoystickButton fieldCentricButton = new JoystickButton(rightJoystick, 2);
 
@@ -164,8 +165,7 @@ public class RobotContainer {
     JoystickButton pivotButton = new JoystickButton(leftJoystick, 3);
 
     JoystickButton intakeButton = new JoystickButton(leftJoystick, 1);
-
-
+    
 
     //Constructs commands and binds them for swerve drive
     swerveDrive.setDefaultCommand(new RunCommand(() -> {
@@ -193,43 +193,40 @@ public class RobotContainer {
     //Constructs commands and binds them for shooter
 
     shooter.setDefaultCommand(new RunCommand(() -> {
-      shooter.feed(0);
-      shooter.shoot(0);
-    }, shooter));
-
-    feedInButton.whileTrue(new RunCommand(() -> {
-      shooter.feed(0.1);
-    }, shooter));
-
-    feedOutButton.whileTrue(new RunCommand((
-    ) -> {
-      shooter.feed(-0.1);
+      shooter.shoot(limitS.calculate(0));
     }, shooter));
 
     shooterButton.whileTrue(new RunCommand(() -> {
       shooter.shoot(limitS.calculate((applyDeadband(-leftJoystick.getThrottle(), ShooterConstants.SHOOTER_DEADBAND))));
-      if (feedInButton.getAsBoolean()) {
-          shooter.feed(0.1);
-      } 
-      else if (feedOutButton.getAsBoolean()) {
-          shooter.feed(-0.1);
-      }
-      else {
-          shooter.feed(0);
-      }
     }, shooter));
+
+    //Constructs commands and binds them for feed
+
+    feedSubsystem.setDefaultCommand(new RunCommand(() -> {
+      feedSubsystem.feed(0);
+    }, feedSubsystem));
+
+    feedInButton.whileTrue(new RunCommand(() -> {
+      feedSubsystem.feed(0.2);
+    }, feedSubsystem));
+
+    feedOutButton.whileTrue(new RunCommand(() -> {
+      feedSubsystem.feed(-0.2);
+    }, feedSubsystem));
 
     //Constructs commands and binds them for pivot
 
     pivotSubsystem.setDefaultCommand(new RunCommand(() -> {
       pivotSubsystem.setPivotPosition(pivotSubsystem.getLockPos());
-      pivotSubsystem.setTargetPos(MathUtil.clamp(-rightJoystick.getThrottle(), 0, 0.25));
+      pivotSubsystem.setTargetPos(MathUtil.clamp(-rightJoystick.getThrottle(), 0.25, 0.4));
+      System.out.println("Holding lock");
     }, pivotSubsystem));
 
     pivotButton.whileTrue(new RunCommand(() -> {
+      System.out.println("Setting to target");
       pivotSubsystem.setPivotPosition(pivotSubsystem.getTargetPos());
-      pivotSubsystem.setTargetPos(MathUtil.clamp(-rightJoystick.getThrottle(), 0, 0.25));
-      pivotSubsystem.setLockPos(pivotSubsystem.getTargetPos());
+      pivotSubsystem.setTargetPos(MathUtil.clamp(-rightJoystick.getThrottle(), 0.25, 0.4));
+      pivotSubsystem.setLockPos(MathUtil.clamp(pivotSubsystem.getTargetPos(),0.25, 0.4));
     }, pivotSubsystem));
 
     //Constructs commands and binds them for intake
@@ -261,12 +258,13 @@ public class RobotContainer {
     frontLeftSpeedMotor.restoreFactoryDefaults();
     frontRightSpeedMotor.restoreFactoryDefaults();
 
-    intakeMotor.restoreFactoryDefaults();
+    leftShooter.restoreFactoryDefaults();
+    rightShooter.restoreFactoryDefaults();
+    feedMotor.restoreFactoryDefaults();
 
-    bottomLeftShooter.restoreFactoryDefaults();
-    bottomRightShooter.restoreFactoryDefaults();
-    topLeftShooter.restoreFactoryDefaults();
-    topRightShooter.restoreFactoryDefaults();
+    pivotMotor.restoreFactoryDefaults();
+
+    intakeMotor.restoreFactoryDefaults();
   }
 
   public void coastDrive() {

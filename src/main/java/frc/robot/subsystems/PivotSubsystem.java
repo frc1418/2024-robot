@@ -7,11 +7,14 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkAbsoluteEncoder;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 
@@ -27,8 +30,18 @@ public class PivotSubsystem extends SubsystemBase {
     private final NetworkTableEntry ntTargetPivotPosition = table.getEntry("targetPivotPosition");
     private final NetworkTableEntry ntLockPivotPosition = table.getEntry("lockPivotPosition");
 
-    private PIDController pivotPidController = new PIDController(0, 0, 0);
-    private ArmFeedforward armFeedforward = new ArmFeedforward(0, 0, 0);
+    private double PVal = 15;
+    private double IVal = 4;
+    private double DVal = 0;
+
+    private PIDController pivotPidController = new PIDController(PVal, IVal, DVal);
+    private PIDController P = new PIDController(PVal, 0, 0);
+    private PIDController I = new PIDController(0, IVal, 0);
+    private PIDController D = new PIDController(0, 0, DVal);
+
+    private double kG = 0.53;
+
+    private ArmFeedforward armFeedforward = new ArmFeedforward(0, kG, 0);
 
     private double targetPos;
     private double lockPos;
@@ -40,8 +53,8 @@ public class PivotSubsystem extends SubsystemBase {
 
         pivotPidController.enableContinuousInput(0, 1);
 
-        targetPos = pivotEncoder.getPosition();
-        lockPos = pivotEncoder.getPosition();
+        targetPos = MathUtil.clamp(pivotEncoder.getPosition(), 0.25, 0.4);
+        lockPos = MathUtil.clamp(pivotEncoder.getPosition(), 0.25, 0.4);
     }
 
     public void setPivotMotor(double speed) {
@@ -49,7 +62,12 @@ public class PivotSubsystem extends SubsystemBase {
     }
 
     public void setPivotPosition(double pos) {
-        pivotMotor.setVoltage(armFeedforward.calculate(pos, 0) + pivotPidController.calculate(ntPivotPosition.getDouble(0), pos));
+        pivotMotor.setVoltage(armFeedforward.calculate(pos, 0) - pivotPidController.calculate(ntPivotPosition.getDouble(0), pos));
+        System.out.println("FF: " + armFeedforward.calculate(pos, 0));
+        System.out.println("P: " + -P.calculate(ntPivotPosition.getDouble(0), pos));
+        System.out.println("I: " + -I.calculate(ntPivotPosition.getDouble(0), pos));
+        System.out.println("D: " + -D.calculate(ntPivotPosition.getDouble(0), pos));
+        System.out.println("Error: " + (ntTargetPivotPosition.getDouble(0)-ntPivotPosition.getDouble(0)));
     }
 
     public void updatePivotPosition() {
