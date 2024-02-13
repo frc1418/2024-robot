@@ -106,7 +106,9 @@ public class RobotContainer {
 
     SlewRateLimiter limitX = new SlewRateLimiter(6);
     SlewRateLimiter limitY = new SlewRateLimiter(6);
+    //Limits shooter motor speed
     SlewRateLimiter limitI = new SlewRateLimiter(6);
+    //Limits intake motor speed
     SlewRateLimiter limitS = new SlewRateLimiter(2);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -151,13 +153,10 @@ public class RobotContainer {
     Joystick altJoystick = new Joystick(2);
 
     JoystickButton turtleButton = new JoystickButton(rightJoystick, 3);
-
     JoystickButton fieldCentricButton = new JoystickButton(rightJoystick, 2);
-
     JoystickButton resetFieldCentricButton = new JoystickButton(leftJoystick, 2);
 
     JoystickButton feedInButton = new JoystickButton(leftJoystick, 4);
-
     JoystickButton feedOutButton = new JoystickButton(rightJoystick, 4);
 
     JoystickButton shooterButton = new JoystickButton(rightJoystick, 1);
@@ -207,11 +206,11 @@ public class RobotContainer {
     }, feedSubsystem));
 
     feedInButton.whileTrue(new RunCommand(() -> {
-      feedSubsystem.feed(0.2);
+      feedSubsystem.feed(0.1);
     }, feedSubsystem));
 
     feedOutButton.whileTrue(new RunCommand(() -> {
-      feedSubsystem.feed(-0.2);
+      feedSubsystem.feed(-0.1);
     }, feedSubsystem));
 
     //Constructs commands and binds them for pivot
@@ -219,11 +218,9 @@ public class RobotContainer {
     pivotSubsystem.setDefaultCommand(new RunCommand(() -> {
       pivotSubsystem.setPivotPosition(pivotSubsystem.getLockPos());
       pivotSubsystem.setTargetPos(MathUtil.clamp(-rightJoystick.getThrottle(), 0.25, 0.4));
-      System.out.println("Holding lock");
     }, pivotSubsystem));
 
     pivotButton.whileTrue(new RunCommand(() -> {
-      System.out.println("Setting to target");
       pivotSubsystem.setPivotPosition(pivotSubsystem.getTargetPos());
       pivotSubsystem.setTargetPos(MathUtil.clamp(-rightJoystick.getThrottle(), 0.25, 0.4));
       pivotSubsystem.setLockPos(MathUtil.clamp(pivotSubsystem.getTargetPos(),0.25, 0.4));

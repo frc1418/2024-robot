@@ -2,10 +2,14 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+//Best angle for amp rn: 0.344
+//Best speed for amp rn: 0.40
+
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkAbsoluteEncoder;
+import com.revrobotics.CANSparkBase.ControlType;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
@@ -29,6 +33,11 @@ public class PivotSubsystem extends SubsystemBase {
     private final NetworkTableEntry ntPivotPosition = table.getEntry("pivotPosition");
     private final NetworkTableEntry ntTargetPivotPosition = table.getEntry("targetPivotPosition");
     private final NetworkTableEntry ntLockPivotPosition = table.getEntry("lockPivotPosition");
+    private final NetworkTableEntry ntFF = table.getEntry("FF Volts");
+    private final NetworkTableEntry ntP = table.getEntry("P Volts");
+    private final NetworkTableEntry ntI = table.getEntry("I Volts");
+    private final NetworkTableEntry ntD = table.getEntry("D Volts");
+    private final NetworkTableEntry ntError = table.getEntry("Pivot Error");
 
     private double PVal = 15;
     private double IVal = 4;
@@ -62,12 +71,12 @@ public class PivotSubsystem extends SubsystemBase {
     }
 
     public void setPivotPosition(double pos) {
-        pivotMotor.setVoltage(armFeedforward.calculate(pos, 0) - pivotPidController.calculate(ntPivotPosition.getDouble(0), pos));
-        System.out.println("FF: " + armFeedforward.calculate(pos, 0));
-        System.out.println("P: " + -P.calculate(ntPivotPosition.getDouble(0), pos));
-        System.out.println("I: " + -I.calculate(ntPivotPosition.getDouble(0), pos));
-        System.out.println("D: " + -D.calculate(ntPivotPosition.getDouble(0), pos));
-        System.out.println("Error: " + (ntTargetPivotPosition.getDouble(0)-ntPivotPosition.getDouble(0)));
+        pivotMotor.setVoltage(armFeedforward.calculate(pos, 0) - pivotPidController.calculate(pivotEncoder.getPosition(), pos));
+        ntFF.setDouble(armFeedforward.calculate(pos, 0));
+        ntP.setDouble(-P.calculate(pivotEncoder.getPosition(), pos));
+        ntI.setDouble(-I.calculate(pivotEncoder.getPosition(), pos));
+        ntD.setDouble(-D.calculate(pivotEncoder.getPosition(), pos));
+        ntError.setDouble((pos-pivotEncoder.getPosition()));
     }
 
     public void updatePivotPosition() {
