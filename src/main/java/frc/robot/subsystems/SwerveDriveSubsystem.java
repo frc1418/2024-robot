@@ -10,7 +10,9 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.common.Odometry;
 
@@ -61,6 +63,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         this.ntIsFieldCentric.setBoolean(fieldCentric);
     }
 
+    //Initial drive method, maintains rotation and passes into ChassisSpeeds
     public void drive(double x, double y, double rot) {
 
         if(rot == 0){
@@ -69,8 +72,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         else{
             lockedRot = odometry.getHeading();
         }
-        if (Math.abs(rot) > DrivetrainConstants.ROTATION_SPEED_CAP) {
-            rot = DrivetrainConstants.ROTATION_SPEED_CAP*Math.signum(rot);
+        if (Math.abs(rot) > DriverConstants.ROTATION_SPEED_CAP) {
+            rot = DriverConstants.ROTATION_SPEED_CAP*Math.signum(rot);
         }
 
         ChassisSpeeds speeds = new ChassisSpeeds(x, y, rot);
@@ -80,14 +83,15 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         }
         drive(speeds);
     }
-
+    
+    // Second method passing to moduleStates
     public void drive(ChassisSpeeds speeds){
-        // Convert to module states
         SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(speeds);
 
         drive(moduleStates);
     }
 
+    //Third drive method, passing states to each module
     public void drive (SwerveModuleState[] moduleStates){
         SwerveModuleState frontLeftState = moduleStates[0];
         SwerveModuleState frontRightState = moduleStates[1];
@@ -100,6 +104,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         backRight.drive(backRightState);
     }
 
+    //Locks the robot's angles to prevent movement
     public void turtle() {
         frontRight.setAngle(Rotation2d.fromDegrees(-45));
         backLeft.setAngle(Rotation2d.fromDegrees(-45));
@@ -108,6 +113,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         frontLeft.setAngle(Rotation2d.fromDegrees(45));
     }
 
+    //Updates the network tables and odometry
     @Override
     public void periodic() {
         odometry.update(getPositions());
@@ -127,15 +133,17 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     }
 
     public Command toggleFieldCentric() {
-        return runOnce(() -> {
+        return Commands.runOnce(() -> {
             fieldCentric = !fieldCentric;
             ntIsFieldCentric.setBoolean(fieldCentric);
         });
     }
 
-    public void resetFieldCentric() {
-        odometry.zeroHeading();
-        resetLockRot();
+    public Command resetFieldCentric() {
+        return Commands.runOnce(() -> {
+            odometry.zeroHeading();
+            resetLockRot();
+        });
     }
 
     public SwerveModulePosition[] getPositions() {

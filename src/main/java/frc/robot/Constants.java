@@ -47,18 +47,33 @@ public final class Constants {
     public static final Translation2d FRONT_LEFT_LOC = new Translation2d(0.238125, 0.238125);
     public static final double FRONT_LEFT_ENCODER_OFFSET = 0.862;
     
-    public final static SwerveDriveKinematics SWERVE_KINEMATICS = new SwerveDriveKinematics(
+    public static final SwerveDriveKinematics SWERVE_KINEMATICS = new SwerveDriveKinematics(
       FRONT_LEFT_LOC,
       FRONT_RIGHT_LOC,
       BACK_LEFT_LOC,
       BACK_RIGHT_LOC);
-
-    public static final double ROTATION_SPEED_CAP = 5;
   }
-  
+
+  public static final class ShooterConstants {
+    public final static int LEFT_SHOOTER_ID = 10;
+    public final static int RIGHT_SHOOTER_ID = 11;
+    public static final double SHOOTER_DEADBAND = 0.1;
+
+    public final static int TOP_SHOOTER_ID = 13;
+    
+    public final static int PIVOT_MOTOR_ID = 14;
+    public final static double PIVOT_OFFSET = 0.265;
+  }
+
+  public static final class IntakeConstants {
+    public final static int INTAKE_MOTOR_ID = 15;
+    public static final double INTAKE_DEADBAND = 0.1;
+  } 
+
   public final static class DriverConstants {
     public final static double speedMultiplier = 3;
     public final static double angleMultiplier = 4;
+    public static final double ROTATION_SPEED_CAP = 5;
   }
 
   public final static class WheelConstants {

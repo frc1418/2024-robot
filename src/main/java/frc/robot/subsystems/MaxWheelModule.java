@@ -56,6 +56,7 @@ public class MaxWheelModule {
             speedMotor.getEncoder().getPosition(), Rotation2d.fromRotations(getEncoderPosition()));
 	}
 
+    //Final drive method, passes each wheel's states into the PID controllers and optimizes rotation
     public void drive(SwerveModuleState state)
     {
         SwerveModuleState optimizedState = SwerveModuleState.optimize(state, Rotation2d.fromRotations(
