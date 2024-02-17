@@ -206,11 +206,11 @@ public class RobotContainer {
     }, feedSubsystem));
 
     feedInButton.whileTrue(new RunCommand(() -> {
-      feedSubsystem.feed(0.1);
+      feedSubsystem.feed(0.15);
     }, feedSubsystem));
 
     feedOutButton.whileTrue(new RunCommand(() -> {
-      feedSubsystem.feed(-0.1);
+      feedSubsystem.feed(-0.15);
     }, feedSubsystem));
 
     //Constructs commands and binds them for pivot
