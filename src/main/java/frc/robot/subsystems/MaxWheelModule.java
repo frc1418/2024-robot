@@ -27,7 +27,9 @@ public class MaxWheelModule {
     public MaxWheelModule(CANSparkMax angleMotor, CANSparkMax speedMotor) {
 
         this.angleMotor = angleMotor;
+        // this.angleMotor.restoreFactoryDefaults();
         this.speedMotor = speedMotor;
+        // this.speedMotor.restoreFactoryDefaults();
         this.turningEncoder =  angleMotor.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
 
         this.speedPIDController = this.speedMotor.getPIDController();
