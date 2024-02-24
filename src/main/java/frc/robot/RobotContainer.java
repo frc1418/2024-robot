@@ -8,11 +8,13 @@ import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.commands.AlignByAprilTag;
 import frc.robot.commands.Autos;
 import frc.robot.common.Odometry;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.FeedSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.subsystems.MaxWheelModule;
 import frc.robot.subsystems.PivotSubsystem;
@@ -33,9 +35,7 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class RobotContainer {
   // The robot's subsystems and commands are defined here
@@ -98,16 +98,20 @@ public class RobotContainer {
 
     private SwerveDriveOdometry driveOdometry = new SwerveDriveOdometry(DrivetrainConstants.SWERVE_KINEMATICS, gyro.getRotation2d(), positions);
 
-    private Odometry odometry = new Odometry(gyro, driveOdometry, positions);
+    private LimelightSubsystem limelight = new LimelightSubsystem();
+
+    private Odometry odometry = new Odometry(gyro, driveOdometry, positions, limelight);
 
     private SwerveDriveSubsystem swerveDrive = new SwerveDriveSubsystem(
       backRightWheel, backLeftWheel, frontRightWheel, frontLeftWheel,
       DrivetrainConstants.SWERVE_KINEMATICS, odometry);
 
+    private final AlignByAprilTag alignAtAprilTag = new AlignByAprilTag(swerveDrive, limelight, odometry, 0, -1);
+
     SlewRateLimiter limitX = new SlewRateLimiter(6);
     SlewRateLimiter limitY = new SlewRateLimiter(6);
     //Limits shooter motor speed
-    SlewRateLimiter limitI = new SlewRateLimiter(1);
+    SlewRateLimiter limitI = new SlewRateLimiter(0.5);
     //Limits intake motor speed
     SlewRateLimiter limitS = new SlewRateLimiter(2);
 
@@ -134,11 +138,6 @@ public class RobotContainer {
     frontRightWheel.getTurningEncoder().setZeroOffset(DrivetrainConstants.FRONT_RIGHT_ENCODER_OFFSET);
     frontLeftWheel.getTurningEncoder().setZeroOffset(DrivetrainConstants.FRONT_LEFT_ENCODER_OFFSET);
 
-    frontLeftWheel.getTurningEncoder().setInverted(true);
-    frontRightWheel.getTurningEncoder().setInverted(true);
-    backLeftWheel.getTurningEncoder().setInverted(true);
-    backRightWheel.getTurningEncoder().setInverted(true);
-
     //Configuring shooter motors
     leftShooter.setInverted(true);
     feedMotor.setInverted(true);
@@ -162,16 +161,21 @@ public class RobotContainer {
     JoystickButton shooterButton = new JoystickButton(rightJoystick, 1);
 
     JoystickButton pivotButton = new JoystickButton(leftJoystick, 3);
+    JoystickButton pivotUpBotton = new JoystickButton(leftJoystick, 5);
+    JoystickButton pivotDownBotton = new JoystickButton(leftJoystick, 6);
+
 
     JoystickButton intakeButton = new JoystickButton(leftJoystick, 1);
+
+    JoystickButton alignAtAprilTagButton = new JoystickButton(rightJoystick, 8);
     
 
     //Constructs commands and binds them for swerve drive
     swerveDrive.setDefaultCommand(new RunCommand(() -> {
       if (robot.isTeleopEnabled()){
         swerveDrive.drive(
-          -limitY.calculate(applyDeadband(leftJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND))*DriverConstants.speedMultiplier,
-          -limitX.calculate(applyDeadband(leftJoystick.getX(), DrivetrainConstants.DRIFT_DEADBAND))*DriverConstants.speedMultiplier,
+          -limitX.calculate(applyDeadband(leftJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND))*DriverConstants.speedMultiplier,
+          -limitY.calculate(applyDeadband(leftJoystick.getX(), DrivetrainConstants.DRIFT_DEADBAND))*DriverConstants.speedMultiplier,
           applyDeadband(-rightJoystick.getX(), DrivetrainConstants.ROTATION_DEADBAND)*DriverConstants.angleMultiplier);
       }
       else 
@@ -196,7 +200,7 @@ public class RobotContainer {
     }, shooter));
 
     shooterButton.whileTrue(new RunCommand(() -> {
-      shooter.shoot(limitS.calculate(0.65));//(applyDeadband(-leftJoystick.getThrottle(), ShooterConstants.SHOOTER_DEADBAND))));
+      shooter.shoot(limitS.calculate(0.4));//(applyDeadband(-leftJoystick.getThrottle(), ShooterConstants.SHOOTER_DEADBAND))));
     }, shooter));
 
     //Constructs commands and binds them for feed
@@ -217,14 +221,20 @@ public class RobotContainer {
 
     pivotSubsystem.setDefaultCommand(new RunCommand(() -> {
       pivotSubsystem.setPivotPosition(pivotSubsystem.getLockPos());
-      pivotSubsystem.setTargetPos(MathUtil.clamp(-rightJoystick.getThrottle(), 0.25, 0.4));
     }, pivotSubsystem));
 
     pivotButton.whileTrue(new RunCommand(() -> {
       pivotSubsystem.setPivotPosition(pivotSubsystem.getTargetPos());
-      pivotSubsystem.setTargetPos(MathUtil.clamp(-rightJoystick.getThrottle(), 0.25, 0.4));
-      pivotSubsystem.setLockPos(MathUtil.clamp(pivotSubsystem.getTargetPos(),0.25, 0.4));
+      pivotSubsystem.setLockPos(MathUtil.clamp(pivotSubsystem.getTargetPos(),0.75, 0.992));
     }, pivotSubsystem));
+
+    pivotUpBotton.onTrue(new InstantCommand(() -> {
+      pivotSubsystem.changeTargetPos(-0.01);
+    }));
+
+    pivotDownBotton.onTrue(new InstantCommand(() -> {
+      pivotSubsystem.changeTargetPos(0.01);
+    }));
 
     //Constructs commands and binds them for intake
 
@@ -233,8 +243,13 @@ public class RobotContainer {
     }, intakeSubsystem));
 
     intakeButton.whileTrue(new RunCommand(() -> {
-      intakeSubsystem.intake(limitI.calculate((applyDeadband(-leftJoystick.getThrottle(), IntakeConstants.INTAKE_DEADBAND))));
+      intakeSubsystem.intake(limitI.calculate((applyDeadband(-leftJoystick.getThrottle()/2, IntakeConstants.INTAKE_DEADBAND))));
+      pivotSubsystem.setLockPos(0.85);
     }, intakeSubsystem));
+
+    //Constructs commands and binds them for AprilTags
+    alignAtAprilTagButton.whileTrue(alignAtAprilTag);
+
   }
 
   public double applyDeadband(double input, double deadband) {

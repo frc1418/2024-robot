@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriverConstants;
-import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.common.Odometry;
 
 public class SwerveDriveSubsystem extends SubsystemBase {
@@ -35,10 +34,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
     private final NetworkTable odometryTable = ntInstance.getTable("/common/Odometry");
     private final NetworkTableEntry ntOdometryPose = odometryTable.getEntry("odometryPose");
-    private final NetworkTableEntry ntVelocityBackRight = table.getEntry("wheelvelocitybackright");
-    private final NetworkTableEntry ntVelocityBackLeft = table.getEntry("wheelvelocitybackleft");
-    private final NetworkTableEntry ntVelocityFrontRight = table.getEntry("wheelvelocityfrontright");
-    private final NetworkTableEntry ntVelocityFrontLeft = table.getEntry("wheelvelocityfrontleft");
 
     private PIDController rotationController = new PIDController(0.04, 0, 0); 
 
@@ -124,12 +119,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         ntBackRightAngleEncoder.setDouble(backRight.getEncoderPosition());
         ntFrontLeftAngleEncoder.setDouble(frontLeft.getEncoderPosition());
         ntFrontRightAngleEncoder.setDouble(frontRight.getEncoderPosition());
-
-        ntVelocityBackRight.setDouble(backRight.getSpeed());
-        ntVelocityBackLeft.setDouble(backLeft.getSpeed());
-        ntVelocityFrontRight.setDouble(frontRight.getSpeed());
-        ntVelocityFrontLeft.setDouble(frontLeft.getSpeed());
-
     }
 
     public Command toggleFieldCentric() {
@@ -143,6 +132,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         return Commands.runOnce(() -> {
             odometry.zeroHeading();
             resetLockRot();
+            odometry.setAngleOffset(180);
         });
     }
 
@@ -157,5 +147,13 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     
     public void resetLockRot() {
         lockedRot = odometry.getHeading();
+    }
+
+    public boolean getFieldCentric() {
+        return(fieldCentric);
+    }
+
+    public void setFieldCentric(boolean fieldCentric) {
+        this.fieldCentric = fieldCentric;
     }
 }

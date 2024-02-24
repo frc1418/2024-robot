@@ -5,20 +5,19 @@
 //Best angle for amp rn: 0.344
 //Best speed for amp rn: 0.40
 
+//Best angle for intake: 0.811
+
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkAbsoluteEncoder;
-import com.revrobotics.CANSparkBase.ControlType;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 
@@ -37,23 +36,24 @@ public class PivotSubsystem extends SubsystemBase {
     private final NetworkTableEntry ntP = table.getEntry("P Volts");
     private final NetworkTableEntry ntI = table.getEntry("I Volts");
     private final NetworkTableEntry ntD = table.getEntry("D Volts");
-    private final NetworkTableEntry ntError = table.getEntry("Pivot Error");
 
-    private double PVal = 15;
-    private double IVal = 4;
-    private double DVal = 0;
+    private double PVal = 22;
+    private double IVal = 27.5; 
+    private double DVal = 3; 
 
     private PIDController pivotPidController = new PIDController(PVal, IVal, DVal);
     private PIDController P = new PIDController(PVal, 0, 0);
     private PIDController I = new PIDController(0, IVal, 0);
     private PIDController D = new PIDController(0, 0, DVal);
 
-    private double kG = 0.53;
+    private double kG = 0.142;
 
     private ArmFeedforward armFeedforward = new ArmFeedforward(0, kG, 0);
 
     private double targetPos;
     private double lockPos;
+
+    private SlewRateLimiter limitP = new SlewRateLimiter(0.5);
 
     public PivotSubsystem(CANSparkMax pivotMotor) {
         this.pivotMotor = pivotMotor;
@@ -62,8 +62,8 @@ public class PivotSubsystem extends SubsystemBase {
 
         pivotPidController.enableContinuousInput(0, 1);
 
-        targetPos = MathUtil.clamp(pivotEncoder.getPosition(), 0.25, 0.4);
-        lockPos = MathUtil.clamp(pivotEncoder.getPosition(), 0.25, 0.4);
+        targetPos = MathUtil.clamp(pivotEncoder.getPosition(), 0.75, 0.992);
+        lockPos = MathUtil.clamp(pivotEncoder.getPosition(), 0.75, 0.992);
     }
 
     public void setPivotMotor(double speed) {
@@ -71,12 +71,12 @@ public class PivotSubsystem extends SubsystemBase {
     }
 
     public void setPivotPosition(double pos) {
-        pivotMotor.setVoltage(armFeedforward.calculate(pos, 0) - pivotPidController.calculate(pivotEncoder.getPosition(), pos));
-        ntFF.setDouble(armFeedforward.calculate(pos, 0));
+        pivotMotor.setVoltage(limitP.calculate(armFeedforward.calculate(pos*2*Math.PI, 0) - pivotPidController.calculate(pivotEncoder.getPosition(), MathUtil.clamp(pos, 0.75, 0.992))));
+        System.out.println(pos);
+        ntFF.setDouble(armFeedforward.calculate(pos*2*Math.PI, 0));
         ntP.setDouble(-P.calculate(pivotEncoder.getPosition(), pos));
         ntI.setDouble(-I.calculate(pivotEncoder.getPosition(), pos));
         ntD.setDouble(-D.calculate(pivotEncoder.getPosition(), pos));
-        ntError.setDouble((pos-pivotEncoder.getPosition()));
     }
 
     public void updatePivotPosition() {
@@ -108,5 +108,9 @@ public class PivotSubsystem extends SubsystemBase {
 
     public double getLockPos() {
         return lockPos;
+    }
+
+    public void changeTargetPos(double val) {
+        targetPos += val;
     }
 }

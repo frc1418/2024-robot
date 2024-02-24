@@ -4,12 +4,16 @@
 
 package frc.robot.subsystems;
 
+import java.util.Optional;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.LimelightDirections;
 
 public class LimelightSubsystem extends SubsystemBase {
 
@@ -28,14 +32,45 @@ public class LimelightSubsystem extends SubsystemBase {
     private double xToTarget;
     private double yToTarget;
     private double rotToTarget;
+    private LimelightDirections targetRotation;
+
 
     public LimelightSubsystem() {}
 
 
-  @Override
-  public void periodic() {
-    
-  }
+    @Override
+    public void periodic() {
+    double[] botPosArray = ntRobotposeTargetspace.getDoubleArray(new double[6]);
+    double [] camPosArray = ntCameraposeTargetspace.getDoubleArray(new double[6]);
+
+    xToTarget = botPosArray[0];
+    yToTarget = botPosArray[2];
+    rotToTarget = camPosArray[4];
+
+        if(DriverStation.getAlliance() == Optional.of(Alliance.Blue)){
+            if(ntID.getDouble(0) == 7 || ntID.getDouble(0) == 8){
+                targetRotation = LimelightDirections.SPEAKER_SIDE;
+            }
+            else if (ntID.getDouble(0) == 6) {
+                targetRotation = LimelightDirections.BLUE_AMP_SIDE;
+            }
+            else if (ntID.getDouble(0) == 1 || ntID.getDouble(0) == 2){
+                targetRotation = LimelightDirections.BLUE_SOURCE_SIDE;
+            }
+        } 
+        else {
+            if(ntID.getDouble(0) == 3 || ntID.getDouble(0) == 4){
+                targetRotation = LimelightDirections.SPEAKER_SIDE;
+            }
+            else if (ntID.getDouble(0) == 5) {
+                targetRotation = LimelightDirections.RED_AMP_SIDE;
+            }
+            else if (ntID.getDouble(0) == 9 || ntID.getDouble(0) == 10){
+                targetRotation = LimelightDirections.RED_SOURCE_SIDE;
+            }
+        }
+        distanceToTarget = Math.hypot(xToTarget, yToTarget);
+    }
 
     public double getDistance() {
             return distanceToTarget;
@@ -56,7 +91,10 @@ public class LimelightSubsystem extends SubsystemBase {
 
         public boolean getIsDetecting() {
             int id = (int) ntID.getInteger(Integer.MAX_VALUE);
-            boolean isDetecting = ntIsDetecting.getInteger(0) == 1 && id >= 1 && id <= 8;
+            boolean isDetecting = ntIsDetecting.getInteger(0) == 1 && id >= 1 && id <= 16;
             return isDetecting;
+        }
+        public LimelightDirections getTargetRotation() {
+            return targetRotation;
         }
 }

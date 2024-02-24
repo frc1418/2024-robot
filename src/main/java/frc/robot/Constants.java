@@ -62,7 +62,7 @@ public final class Constants {
     public final static int TOP_SHOOTER_ID = 13;
     
     public final static int PIVOT_MOTOR_ID = 14;
-    public final static double PIVOT_OFFSET = 0.265;
+    public final static double PIVOT_OFFSET = 0.755;
   }
 
   public static final class IntakeConstants {
@@ -81,7 +81,7 @@ public final class Constants {
   }
 
       public enum LimelightDirections {
-        GRID_SIDE(180), SUBSTATION_SIDE(0);
+        SPEAKER_SIDE(0), BLUE_SOURCE_SIDE(120), RED_SOURCE_SIDE(-120), BLUE_AMP_SIDE(-90), RED_AMP_SIDE(90);
 
         private int angle;
         LimelightDirections(int angle){
