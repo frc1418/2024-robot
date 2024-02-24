@@ -107,6 +107,8 @@ public class RobotContainer {
       DrivetrainConstants.SWERVE_KINEMATICS, odometry);
 
     private final AlignByAprilTag alignAtAprilTag = new AlignByAprilTag(swerveDrive, limelight, odometry, 0, -1);
+    private final AlignByAprilTag alignLeftOfAprilTag = new AlignByAprilTag(swerveDrive, limelight, odometry, -0.5, -1);
+    private final AlignByAprilTag alignRightOfAprilTag = new AlignByAprilTag(swerveDrive, limelight, odometry, 0.5, -1);
 
     SlewRateLimiter limitX = new SlewRateLimiter(6);
     SlewRateLimiter limitY = new SlewRateLimiter(6);
@@ -149,7 +151,7 @@ public class RobotContainer {
     //Constructs input devices
     Joystick leftJoystick = new Joystick(0);
     Joystick rightJoystick = new Joystick(1);
-    Joystick altJoystick = new Joystick(2);
+    // Joystick altJoystick = new Joystick(2);
 
     JoystickButton turtleButton = new JoystickButton(rightJoystick, 3);
     JoystickButton fieldCentricButton = new JoystickButton(rightJoystick, 2);
@@ -168,7 +170,7 @@ public class RobotContainer {
     JoystickButton intakeButton = new JoystickButton(leftJoystick, 1);
 
     JoystickButton alignAtAprilTagButton = new JoystickButton(rightJoystick, 8);
-    
+
 
     //Constructs commands and binds them for swerve drive
     swerveDrive.setDefaultCommand(new RunCommand(() -> {
