@@ -43,7 +43,7 @@ public class Odometry extends SubsystemBase{
 
         if (limelight.getIsDetecting() && DriverStation.isTeleop()){
                 reset(
-                    new Pose2d(new Translation2d(-limelight.getYDistance(), limelight.getXDistance()), 
+                    new Pose2d(new Translation2d(limelight.getXDistance(), limelight.getYDistance()), 
                     this.getPose().getRotation())
                 );
         }

@@ -67,7 +67,7 @@ public final class Constants {
 
   public static final class IntakeConstants {
     public final static int INTAKE_MOTOR_ID = 15;
-    public static final double INTAKE_DEADBAND = 0.1;
+    public static final double INTAKE_DEADBAND = 0.05;
   } 
 
   public final static class DriverConstants {

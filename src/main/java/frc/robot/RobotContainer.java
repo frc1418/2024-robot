@@ -106,9 +106,11 @@ public class RobotContainer {
       backRightWheel, backLeftWheel, frontRightWheel, frontLeftWheel,
       DrivetrainConstants.SWERVE_KINEMATICS, odometry);
 
-    private final AlignByAprilTag alignAtAprilTag = new AlignByAprilTag(swerveDrive, limelight, odometry, 0, -1);
-    private final AlignByAprilTag alignLeftOfAprilTag = new AlignByAprilTag(swerveDrive, limelight, odometry, -0.5, -1);
-    private final AlignByAprilTag alignRightOfAprilTag = new AlignByAprilTag(swerveDrive, limelight, odometry, 0.5, -1);
+    private final AlignByAprilTag alignAtAmpCenter = new AlignByAprilTag(swerveDrive, limelight, odometry, 0, -0.63, 0.9, 0.07, 0.1, 90, 0);
+    private final AlignByAprilTag alignAtSpeakerCenter = new AlignByAprilTag(swerveDrive, limelight, odometry, 0.04, -1.4, 1, 0.04, 0.1, 0, 0);
+    //TODO: Find position for align right of speaker button
+    // private final AlignByAprilTag alignLeftOfSpeaker = new AlignByAprilTag(swerveDrive, limelight, odometry,  ?, -0.73, 1, 0.04, 0.1, -60, -60);
+    private final AlignByAprilTag alignRightOfSpeaker = new AlignByAprilTag(swerveDrive, limelight, odometry,  1.15, -0.73, 1, 0.04, 0.1, 60, 60);
 
     SlewRateLimiter limitX = new SlewRateLimiter(6);
     SlewRateLimiter limitY = new SlewRateLimiter(6);
@@ -127,7 +129,7 @@ public class RobotContainer {
   }
   
   public void configureObjects() {
-    resetMotors();
+    // resetMotors();
 
     //Configuring the swerve modules
     frontLeftWheel.getTurningEncoder().setInverted(true);
@@ -144,6 +146,8 @@ public class RobotContainer {
     leftShooter.setInverted(true);
     feedMotor.setInverted(true);
 
+    pivotMotor.setIdleMode(IdleMode.kBrake);
+
     coastDrive();
   }
 
@@ -153,23 +157,26 @@ public class RobotContainer {
     Joystick rightJoystick = new Joystick(1);
     // Joystick altJoystick = new Joystick(2);
 
-    JoystickButton turtleButton = new JoystickButton(rightJoystick, 3);
-    JoystickButton fieldCentricButton = new JoystickButton(rightJoystick, 2);
-    JoystickButton resetFieldCentricButton = new JoystickButton(leftJoystick, 2);
+    JoystickButton resetFieldCentricButton = new JoystickButton(rightJoystick, 14);
+    JoystickButton fieldCentricButton = new JoystickButton(rightJoystick, 15);
+    JoystickButton turtleButton = new JoystickButton(rightJoystick, 16);
 
+    JoystickButton feedOutButton = new JoystickButton(leftJoystick, 3);
     JoystickButton feedInButton = new JoystickButton(leftJoystick, 4);
-    JoystickButton feedOutButton = new JoystickButton(rightJoystick, 4);
 
     JoystickButton shooterButton = new JoystickButton(rightJoystick, 1);
 
-    JoystickButton pivotButton = new JoystickButton(leftJoystick, 3);
-    JoystickButton pivotUpBotton = new JoystickButton(leftJoystick, 5);
-    JoystickButton pivotDownBotton = new JoystickButton(leftJoystick, 6);
+    JoystickButton pivotButton = new JoystickButton(leftJoystick, 2);
+    JoystickButton pivotUpBotton = new JoystickButton(leftJoystick, 8);
+    JoystickButton pivotDownBotton = new JoystickButton(leftJoystick, 14);
 
 
     JoystickButton intakeButton = new JoystickButton(leftJoystick, 1);
 
-    JoystickButton alignAtAprilTagButton = new JoystickButton(rightJoystick, 8);
+    JoystickButton alignAtAmpCenterButton = new JoystickButton(rightJoystick, 2);
+    JoystickButton alignAtSpeakerCenterButton = new JoystickButton(rightJoystick, 3);
+    JoystickButton alignRightOfSpeakerButton = new JoystickButton(rightJoystick, 4);
+
 
 
     //Constructs commands and binds them for swerve drive
@@ -202,7 +209,7 @@ public class RobotContainer {
     }, shooter));
 
     shooterButton.whileTrue(new RunCommand(() -> {
-      shooter.shoot(limitS.calculate(0.4));//(applyDeadband(-leftJoystick.getThrottle(), ShooterConstants.SHOOTER_DEADBAND))));
+      shooter.shoot(limitS.calculate(applyDeadband(-rightJoystick.getThrottle(), ShooterConstants.SHOOTER_DEADBAND)));
     }, shooter));
 
     //Constructs commands and binds them for feed
@@ -227,7 +234,7 @@ public class RobotContainer {
 
     pivotButton.whileTrue(new RunCommand(() -> {
       pivotSubsystem.setPivotPosition(pivotSubsystem.getTargetPos());
-      pivotSubsystem.setLockPos(MathUtil.clamp(pivotSubsystem.getTargetPos(),0.75, 0.992));
+      pivotSubsystem.setLockPos(MathUtil.clamp(pivotSubsystem.getTargetPos(),0.79, 0.992));
     }, pivotSubsystem));
 
     pivotUpBotton.onTrue(new InstantCommand(() -> {
@@ -246,11 +253,13 @@ public class RobotContainer {
 
     intakeButton.whileTrue(new RunCommand(() -> {
       intakeSubsystem.intake(limitI.calculate((applyDeadband(-leftJoystick.getThrottle()/2, IntakeConstants.INTAKE_DEADBAND))));
-      pivotSubsystem.setLockPos(0.85);
+      // pivotSubsystem.setLockPos(0.85);
     }, intakeSubsystem));
 
     //Constructs commands and binds them for AprilTags
-    alignAtAprilTagButton.whileTrue(alignAtAprilTag);
+    alignAtAmpCenterButton.whileTrue(alignAtAmpCenter);
+    alignAtSpeakerCenterButton.whileTrue(alignAtSpeakerCenter);
+    alignRightOfSpeakerButton.whileTrue(alignRightOfSpeaker);
 
   }
 

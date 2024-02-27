@@ -24,23 +24,28 @@ public class AlignByAprilTag extends Command {
     double targetX;
     double targetY;
 
+    double targetRot;
+    double approachAngle;
+
     boolean startedFieldCentric;
 
     PIDController speedController;
 
-    SlewRateLimiter limitX = new SlewRateLimiter(0.5);
-    SlewRateLimiter limitY = new SlewRateLimiter(0.5);
+    SlewRateLimiter limitX = new SlewRateLimiter(2);
+    SlewRateLimiter limitY = new SlewRateLimiter(2);
 
-    public AlignByAprilTag(SwerveDriveSubsystem swerveDrive, LimelightSubsystem limelight, Odometry odometry, double targetX, double targetY) {
+    public AlignByAprilTag(SwerveDriveSubsystem swerveDrive, LimelightSubsystem limelight, Odometry odometry, double targetX, double targetY, double P, double I, double D, double targetRot, double approachAngle) {
 
         this.swerveDrive = swerveDrive;
         this.limelight = limelight;
         this.odometry = odometry;
         this.targetX = targetX;
         this.targetY = targetY;
+        this.targetRot = targetRot;
+        this.approachAngle = approachAngle;
        
-        speedController = new PIDController(1, 0, 0);
-        speedRotController = new PIDController(0.05, 0.001, 0);
+        speedController = new PIDController(P, I, D);
+        speedRotController = new PIDController(0.05, 0.002, 0);
         speedRotController.enableContinuousInput(-180, 180);
 
         addRequirements(swerveDrive, limelight);
@@ -62,16 +67,14 @@ public class AlignByAprilTag extends Command {
     public void execute() {
 
         Pose2d robotPose = new Pose2d(
-            new Translation2d(odometry.getPose().getY(), odometry.getPose().getX()),
+            new Translation2d(odometry.getPose().getX(), -odometry.getPose().getY()),
             odometry.getPose().getRotation());
-
-        //TODO: Check x and y of robot pose to make sure odometry not switched here and in limelight
 
         System.out.println("Robot X: " + robotPose.getX());
         System.out.println("Robot Y: " + robotPose.getY());
 
         Pose2d targetPose;
-        targetPose = new Pose2d(new Translation2d(targetX, -targetY), Rotation2d.fromDegrees(limelight.getTargetRotation().angle()));
+        targetPose = new Pose2d(new Translation2d(targetX, -targetY), Rotation2d.fromDegrees(targetRot));
         
         double x;
         double y;
@@ -83,17 +86,12 @@ public class AlignByAprilTag extends Command {
         double distance = Math.hypot(dx, dy);
         double angleToTarget = Math.atan2(dx, dy) * 180 / Math.PI;
 
-        System.out.println("dx: " + dx);
-
-        System.out.println("dy: " + dy);
-
-        System.out.println("rotation: " + odometry.getPose().getRotation().getDegrees());
-
-        rot = speedRotController.calculate(odometry.getPose().getRotation().getDegrees(), limelight.getTargetRotation().angle());
+        rot = speedRotController.calculate(odometry.getPose().getRotation().getDegrees(), targetRot);
 
         double speed = -speedController.calculate(distance, 0);
 
-        Rotation2d direction = Rotation2d.fromDegrees(180 + angleToTarget - odometry.getHeading() + limelight.getTargetRotation().angle());
+        Rotation2d direction = Rotation2d.fromDegrees(180 + angleToTarget - odometry.getHeading() + targetRot - approachAngle);
+        System.out.println(direction.getDegrees());
 
         x = direction.getCos() * speed;
         y = direction.getSin() * speed;
