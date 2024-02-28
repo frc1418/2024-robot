@@ -37,9 +37,9 @@ public class PivotSubsystem extends SubsystemBase {
     private final NetworkTableEntry ntI = table.getEntry("I Volts");
     private final NetworkTableEntry ntD = table.getEntry("D Volts");
 
-    private double PVal = 0; //28
-    private double IVal = 0;//27.5; 
-    private double DVal = 0; //3;
+    private double PVal = 23;
+    private double IVal = 25;
+    private double DVal = 3;
 
     private PIDController pivotPidController = new PIDController(PVal, IVal, DVal);
     private PIDController P = new PIDController(PVal, 0, 0);
@@ -53,7 +53,7 @@ public class PivotSubsystem extends SubsystemBase {
     private double targetPos;
     private double lockPos;
 
-    private SlewRateLimiter limitP = new SlewRateLimiter(0.5);
+    private SlewRateLimiter limitP = new SlewRateLimiter(5);
 
     public PivotSubsystem(CANSparkMax pivotMotor) {
         this.pivotMotor = pivotMotor;
@@ -62,8 +62,8 @@ public class PivotSubsystem extends SubsystemBase {
 
         pivotPidController.enableContinuousInput(0, 1);
 
-        targetPos = MathUtil.clamp(pivotEncoder.getPosition(), 0.79, 0.992);
-        lockPos = MathUtil.clamp(pivotEncoder.getPosition(), 0.79, 0.992);
+        targetPos = MathUtil.clamp(pivotEncoder.getPosition(), 0.793, 0.992);
+        lockPos = MathUtil.clamp(pivotEncoder.getPosition(), 0.793, 0.992);
     }
 
     public void setPivotMotor(double speed) {
@@ -71,7 +71,7 @@ public class PivotSubsystem extends SubsystemBase {
     }
 
     public void setPivotPosition(double pos) {
-        pivotMotor.setVoltage(limitP.calculate(armFeedforward.calculate(pos*2*Math.PI, 0) - pivotPidController.calculate(pivotEncoder.getPosition(), MathUtil.clamp(pos, 0.79, 0.992))));
+        pivotMotor.setVoltage(limitP.calculate(armFeedforward.calculate(pos*2*Math.PI, 0) - pivotPidController.calculate(pivotEncoder.getPosition(), MathUtil.clamp(pos, 0.793, 0.992))));
         ntFF.setDouble(armFeedforward.calculate(pos*2*Math.PI, 0));
         ntP.setDouble(-P.calculate(pivotEncoder.getPosition(), pos));
         ntI.setDouble(-I.calculate(pivotEncoder.getPosition(), pos));

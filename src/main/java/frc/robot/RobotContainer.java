@@ -234,7 +234,7 @@ public class RobotContainer {
 
     pivotButton.whileTrue(new RunCommand(() -> {
       pivotSubsystem.setPivotPosition(pivotSubsystem.getTargetPos());
-      pivotSubsystem.setLockPos(MathUtil.clamp(pivotSubsystem.getTargetPos(),0.79, 0.992));
+      pivotSubsystem.setLockPos(MathUtil.clamp(pivotSubsystem.getTargetPos(),0.793, 0.992));
     }, pivotSubsystem));
 
     pivotUpBotton.onTrue(new InstantCommand(() -> {
