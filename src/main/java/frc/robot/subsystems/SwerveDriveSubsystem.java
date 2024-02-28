@@ -1,5 +1,10 @@
 package frc.robot.subsystems;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -9,6 +14,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -43,6 +49,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     public boolean fieldCentric = true;
 
     private double lockedRot = 0;
+    private ChassisSpeeds speeds;
 
     public SwerveDriveSubsystem(MaxWheelModule backRight, MaxWheelModule backLeft, MaxWheelModule frontRight, MaxWheelModule frontLeft,
             SwerveDriveKinematics kinematics, Odometry odometry) {
@@ -56,6 +63,32 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         this.odometry = odometry;
 
         this.ntIsFieldCentric.setBoolean(fieldCentric);
+
+        AutoBuilder.configureHolonomic(
+            this.odometry::getPose, // Robot pose supplier
+            this.odometry::reset, // Method to reset odometry (will be called if your auto has a starting pose)
+            this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            this::drive, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+            new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+                    new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
+                    4.5, // Max module speed, in m/s
+                    0.969867, // Drive base radius in meters. Distance from robot center to furthest module.
+                    new ReplanningConfig() // Default path replanning config. See the API for the options here
+            ),
+            () -> {
+              // Boolean supplier that controls when the path will be mirrored for the red alliance
+              // This will flip the path being followed to the red side of the field.
+              // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+    
+              var alliance = DriverStation.getAlliance();
+              if (alliance.isPresent()) {
+                return alliance.get() == DriverStation.Alliance.Red;
+              }
+              return false;
+            },
+            this // Reference to this subsystem to set requirements
+        );
     }
 
     //Initial drive method, maintains rotation and passes into ChassisSpeeds
@@ -71,7 +104,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
             rot = DriverConstants.ROTATION_SPEED_CAP*Math.signum(rot);
         }
 
-        ChassisSpeeds speeds = new ChassisSpeeds(x, y, rot);
+        speeds = new ChassisSpeeds(x, y, rot);
 
         if (fieldCentric) {
             speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, odometry.getRotation2d());
@@ -155,5 +188,10 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
     public void setFieldCentric(boolean fieldCentric) {
         this.fieldCentric = fieldCentric;
+    }
+
+    public ChassisSpeeds getChassisSpeeds()
+    {
+        return this.speeds;
     }
 }
