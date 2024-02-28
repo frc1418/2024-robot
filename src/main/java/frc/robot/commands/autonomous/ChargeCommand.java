@@ -1,6 +1,5 @@
 package frc.robot.commands.autonomous;
 
-import frc.robot.commands.FollowTrajectoryCommand;
 import frc.robot.common.Odometry;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 import java.util.HashMap;
