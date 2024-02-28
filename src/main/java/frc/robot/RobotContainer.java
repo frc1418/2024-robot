@@ -253,9 +253,11 @@ public class RobotContainer {
 
     intakeButton.whileTrue(new RunCommand(() -> {
       intakeSubsystem.intake(limitI.calculate((applyDeadband(-leftJoystick.getThrottle()/2, IntakeConstants.INTAKE_DEADBAND))));
+      
       // pivotSubsystem.setLockPos(0.85);
     }, intakeSubsystem));
 
+    
     //Constructs commands and binds them for AprilTags
     alignAtAmpCenterButton.whileTrue(alignAtAmpCenter);
     alignAtSpeakerCenterButton.whileTrue(alignAtSpeakerCenter);
