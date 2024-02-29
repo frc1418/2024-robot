@@ -31,8 +31,11 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -133,6 +136,8 @@ public class RobotContainer {
     //Limits intake motor speed
     SlewRateLimiter limitS = new SlewRateLimiter(2);
 
+    private final SendableChooser<Command> autoChooser;
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer(RobotBase robot) {
     this.robot  = robot;
@@ -140,6 +145,14 @@ public class RobotContainer {
     configureBindings();
     //Configure the motors and sensors
     configureObjects();
+
+    // Build an auto chooser. This will use Commands.none() as the default option.
+    autoChooser = AutoBuilder.buildAutoChooser();
+
+    // Another option that allows you to specify the default auto by its name
+    // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
+
+    SmartDashboard.putData("Auto Chooser", autoChooser);
   }
   
   public void configureObjects() {
@@ -169,23 +182,30 @@ public class RobotContainer {
     //Constructs input devices
     Joystick leftJoystick = new Joystick(0);
     Joystick rightJoystick = new Joystick(1);
-    // Joystick altJoystick = new Joystick(2);
+    Joystick altJoystick = new Joystick(2);
 
     JoystickButton resetFieldCentricButton = new JoystickButton(rightJoystick, 14);
     JoystickButton fieldCentricButton = new JoystickButton(rightJoystick, 15);
     JoystickButton turtleButton = new JoystickButton(rightJoystick, 16);
 
     JoystickButton feedOutButton = new JoystickButton(leftJoystick, 3);
+    JoystickButton altFeedOutButton = new JoystickButton(altJoystick, 9);
     JoystickButton feedInButton = new JoystickButton(leftJoystick, 4);
+    JoystickButton altFeedInButton = new JoystickButton(altJoystick, 10);
 
     JoystickButton shooterButton = new JoystickButton(rightJoystick, 1);
+    JoystickButton altShooterButton = new JoystickButton(altJoystick, 6);
 
     JoystickButton pivotButton = new JoystickButton(leftJoystick, 2);
+    JoystickButton altPivotButton = new JoystickButton(altJoystick, 2);
     JoystickButton pivotUpBotton = new JoystickButton(leftJoystick, 8);
+    JoystickButton altPivotUpButton = new JoystickButton(altJoystick, 4);
     JoystickButton pivotDownBotton = new JoystickButton(leftJoystick, 14);
+    JoystickButton altPivotDownButton = new JoystickButton(altJoystick, 1);
 
 
     JoystickButton intakeButton = new JoystickButton(leftJoystick, 1);
+    JoystickButton altIntakeButton = new JoystickButton(altJoystick, 5);
 
     JoystickButton alignAtAmpCenterButton = new JoystickButton(rightJoystick, 2);
     JoystickButton alignAtSpeakerCenterButton = new JoystickButton(rightJoystick, 3);
@@ -276,7 +296,6 @@ public class RobotContainer {
     alignAtAmpCenterButton.whileTrue(alignAtAmpCenter);
     alignAtSpeakerCenterButton.whileTrue(alignAtSpeakerCenter);
     alignRightOfSpeakerButton.whileTrue(alignRightOfSpeaker);
-
   }
 
   public double applyDeadband(double input, double deadband) {
@@ -322,7 +341,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
-    return Autos.exampleAuto(m_exampleSubsystem);
-  } 
+    return autoChooser.getSelected();
+  }
 }
