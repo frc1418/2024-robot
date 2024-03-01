@@ -19,6 +19,7 @@ import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.subsystems.MaxWheelModule;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.SmartDashboardUpdater;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
@@ -45,7 +46,11 @@ import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import com.pathplanner.lib.util.ReplanningConfig;
@@ -53,6 +58,8 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 
 public class RobotContainer {
   // The robot's subsystems and commands are defined here
+  private final SendableChooser<Command> autoChooser;
+
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
     private final RobotBase robot;
@@ -140,6 +147,10 @@ public class RobotContainer {
     configureBindings();
     //Configure the motors and sensors
     configureObjects();
+
+     // Build an auto chooser. This will use Commands.none() as the default option.
+     autoChooser = AutoBuilder.buildAutoChooser();
+     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
   
   public void configureObjects() {
@@ -191,6 +202,8 @@ public class RobotContainer {
     JoystickButton alignAtSpeakerCenterButton = new JoystickButton(rightJoystick, 3);
     JoystickButton alignRightOfSpeakerButton = new JoystickButton(rightJoystick, 4);
 
+    //Constructs commands for auto?????
+    // NamedCommands.registerCommand("simpleBack", this.getAutonomousCommand());
 
 
     //Constructs commands and binds them for swerve drive
@@ -321,8 +334,11 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
-    return Autos.exampleAuto(m_exampleSubsystem);
-  } 
+  
+   public Command getAutoCommand () {
+    SmartDashboardUpdater smartDashboardUpdater = new SmartDashboardUpdater();
+    String autoSelected = smartDashboardUpdater.getAutoSelected();
+
+    return command; // edit to include command
+    }
 }
