@@ -10,6 +10,8 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.AlignByAprilTag;
 import frc.robot.commands.Autos;
+import frc.robot.commands.ShootByAprilTag;
+import frc.robot.commands.SpeakerMiddle;
 import frc.robot.common.Odometry;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.FeedSubsystem;
@@ -25,6 +27,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -124,10 +127,12 @@ public class RobotContainer {
       DrivetrainConstants.SWERVE_KINEMATICS, odometry);
 
     private final AlignByAprilTag alignAtAmpCenter = new AlignByAprilTag(swerveDrive, limelight, odometry, 0, -0.63, 0.9, 0.07, 0.1, 90, 0);
-    private final AlignByAprilTag alignAtSpeakerCenter = new AlignByAprilTag(swerveDrive, limelight, odometry, 0.04, -1.4, 1, 0.04, 0.1, 0, 0);
+    // private final AlignByAprilTag alignAtSpeakerCenter = new AlignByAprilTag(swerveDrive, limelight, odometry, 0.04, -1.4, 1, 0.04, 0.1, 0, 0);
     //TODO: Find position for align right of speaker button
     // private final AlignByAprilTag alignLeftOfSpeaker = new AlignByAprilTag(swerveDrive, limelight, odometry,  ?, -0.73, 1, 0.04, 0.1, -60, -60);
-    private final AlignByAprilTag alignRightOfSpeaker = new AlignByAprilTag(swerveDrive, limelight, odometry,  1.15, -0.73, 1, 0.04, 0.1, 60, 60);
+    // private final AlignByAprilTag alignRightOfSpeaker = new AlignByAprilTag(swerveDrive, limelight, odometry,  1.15, -0.73, 1, 0.04, 0.1, 60, 60);
+    private final SpeakerMiddle alignAtSpeakerCenter = new SpeakerMiddle(pivotSubsystem, limelight, swerveDrive, odometry);
+    private final ShootByAprilTag shootByAprilTag = new ShootByAprilTag(swerveDrive, limelight, odometry);
 
     SlewRateLimiter limitX = new SlewRateLimiter(6);
     SlewRateLimiter limitY = new SlewRateLimiter(6);
@@ -157,6 +162,8 @@ public class RobotContainer {
   
   public void configureObjects() {
     // resetMotors();
+
+    CameraServer.startAutomaticCapture();
 
     //Configuring the swerve modules
     frontLeftWheel.getTurningEncoder().setInverted(true);
@@ -203,14 +210,12 @@ public class RobotContainer {
     JoystickButton pivotDownBotton = new JoystickButton(leftJoystick, 14);
     JoystickButton altPivotDownButton = new JoystickButton(altJoystick, 1);
 
-
     JoystickButton intakeButton = new JoystickButton(leftJoystick, 1);
     JoystickButton altIntakeButton = new JoystickButton(altJoystick, 5);
 
     JoystickButton alignAtAmpCenterButton = new JoystickButton(rightJoystick, 2);
     JoystickButton alignAtSpeakerCenterButton = new JoystickButton(rightJoystick, 3);
-    JoystickButton alignRightOfSpeakerButton = new JoystickButton(rightJoystick, 4);
-
+    JoystickButton ShootByAprilTagButton = new JoystickButton(rightJoystick, 4);
 
 
     //Constructs commands and binds them for swerve drive
@@ -295,7 +300,7 @@ public class RobotContainer {
     //Constructs commands and binds them for AprilTags
     alignAtAmpCenterButton.whileTrue(alignAtAmpCenter);
     alignAtSpeakerCenterButton.whileTrue(alignAtSpeakerCenter);
-    alignRightOfSpeakerButton.whileTrue(alignRightOfSpeaker);
+    ShootByAprilTagButton.whileTrue(shootByAprilTag);
   }
 
   public double applyDeadband(double input, double deadband) {
