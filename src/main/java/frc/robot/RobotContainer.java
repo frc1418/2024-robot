@@ -9,9 +9,7 @@ import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.AlignByAprilTag;
-import frc.robot.commands.Autos;
-import frc.robot.commands.ShootByAprilTag;
-import frc.robot.commands.SpeakerMiddle;
+import frc.robot.commands.autonomous.ChargeCommand;
 import frc.robot.common.Odometry;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.FeedSubsystem;
@@ -21,7 +19,6 @@ import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.subsystems.MaxWheelModule;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
-
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -32,33 +29,24 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
-import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.path.PathPlannerTrajectory;
-import com.pathplanner.lib.util.PIDConstants;
-import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.auto.AutoBuilder;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import com.pathplanner.lib.util.ReplanningConfig;
-import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.auto.NamedCommands;
+
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class RobotContainer {
   // The robot's subsystems and commands are defined here
+  // private final SendableChooser<Command> autoChooser;
+
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
     private final RobotBase robot;
@@ -127,12 +115,11 @@ public class RobotContainer {
       DrivetrainConstants.SWERVE_KINEMATICS, odometry);
 
     private final AlignByAprilTag alignAtAmpCenter = new AlignByAprilTag(swerveDrive, limelight, odometry, 0, -0.63, 0.9, 0.07, 0.1, 90, 0);
-    // private final AlignByAprilTag alignAtSpeakerCenter = new AlignByAprilTag(swerveDrive, limelight, odometry, 0.04, -1.4, 1, 0.04, 0.1, 0, 0);
-    //TODO: Find position for align right of speaker button
-    // private final AlignByAprilTag alignLeftOfSpeaker = new AlignByAprilTag(swerveDrive, limelight, odometry,  ?, -0.73, 1, 0.04, 0.1, -60, -60);
-    // private final AlignByAprilTag alignRightOfSpeaker = new AlignByAprilTag(swerveDrive, limelight, odometry,  1.15, -0.73, 1, 0.04, 0.1, 60, 60);
-    private final SpeakerMiddle alignAtSpeakerCenter = new SpeakerMiddle(pivotSubsystem, limelight, swerveDrive, odometry);
-    private final ShootByAprilTag shootByAprilTag = new ShootByAprilTag(swerveDrive, limelight, odometry);
+    private final AlignByAprilTag alignAtSpeakerCenter = new AlignByAprilTag(swerveDrive, limelight, odometry, 0.04, -1.4, 1, 0.04, 0.1, 0, 0);
+    private final AlignByAprilTag alignRightOfSpeaker = new AlignByAprilTag(swerveDrive, limelight, odometry,  1.08, -0.96, 1, 0.04, 0.1, 44, 44);
+    private final AlignByAprilTag alignLeftOfSpeaker = new AlignByAprilTag(swerveDrive, limelight, odometry,  -1.08, -0.96, 1, 0.04, 0.1, -44, -4);
+
+    private final ChargeCommand chargeCommand;
 
     SlewRateLimiter limitX = new SlewRateLimiter(6);
     SlewRateLimiter limitY = new SlewRateLimiter(6);
@@ -141,29 +128,31 @@ public class RobotContainer {
     //Limits intake motor speed
     SlewRateLimiter limitS = new SlewRateLimiter(2);
 
-    private final SendableChooser<Command> autoChooser;
-
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer(RobotBase robot) {
     this.robot  = robot;
+
+    CameraServer.startAutomaticCapture();
+
+    NamedCommands.registerCommand("toggleFieldCentric", swerveDrive.toggleFieldCentric());
+
     // Configure the trigger bindings
     configureBindings();
     //Configure the motors and sensors
     configureObjects();
 
-    // Build an auto chooser. This will use Commands.none() as the default option.
-    autoChooser = AutoBuilder.buildAutoChooser();
+    System.out.println("CREATING CHARGE COMMAND");
+    chargeCommand = new ChargeCommand(swerveDrive, feedSubsystem);
 
-    // Another option that allows you to specify the default auto by its name
-    // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
-
-    SmartDashboard.putData("Auto Chooser", autoChooser);
+     // Build an auto chooser. This will use Commands.none() as the default option.
+    //  autoChooser = AutoBuilder.buildAutoChooser();
+    //  autoChooser.setDefaultOption("Default Path", null);
+    //  autoChooser.addOption("Charge Command", chargeCommand);
+    //  SmartDashboard.putData("Auto Chooser", autoChooser);
   }
   
   public void configureObjects() {
     // resetMotors();
-
-    CameraServer.startAutomaticCapture();
 
     //Configuring the swerve modules
     frontLeftWheel.getTurningEncoder().setInverted(true);
@@ -196,27 +185,30 @@ public class RobotContainer {
     JoystickButton turtleButton = new JoystickButton(rightJoystick, 16);
 
     JoystickButton feedOutButton = new JoystickButton(leftJoystick, 3);
-    JoystickButton altFeedOutButton = new JoystickButton(altJoystick, 9);
+    JoystickButton altFeedOutButton = new JoystickButton(altJoystick, 2);
     JoystickButton feedInButton = new JoystickButton(leftJoystick, 4);
-    JoystickButton altFeedInButton = new JoystickButton(altJoystick, 10);
+    JoystickButton altFeedInButton = new JoystickButton(altJoystick, 1);
 
     JoystickButton shooterButton = new JoystickButton(rightJoystick, 1);
     JoystickButton altShooterButton = new JoystickButton(altJoystick, 6);
 
     JoystickButton pivotButton = new JoystickButton(leftJoystick, 2);
-    JoystickButton altPivotButton = new JoystickButton(altJoystick, 2);
-    JoystickButton pivotUpBotton = new JoystickButton(leftJoystick, 8);
+    // JoystickButton altPivotButton = new JoystickButton(altJoystick, 2);
+    JoystickButton pivotUpButton = new JoystickButton(leftJoystick, 8);
     JoystickButton altPivotUpButton = new JoystickButton(altJoystick, 4);
-    JoystickButton pivotDownBotton = new JoystickButton(leftJoystick, 14);
-    JoystickButton altPivotDownButton = new JoystickButton(altJoystick, 1);
+    JoystickButton pivotDownButton = new JoystickButton(leftJoystick, 14);
+    JoystickButton altPivotDownButton = new JoystickButton(altJoystick, 3);
+    JoystickButton allDownButton = new JoystickButton(rightJoystick, 8);
+    JoystickButton altAllDownButton = new JoystickButton(altJoystick, 10);
+    // JoystickButton allDownButton = new JoystickButton(altJoystick, 0)
 
     JoystickButton intakeButton = new JoystickButton(leftJoystick, 1);
     JoystickButton altIntakeButton = new JoystickButton(altJoystick, 5);
-
+  
     JoystickButton alignAtAmpCenterButton = new JoystickButton(rightJoystick, 2);
-    JoystickButton alignAtSpeakerCenterButton = new JoystickButton(rightJoystick, 3);
-    JoystickButton ShootByAprilTagButton = new JoystickButton(rightJoystick, 4);
-
+    // JoystickButton alignAtSpeakerCenterButton = new JoystickButton(rightJoystick, 3);
+    JoystickButton alignRightOfSpeakerButton = new JoystickButton(rightJoystick, 3);
+    JoystickButton alignLeftOfSpeakerButton = new JoystickButton(rightJoystick, 4);
 
     //Constructs commands and binds them for swerve drive
     swerveDrive.setDefaultCommand(new RunCommand(() -> {
@@ -247,8 +239,12 @@ public class RobotContainer {
       shooter.shoot(limitS.calculate(0));
     }, shooter));
 
-    shooterButton.whileTrue(new RunCommand(() -> {
-      shooter.shoot(limitS.calculate(applyDeadband(-rightJoystick.getThrottle(), ShooterConstants.SHOOTER_DEADBAND)));
+    // shooterButton.whileTrue(new RunCommand(() -> {
+    //   shooter.shoot(limitS.calculate(applyDeadband(-rightJoystick.getThrottle(), ShooterConstants.SHOOTER_DEADBAND)));
+    // }, shooter));
+
+    altShooterButton.whileTrue(new RunCommand(() -> {
+      shooter.shoot(limitS.calculate(applyDeadband(-rightJoystick.getThrottle(), ShooterConstants.SHOOTER_DEADBAND)));  
     }, shooter));
 
     //Constructs commands and binds them for feed
@@ -257,12 +253,20 @@ public class RobotContainer {
       feedSubsystem.feed(0);
     }, feedSubsystem));
 
-    feedInButton.whileTrue(new RunCommand(() -> {
-      feedSubsystem.feed(0.15);
+    // feedInButton.whileTrue(new RunCommand(() -> {
+    //   feedSubsystem.feed(0.25);
+    // }, feedSubsystem));
+
+    altFeedInButton.whileTrue(new RunCommand(() -> {
+      feedSubsystem.feed(0.25);
     }, feedSubsystem));
 
-    feedOutButton.whileTrue(new RunCommand(() -> {
-      feedSubsystem.feed(-0.15);
+    // feedOutButton.whileTrue(new RunCommand(() -> {
+    //   feedSubsystem.feed(-0.1);
+    // }, feedSubsystem));
+
+    altFeedOutButton.whileTrue(new RunCommand(() -> {
+      feedSubsystem.feed(-0.1);
     }, feedSubsystem));
 
     //Constructs commands and binds them for pivot
@@ -271,17 +275,38 @@ public class RobotContainer {
       pivotSubsystem.setPivotPosition(pivotSubsystem.getLockPos());
     }, pivotSubsystem));
 
-    pivotButton.whileTrue(new RunCommand(() -> {
-      pivotSubsystem.setPivotPosition(pivotSubsystem.getTargetPos());
-      pivotSubsystem.setLockPos(MathUtil.clamp(pivotSubsystem.getTargetPos(),0.793, 0.992));
-    }, pivotSubsystem));
+    // pivotButton.whileTrue(new RunCommand(() -> {
+    //   pivotSubsystem.setPivotPosition(pivotSubsystem.getTargetPos());
+    //   pivotSubsystem.setLockPos(MathUtil.clamp(pivotSubsystem.getTargetPos(),0.82, 0.972));
+    // }, pivotSubsystem));
 
-    pivotUpBotton.onTrue(new InstantCommand(() -> {
-      pivotSubsystem.changeTargetPos(-0.01);
+    // altPivotButton.whileTrue(new RunCommand(() -> {
+    //   pivotSubsystem.setPivotPosition(pivotSubsystem.getTargetPos());
+    //   pivotSubsystem.setLockPos(MathUtil.clamp(pivotSubsystem.getTargetPos(),0.82, 0.972));
+    // }, pivotSubsystem));
+
+    // allDownButton.onTrue(new InstantCommand(() -> {
+    //   pivotSubsystem.setPivotPosition(0.972);
+    // }));
+
+    altAllDownButton.onTrue(new InstantCommand(() -> {
+      pivotSubsystem.setLockPos(0.972);
     }));
 
-    pivotDownBotton.onTrue(new InstantCommand(() -> {
-      pivotSubsystem.changeTargetPos(0.01);
+    // pivotUpButton.onTrue(new InstantCommand(() -> {
+    //   pivotSubsystem.changeTargetPos(-0.01);
+    // }));
+
+    altPivotUpButton.onTrue(new InstantCommand(() -> {
+      pivotSubsystem.changeLockPos(-0.01);
+    }));
+
+    // pivotDownButton.onTrue(new InstantCommand(() -> {
+    //   pivotSubsystem.changeTargetPos(0.01);
+    // }));
+
+    altPivotDownButton.onTrue(new InstantCommand(() -> {
+      pivotSubsystem.changeLockPos(0.01);
     }));
 
     //Constructs commands and binds them for intake
@@ -290,17 +315,25 @@ public class RobotContainer {
       intakeSubsystem.intake(0);
     }, intakeSubsystem));
 
-    intakeButton.whileTrue(new RunCommand(() -> {
+    // intakeButton.whileTrue(new RunCommand(() -> {
+    //   intakeSubsystem.intake(limitI.calculate((applyDeadband(-leftJoystick.getThrottle()/2, IntakeConstants.INTAKE_DEADBAND))));
+    //   feedSubsystem.feed(0.25);
+    //   pivotSubsystem.setLockPos(0.82);
+    // }, intakeSubsystem, feedSubsystem));
+
+    altIntakeButton.whileTrue(new RunCommand(() -> {
       intakeSubsystem.intake(limitI.calculate((applyDeadband(-leftJoystick.getThrottle()/2, IntakeConstants.INTAKE_DEADBAND))));
-      
-      // pivotSubsystem.setLockPos(0.85);
-    }, intakeSubsystem));
+      feedSubsystem.feed(0.25);
+      pivotSubsystem.setLockPos(0.82);
+    }, intakeSubsystem, feedSubsystem));
 
     
     //Constructs commands and binds them for AprilTags
     alignAtAmpCenterButton.whileTrue(alignAtAmpCenter);
-    alignAtSpeakerCenterButton.whileTrue(alignAtSpeakerCenter);
-    ShootByAprilTagButton.whileTrue(shootByAprilTag);
+    // alignAtSpeakerCenterButton.whileTrue(alignAtSpeakerCenter);
+    alignRightOfSpeakerButton.whileTrue(alignRightOfSpeaker);
+    alignLeftOfSpeakerButton.whileTrue(alignLeftOfSpeaker);
+
   }
 
   public double applyDeadband(double input, double deadband) {
@@ -345,7 +378,9 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
-  }
+  
+   public Command getAutonomousCommand () {
+      // return autoChooser.getSelected();
+      return chargeCommand;
+    }
 }

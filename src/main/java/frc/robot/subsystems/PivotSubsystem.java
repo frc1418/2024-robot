@@ -62,8 +62,8 @@ public class PivotSubsystem extends SubsystemBase {
 
         pivotPidController.enableContinuousInput(0, 1);
 
-        targetPos = MathUtil.clamp(pivotEncoder.getPosition(), 0.793, 0.992);
-        lockPos = MathUtil.clamp(pivotEncoder.getPosition(), 0.793, 0.992);
+        targetPos = MathUtil.clamp(pivotEncoder.getPosition(), 0.823, 0.972);
+        lockPos = MathUtil.clamp(pivotEncoder.getPosition(), 0.823, 0.972);
     }
 
     public void setPivotMotor(double speed) {
@@ -71,7 +71,7 @@ public class PivotSubsystem extends SubsystemBase {
     }
 
     public void setPivotPosition(double pos) {
-        pivotMotor.setVoltage(limitP.calculate(armFeedforward.calculate(pos*2*Math.PI, 0) - pivotPidController.calculate(pivotEncoder.getPosition(), MathUtil.clamp(pos, 0.793, 0.992))));
+        pivotMotor.setVoltage(limitP.calculate(armFeedforward.calculate(pos*2*Math.PI, 0) - pivotPidController.calculate(pivotEncoder.getPosition(), MathUtil.clamp(pos, 0.823, 0.972))));
         ntFF.setDouble(armFeedforward.calculate(pos*2*Math.PI, 0));
         ntP.setDouble(-P.calculate(pivotEncoder.getPosition(), pos));
         ntI.setDouble(-I.calculate(pivotEncoder.getPosition(), pos));
@@ -110,6 +110,10 @@ public class PivotSubsystem extends SubsystemBase {
     }
 
     public void changeTargetPos(double val) {
-        targetPos += val;
+        targetPos = MathUtil.clamp(targetPos + val, 0.823, 0.972);
+    }
+
+    public void changeLockPos(double val) {
+        lockPos = MathUtil.clamp(lockPos + val, 0.823, 0.972);
     }
 }

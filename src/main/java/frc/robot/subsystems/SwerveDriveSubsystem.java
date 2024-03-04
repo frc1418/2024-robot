@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
@@ -49,7 +51,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     public boolean fieldCentric = true;
 
     private double lockedRot = 0;
-    private ChassisSpeeds speeds;
+    private ChassisSpeeds speeds = new ChassisSpeeds(0, 0, 0);
 
     public SwerveDriveSubsystem(MaxWheelModule backRight, MaxWheelModule backLeft, MaxWheelModule frontRight, MaxWheelModule frontLeft,
             SwerveDriveKinematics kinematics, Odometry odometry) {
@@ -70,10 +72,11 @@ public class SwerveDriveSubsystem extends SubsystemBase {
             this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
             this::drive, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
             new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
-                    4.5, // Max module speed, in m/s
-                    0.969867, // Drive base radius in meters. Distance from robot center to furthest module.
+                    new PIDConstants(0.0, 0.0, 0.0), // Translation PID constants
+                    new PIDConstants(0.0, 0.0, 0.0), // Rotation PID constants
+                    0.5, // Max module speed, in m/s
+                    0.484933-0.058, // Drive base radius in meters. Distance from robot center to furthest module
+                    //Currently calculating from center of swerve module
                     new ReplanningConfig() // Default path replanning config. See the API for the options here
             ),
             () -> {
@@ -193,5 +196,9 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     public ChassisSpeeds getChassisSpeeds()
     {
         return this.speeds;
+    }
+
+    public Command followPath(PathPlannerPath path) {
+        return AutoBuilder.followPath(path);
     }
 }

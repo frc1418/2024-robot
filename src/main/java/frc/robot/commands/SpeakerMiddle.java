@@ -23,7 +23,7 @@ public class SpeakerMiddle extends SequentialCommandGroup {
                 .deadlineWith(
                     // new WaitUntilCommand(() -> limelight.getDistance() < 3)
                     //     .andThen(
-                new InstantCommand(() -> pivotSubsystem.setLockPos(0.823))
+                    new InstantCommand(() -> pivotSubsystem.setLockPos(0.823))
                         // )
                 )
         );
