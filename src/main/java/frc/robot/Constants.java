@@ -77,7 +77,7 @@ public final class Constants {
   }
 
   public final static class WheelConstants {
-    public final static double ROTATIONS_TO_METERS = 0.33/8.33;
+    public final static double ROTATIONS_TO_METERS = 0.33/8.33 * 1.17;
   }
 
       public enum LimelightDirections {

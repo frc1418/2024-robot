@@ -19,6 +19,7 @@ import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.subsystems.MaxWheelModule;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -34,6 +35,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
@@ -120,7 +122,7 @@ public class RobotContainer {
     private final AlignByAprilTag alignLeftOfSpeaker = new AlignByAprilTag(swerveDrive, limelight, odometry,  -1.08, -0.96, 1, 0.04, 0.1, -44, -4);
 
     private final ChargeCommand chargeCommand;
-
+    
     SlewRateLimiter limitX = new SlewRateLimiter(6);
     SlewRateLimiter limitY = new SlewRateLimiter(6);
     //Limits shooter motor speed
@@ -134,7 +136,10 @@ public class RobotContainer {
 
     CameraServer.startAutomaticCapture();
 
-    NamedCommands.registerCommand("toggleFieldCentric", swerveDrive.toggleFieldCentric());
+    NamedCommands.registerCommand("print", new PrintCommand("print!"));
+    NamedCommands.registerCommand("printRight2NoteRed", new PrintCommand("righ2notered path!"));
+    NamedCommands.registerCommand("printLeft2Note", new PrintCommand("left2note path!"));
+
 
     // Configure the trigger bindings
     configureBindings();

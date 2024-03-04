@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.HashMap;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathPlannerPath;
@@ -19,6 +21,8 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.common.Odometry;
@@ -86,6 +90,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     
               var alliance = DriverStation.getAlliance();
               if (alliance.isPresent()) {
+                System.out.println(alliance.get());
                 return alliance.get() == DriverStation.Alliance.Red;
               }
               return false;
@@ -108,6 +113,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         }
 
         speeds = new ChassisSpeeds(x, y, rot);
+        //TODO - check velocity percision
+        // speeds = new ChassisSpeeds(-0.5, 0, 0);
 
         if (fieldCentric) {
             speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, odometry.getRotation2d());
@@ -199,6 +206,9 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     }
 
     public Command followPath(PathPlannerPath path) {
-        return AutoBuilder.followPath(path);
+        return new SequentialCommandGroup(
+            new InstantCommand(() -> odometry.reset(path.getStartingDifferentialPose())), 
+            AutoBuilder.followPath(path));
+
     }
 }

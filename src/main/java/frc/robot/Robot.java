@@ -63,9 +63,9 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     System.out.println("STARTING AUTO");
-    // m_robotContainer.getOdometry().zeroHeading();
-    // m_robotContainer.getOdometry().reset(new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
-    // m_robotContainer.getSwerveDriveSubsystem().resetLockRot();
+    m_robotContainer.getOdometry().zeroHeading();
+    m_robotContainer.getOdometry().reset(new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
+    m_robotContainer.getSwerveDriveSubsystem().resetLockRot();
     System.out.println("GET AUTO");
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     System.out.println("AUTO GOT!");
@@ -89,6 +89,7 @@ public class Robot extends TimedRobot {
     // this line or comment it out.
     m_robotContainer.getOdometry().zeroHeading();
     m_robotContainer.getSwerveDriveSubsystem().resetLockRot();
+    m_robotContainer.getOdometry().reset(new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }

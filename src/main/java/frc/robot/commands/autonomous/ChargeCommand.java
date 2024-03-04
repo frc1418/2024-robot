@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 /** An example command that uses an example subsystem. */
 public class ChargeCommand extends SequentialCommandGroup {
 
-    private String TRAJECTORY_NAME = "SimpleBack";
+    private String TRAJECTORY_NAME = "Middle2Note";
     SwerveDriveSubsystem swerveDrive;
     FeedSubsystem feedSubsystem;
 
@@ -28,6 +28,7 @@ public class ChargeCommand extends SequentialCommandGroup {
       this.swerveDrive = swerveDrive;
       this.feedSubsystem = feedSubsystem;
 
+      
       addRequirements(swerveDrive, feedSubsystem);
 
       addCommands(
