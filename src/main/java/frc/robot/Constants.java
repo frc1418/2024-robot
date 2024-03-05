@@ -70,6 +70,11 @@ public final class Constants {
     public static final double INTAKE_DEADBAND = 0.1;
   } 
 
+  public static final class ClimbConstants{
+    public static final int LEFT_CLIMB_ID = 9;
+    public static final int RIGHT_CLIMB_ID = 11;
+  }
+
   public final static class DriverConstants {
     public final static double speedMultiplier = 3;
     public final static double angleMultiplier = 4;
@@ -79,4 +84,6 @@ public final class Constants {
   public final static class WheelConstants {
     public final static double ROTATIONS_TO_METERS = 0.33/8.33;
   }
+
+
 }
