@@ -88,11 +88,12 @@ public class SwerveDriveSubsystem extends SubsystemBase {
               // This will flip the path being followed to the red side of the field.
               // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
     
-              var alliance = DriverStation.getAlliance();
-              if (alliance.isPresent()) {
-                System.out.println(alliance.get());
-                return alliance.get() == DriverStation.Alliance.Red;
-              }
+            // alliance section: (true = blue, false = red)
+            //   var alliance = DriverStation.getAlliance();
+            //   if (alliance.isPresent()) {
+            //     System.out.println(alliance.get());
+            //     return alliance.get() == DriverStation.Alliance.Red;
+            //   }
               return false;
             },
             this // Reference to this subsystem to set requirements

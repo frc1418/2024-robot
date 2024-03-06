@@ -19,4 +19,8 @@ public class IntakeSubsystem extends SubsystemBase {
   public void intake(double speed) {
     intakeMotor.set(speed);
   }
+  
+  public double getSpeed() {
+    return intakeMotor.get();
+  }
 }

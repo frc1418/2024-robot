@@ -54,6 +54,11 @@ public final class Constants {
       BACK_RIGHT_LOC);
   }
 
+  public static final class ClimbConstants{
+    public static final int LEFT_CLIMB_ID = 9;
+    public static final int RIGHT_CLIMB_ID = 11;
+  }
+  
   public static final class ShooterConstants {
     public final static int LEFT_SHOOTER_ID = 10;
     public final static int RIGHT_SHOOTER_ID = 11;

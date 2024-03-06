@@ -19,6 +19,11 @@ import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.subsystems.MaxWheelModule;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.Constants.ClimbConstants;
+import frc.robot.subsystems.ClimberSubsystem;
+
+
+import java.util.concurrent.TimeUnit;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
@@ -106,6 +111,12 @@ public class RobotContainer {
     private CANSparkMax intakeMotor = new CANSparkMax(IntakeConstants.INTAKE_MOTOR_ID, MotorType.kBrushless);
     private IntakeSubsystem intakeSubsystem = new IntakeSubsystem(intakeMotor);
 
+
+    // Constructing the climbing subsystem
+    // private CANSparkMax leftClimbMotor = new CANSparkMax(ClimbConstants.LEFT_CLIMB_ID, MotorType.kBrushless);
+    // private CANSparkMax rightClimbMotor = new CANSparkMax(ClimbConstants.RIGHT_CLIMB_ID, MotorType.kBrushless);
+    // private ClimberSubsystem climberSubsystem = new ClimberSubsystem(leftClimbMotor, rightClimbMotor);
+
     private SwerveDriveOdometry driveOdometry = new SwerveDriveOdometry(DrivetrainConstants.SWERVE_KINEMATICS, gyro.getRotation2d(), positions);
 
     private LimelightSubsystem limelight = new LimelightSubsystem();
@@ -136,10 +147,14 @@ public class RobotContainer {
 
     CameraServer.startAutomaticCapture();
 
+    //Auto Test commands:
     NamedCommands.registerCommand("print", new PrintCommand("print!"));
     NamedCommands.registerCommand("printRight2NoteRed", new PrintCommand("righ2notered path!"));
     NamedCommands.registerCommand("printLeft2Note", new PrintCommand("left2note path!"));
+    NamedCommands.registerCommand("printAfter", new PrintCommand("print at end!"));
 
+    NamedCommands.registerCommand("intake", intakeNoteCommand());
+    NamedCommands.registerCommand("shoot", shootNoteCommand());
 
     // Configure the trigger bindings
     configureBindings();
@@ -215,6 +230,9 @@ public class RobotContainer {
     JoystickButton alignRightOfSpeakerButton = new JoystickButton(rightJoystick, 3);
     JoystickButton alignLeftOfSpeakerButton = new JoystickButton(rightJoystick, 4);
 
+    JoystickButton ClimbUpButton = new JoystickButton(leftJoystick, 5);
+    JoystickButton ClimbDownButton = new JoystickButton(leftJoystick, 6);
+
     //Constructs commands and binds them for swerve drive
     swerveDrive.setDefaultCommand(new RunCommand(() -> {
       if (robot.isTeleopEnabled()){
@@ -277,7 +295,7 @@ public class RobotContainer {
     //Constructs commands and binds them for pivot
 
     pivotSubsystem.setDefaultCommand(new RunCommand(() -> {
-      pivotSubsystem.setPivotPosition(pivotSubsystem.getLockPos());
+      // pivotSubsystem.setPivotPosition(pivotSubsystem.getLockPos());
     }, pivotSubsystem));
 
     // pivotButton.whileTrue(new RunCommand(() -> {
@@ -314,17 +332,27 @@ public class RobotContainer {
       pivotSubsystem.changeLockPos(0.01);
     }));
 
+    //Constructs commands and binds them for climber
+    // ClimbDownButton.whileTrue(new RunCommand(() -> {
+    //   climberSubsystem.climb(-0.5);
+    // },climberSubsystem));
+
+    // ClimbUpButton.whileTrue(new RunCommand(() -> {
+    //   climberSubsystem.climb(0.5);
+    // },climberSubsystem));
+
+
     //Constructs commands and binds them for intake
 
     intakeSubsystem.setDefaultCommand(new RunCommand(() -> {
       intakeSubsystem.intake(0);
     }, intakeSubsystem));
 
-    // intakeButton.whileTrue(new RunCommand(() -> {
-    //   intakeSubsystem.intake(limitI.calculate((applyDeadband(-leftJoystick.getThrottle()/2, IntakeConstants.INTAKE_DEADBAND))));
-    //   feedSubsystem.feed(0.25);
-    //   pivotSubsystem.setLockPos(0.82);
-    // }, intakeSubsystem, feedSubsystem));
+    intakeButton.whileTrue(new RunCommand(() -> {
+      intakeSubsystem.intake(limitI.calculate((applyDeadband(-leftJoystick.getThrottle()/2, IntakeConstants.INTAKE_DEADBAND))));
+      feedSubsystem.feed(0.25);
+      pivotSubsystem.setLockPos(0.82);
+    }, intakeSubsystem, feedSubsystem));
 
     altIntakeButton.whileTrue(new RunCommand(() -> {
       intakeSubsystem.intake(limitI.calculate((applyDeadband(-leftJoystick.getThrottle()/2, IntakeConstants.INTAKE_DEADBAND))));
@@ -384,8 +412,27 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   
+   public Command intakeNoteCommand()
+   {
+    return (new RunCommand(() -> {
+    intakeSubsystem.intake(0.5);
+    System.out.println("intake");
+    feedSubsystem.feed(0.25);
+    pivotSubsystem.setLockPos(0.82);
+    }, intakeSubsystem, feedSubsystem));
+   }
+
+   public Command shootNoteCommand()
+   {
+    return (new RunCommand(() -> {
+      shooter.shoot(0.75); 
+      feedSubsystem.feed(0.25);
+      pivotSubsystem.setLockPos(0.25); 
+    }, shooter));
+   }
+
    public Command getAutonomousCommand () {
       // return autoChooser.getSelected();
       return chargeCommand;
-    }
+  }
 }
