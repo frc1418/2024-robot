@@ -76,6 +76,8 @@ public class RobotContainer {
     private CANSparkMax frontLeftSpeedMotor = new CANSparkMax(DrivetrainConstants.FRONT_LEFT_SPEED_ID, MotorType.kBrushless);
     // private AnalogEncoder frontLeftEncoder = new AnalogEncoder(DrivetrainConstants.FRONT_LEFT_ENCODER);
 
+    
+
     private MaxWheelModule backRightWheel = new MaxWheelModule (
         backRightAngleMotor, backRightSpeedMotor);
     public MaxWheelModule backLeftWheel = new MaxWheelModule (
@@ -111,11 +113,9 @@ public class RobotContainer {
     private CANSparkMax intakeMotor = new CANSparkMax(IntakeConstants.INTAKE_MOTOR_ID, MotorType.kBrushless);
     private IntakeSubsystem intakeSubsystem = new IntakeSubsystem(intakeMotor);
 
-
-    // Constructing the climbing subsystem
-    // private CANSparkMax leftClimbMotor = new CANSparkMax(ClimbConstants.LEFT_CLIMB_ID, MotorType.kBrushless);
-    // private CANSparkMax rightClimbMotor = new CANSparkMax(ClimbConstants.RIGHT_CLIMB_ID, MotorType.kBrushless);
-    // private ClimberSubsystem climberSubsystem = new ClimberSubsystem(leftClimbMotor, rightClimbMotor);
+    private CANSparkMax LeftClimbMotor = new CANSparkMax(ClimbConstants.LEFT_CLIMB_ID, MotorType.kBrushless);
+    private CANSparkMax RightClimbMotor = new CANSparkMax(ClimbConstants.RIGHT_CLIMB_ID, MotorType.kBrushless);
+    private ClimberSubsystem climberSubsystem = new ClimberSubsystem(LeftClimbMotor, RightClimbMotor);
 
     private SwerveDriveOdometry driveOdometry = new SwerveDriveOdometry(DrivetrainConstants.SWERVE_KINEMATICS, gyro.getRotation2d(), positions);
 
@@ -333,13 +333,22 @@ public class RobotContainer {
     }));
 
     //Constructs commands and binds them for climber
-    // ClimbDownButton.whileTrue(new RunCommand(() -> {
-    //   climberSubsystem.climb(-0.5);
-    // },climberSubsystem));
-
-    // ClimbUpButton.whileTrue(new RunCommand(() -> {
-    //   climberSubsystem.climb(0.5);
-    // },climberSubsystem));
+    ClimbDownButton.onTrue(new InstantCommand(() -> {
+      climberSubsystem.climb(-0.5);
+  }, climberSubsystem));
+  
+  ClimbDownButton.onFalse(new InstantCommand(() -> {
+      climberSubsystem.stopClimbing();
+  }, climberSubsystem));
+  
+  ClimbUpButton.onTrue(new InstantCommand(() -> {
+      climberSubsystem.climb(0.5);
+  }, climberSubsystem));
+  
+  ClimbUpButton.onFalse(new InstantCommand(() -> {
+      climberSubsystem.stopClimbing();
+  }, climberSubsystem));
+  
 
 
     //Constructs commands and binds them for intake
