@@ -113,9 +113,9 @@ public class RobotContainer {
 
 
     // Constructing the climbing subsystem
-    // private CANSparkMax leftClimbMotor = new CANSparkMax(ClimbConstants.LEFT_CLIMB_ID, MotorType.kBrushless);
-    // private CANSparkMax rightClimbMotor = new CANSparkMax(ClimbConstants.RIGHT_CLIMB_ID, MotorType.kBrushless);
-    // private ClimberSubsystem climberSubsystem = new ClimberSubsystem(leftClimbMotor, rightClimbMotor);
+    private CANSparkMax leftClimbMotor = new CANSparkMax(ClimbConstants.LEFT_CLIMB_ID, MotorType.kBrushless);
+    private CANSparkMax rightClimbMotor = new CANSparkMax(ClimbConstants.RIGHT_CLIMB_ID, MotorType.kBrushless);
+    private ClimberSubsystem climberSubsystem = new ClimberSubsystem(leftClimbMotor, rightClimbMotor);
 
     private SwerveDriveOdometry driveOdometry = new SwerveDriveOdometry(DrivetrainConstants.SWERVE_KINEMATICS, gyro.getRotation2d(), positions);
 
@@ -152,6 +152,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("printRight2NoteRed", new PrintCommand("righ2notered path!"));
     NamedCommands.registerCommand("printLeft2Note", new PrintCommand("left2note path!"));
     NamedCommands.registerCommand("printAfter", new PrintCommand("print at end!"));
+    NamedCommands.registerCommand("printAfterShoot", new PrintCommand("print after SHOOTER!"));
+    NamedCommands.registerCommand("printRebound", new PrintCommand("print after REBOUND!"));
 
     NamedCommands.registerCommand("intake", intakeNoteCommand());
     NamedCommands.registerCommand("shoot", shootNoteCommand());
@@ -190,6 +192,8 @@ public class RobotContainer {
     feedMotor.setInverted(true);
 
     pivotMotor.setIdleMode(IdleMode.kBrake);
+    leftClimbMotor.setIdleMode(IdleMode.kBrake);
+    rightClimbMotor.setIdleMode(IdleMode.kBrake);
 
     coastDrive();
   }
@@ -333,13 +337,21 @@ public class RobotContainer {
     }));
 
     //Constructs commands and binds them for climber
-    // ClimbDownButton.whileTrue(new RunCommand(() -> {
-    //   climberSubsystem.climb(-0.5);
-    // },climberSubsystem));
+    ClimbDownButton.onTrue(new InstantCommand(() -> {
+      climberSubsystem.climb(-0.5);
+  }, climberSubsystem));
 
-    // ClimbUpButton.whileTrue(new RunCommand(() -> {
-    //   climberSubsystem.climb(0.5);
-    // },climberSubsystem));
+  ClimbDownButton.onFalse(new InstantCommand(() -> {
+      climberSubsystem.stopClimbing();
+  }, climberSubsystem));
+
+  ClimbUpButton.onTrue(new InstantCommand(() -> {
+      climberSubsystem.climb(0.5);
+  }, climberSubsystem));
+
+  ClimbUpButton.onFalse(new InstantCommand(() -> {
+      climberSubsystem.stopClimbing();
+  }, climberSubsystem));
 
 
     //Constructs commands and binds them for intake
@@ -348,14 +360,14 @@ public class RobotContainer {
       intakeSubsystem.intake(0);
     }, intakeSubsystem));
 
-    intakeButton.whileTrue(new RunCommand(() -> {
-      intakeSubsystem.intake(limitI.calculate((applyDeadband(-leftJoystick.getThrottle()/2, IntakeConstants.INTAKE_DEADBAND))));
-      feedSubsystem.feed(0.25);
-      pivotSubsystem.setLockPos(0.82);
-    }, intakeSubsystem, feedSubsystem));
+    // intakeButton.whileTrue(new RunCommand(() -> {
+    //   intakeSubsystem.intake(limitI.calculate((applyDeadband(-leftJoystick.getThrottle()/2, IntakeConstants.INTAKE_DEADBAND))));
+    //   feedSubsystem.feed(0.25);
+    //   pivotSubsystem.setLockPos(0.82);
+    // }, intakeSubsystem, feedSubsystem));
 
     altIntakeButton.whileTrue(new RunCommand(() -> {
-      intakeSubsystem.intake(limitI.calculate((applyDeadband(-leftJoystick.getThrottle()/2, IntakeConstants.INTAKE_DEADBAND))));
+      intakeSubsystem.intake(limitI.calculate(0.5));
       feedSubsystem.feed(0.25);
       pivotSubsystem.setLockPos(0.82);
     }, intakeSubsystem, feedSubsystem));
@@ -416,18 +428,19 @@ public class RobotContainer {
    {
     return (new RunCommand(() -> {
     intakeSubsystem.intake(0.5);
-    System.out.println("intake");
     feedSubsystem.feed(0.25);
-    pivotSubsystem.setLockPos(0.82);
-    }, intakeSubsystem, feedSubsystem));
+    System.out.println("Arm LockPos: " + pivotSubsystem.getLockPos());
+    pivotSubsystem.setPivotPosition(0.82); 
+  }, intakeSubsystem, feedSubsystem));
    }
 
    public Command shootNoteCommand()
    {
     return (new RunCommand(() -> {
+      System.out.println("Shoot LockPos: " + pivotSubsystem.getLockPos());
       shooter.shoot(0.75); 
       feedSubsystem.feed(0.25);
-      pivotSubsystem.setLockPos(0.25); 
+      pivotSubsystem.setPivotPosition(0.8); 
     }, shooter));
    }
 

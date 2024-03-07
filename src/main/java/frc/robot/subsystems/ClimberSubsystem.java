@@ -19,7 +19,13 @@ public class ClimberSubsystem extends SubsystemBase {
     }
 
     public void climb(double speed) {
-        leftMotor.set(speed);
+        leftMotor.set(-speed);
         rightMotor.set(speed);
     }
+
+    public void stopClimbing(){
+        leftMotor.set(-0.1);
+        rightMotor.set(0.1);
+    }
+
 }

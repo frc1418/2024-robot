@@ -56,7 +56,7 @@ public final class Constants {
 
   public static final class ClimbConstants{
     public static final int LEFT_CLIMB_ID = 9;
-    public static final int RIGHT_CLIMB_ID = 11;
+    public static final int RIGHT_CLIMB_ID = 12;
   }
   
   public static final class ShooterConstants {
