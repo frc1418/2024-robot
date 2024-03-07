@@ -38,6 +38,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
@@ -192,6 +193,12 @@ public class RobotContainer {
     pivotMotor.setIdleMode(IdleMode.kBrake);
 
     coastDrive();
+    
+    LeftClimbMotor.setIdleMode(IdleMode.kBrake);
+    RightClimbMotor.setIdleMode(IdleMode.kBrake);
+    LeftClimbMotor.setSmartCurrentLimit(60);
+    RightClimbMotor.setSmartCurrentLimit(60);
+
   }
 
   private void configureBindings() {
@@ -342,12 +349,12 @@ public class RobotContainer {
   }, climberSubsystem));
   
   ClimbUpButton.onTrue(new InstantCommand(() -> {
-      climberSubsystem.climb(0.5);
+      climberSubsystem.climb(0.3);
   }, climberSubsystem));
   
   ClimbUpButton.onFalse(new InstantCommand(() -> {
       climberSubsystem.stopClimbing();
-  }, climberSubsystem));
+  }, climberSubsystem)); 
   
 
 
@@ -389,9 +396,7 @@ public class RobotContainer {
     leftShooter.restoreFactoryDefaults();
     rightShooter.restoreFactoryDefaults();
     feedMotor.restoreFactoryDefaults();
-
     pivotMotor.restoreFactoryDefaults();
-
     intakeMotor.restoreFactoryDefaults();
   }
 
