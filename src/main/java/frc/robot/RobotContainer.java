@@ -429,18 +429,17 @@ public class RobotContainer {
     return (new RunCommand(() -> {
     intakeSubsystem.intake(0.5);
     feedSubsystem.feed(0.25);
-    System.out.println("Arm LockPos: " + pivotSubsystem.getLockPos());
-    pivotSubsystem.setPivotPosition(0.82); 
+    // pivotSubsystem.setPivotPosition(0.83); 
   }, intakeSubsystem, feedSubsystem));
    }
 
    public Command shootNoteCommand()
    {
     return (new RunCommand(() -> {
-      System.out.println("Shoot LockPos: " + pivotSubsystem.getLockPos());
       shooter.shoot(0.75); 
       feedSubsystem.feed(0.25);
-      pivotSubsystem.setPivotPosition(0.8); 
+      // pivotSubsystem.setPivotPosition(0.65); 
+      // pivotSubsystem.setLockPos(0.65); 
     }, shooter));
    }
 
