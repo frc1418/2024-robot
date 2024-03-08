@@ -201,6 +201,8 @@ public class RobotContainer {
 
   }
 
+  public static boolean climbBrake = false;
+
   private void configureBindings() {
     //Constructs input devices
     Joystick leftJoystick = new Joystick(0);
@@ -237,8 +239,10 @@ public class RobotContainer {
     JoystickButton alignRightOfSpeakerButton = new JoystickButton(rightJoystick, 3);
     JoystickButton alignLeftOfSpeakerButton = new JoystickButton(rightJoystick, 4);
 
-    JoystickButton ClimbUpButton = new JoystickButton(leftJoystick, 5);
-    JoystickButton ClimbDownButton = new JoystickButton(leftJoystick, 6);
+    JoystickButton climbUpButton = new JoystickButton(leftJoystick, 5);
+    JoystickButton climbDownButton = new JoystickButton(leftJoystick, 6);
+    JoystickButton climbBrakeToggleButton = new JoystickButton(leftJoystick, 7);
+    //Change climbBrakeToggleButton from 7 to the one next to 5 and 6 -> later
 
     //Constructs commands and binds them for swerve drive
     swerveDrive.setDefaultCommand(new RunCommand(() -> {
@@ -340,21 +344,28 @@ public class RobotContainer {
     }));
 
     //Constructs commands and binds them for climber
-    ClimbDownButton.onTrue(new InstantCommand(() -> {
+    climbDownButton.onTrue(new InstantCommand(() -> {
       climberSubsystem.climb(-0.5);
   }, climberSubsystem));
   
-  ClimbDownButton.onFalse(new InstantCommand(() -> {
+  climbDownButton.onFalse(new InstantCommand(() -> {
       climberSubsystem.stopClimbing();
   }, climberSubsystem));
   
-  ClimbUpButton.onTrue(new InstantCommand(() -> {
+  climbUpButton.onTrue(new InstantCommand(() -> {
       climberSubsystem.climb(0.3);
   }, climberSubsystem));
   
-  ClimbUpButton.onFalse(new InstantCommand(() -> {
+  climbUpButton.onFalse(new InstantCommand(() -> {
       climberSubsystem.stopClimbing();
   }, climberSubsystem)); 
+
+  climbBrakeToggleButton.onTrue(new InstantCommand(() -> {
+    climbBrake = !climbBrake;
+    System.out.println("Climb Brake Enabled: " + climbBrake);
+})); 
+
+ 
   
 
 

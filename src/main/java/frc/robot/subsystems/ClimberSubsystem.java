@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 
 public class ClimberSubsystem extends SubsystemBase {
 
@@ -18,9 +19,16 @@ public class ClimberSubsystem extends SubsystemBase {
         this.rightMotor = rightMotor;
     }
 
-    public void stopClimbing(){
-        leftMotor.set(-0.13);
-        rightMotor.set(0.1);
+    public void stopClimbing() {
+        if (RobotContainer.climbBrake) {
+            // Once Friction on Left arm is fixed set back to -0.1
+            leftMotor.set(-0.13);
+            rightMotor.set(0.1);
+        } else {
+            leftMotor.set(0);
+            rightMotor.set(0);
+        }
+
     }
 
     public void climb(double speed) {
