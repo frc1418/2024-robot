@@ -31,7 +31,7 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer(this);
     m_robotContainer.getOdometry().zeroHeading();
-    m_robotContainer.getOdometry().setAngleOffset(0);
+    m_robotContainer.getOdometry().setAngleOffset(180);
     m_robotContainer.getOdometry().reset(new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
     m_robotContainer.getSwerveDriveSubsystem().resetLockRot();
   }
@@ -62,10 +62,14 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    System.out.println("STARTING AUTO");
     m_robotContainer.getOdometry().zeroHeading();
     m_robotContainer.getOdometry().reset(new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
     m_robotContainer.getSwerveDriveSubsystem().resetLockRot();
+    System.out.println("GET AUTO");
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    System.out.println("AUTO GOT!");
+
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
@@ -79,12 +83,13 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    m_robotContainer.getOdometry().zeroHeading();
-    m_robotContainer.getSwerveDriveSubsystem().resetLockRot();
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+    m_robotContainer.getOdometry().zeroHeading();
+    m_robotContainer.getSwerveDriveSubsystem().resetLockRot();
+    m_robotContainer.getOdometry().reset(new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
