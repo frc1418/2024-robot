@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.PivotSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -68,6 +69,7 @@ public class Robot extends TimedRobot {
     m_robotContainer.getSwerveDriveSubsystem().resetLockRot();
     System.out.println("GET AUTO");
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_robotContainer.pivotSubsystem.setLockPos(0.85);
     System.out.println("AUTO GOT!");
 
 
@@ -93,6 +95,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    m_robotContainer.pivotSubsystem.setLockPos(0.82);
   }
 
   /** This function is called periodically during operator control. */
