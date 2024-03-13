@@ -92,6 +92,11 @@ public class MaxWheelModule {
         return speedMotor.getEncoder().getVelocity();
     }
 
+    public void setSpeed(double speed)
+    {
+        speedMotor.set(speed);
+    }
+
     public SparkAbsoluteEncoder getTurningEncoder(){
         return turningEncoder;
     }

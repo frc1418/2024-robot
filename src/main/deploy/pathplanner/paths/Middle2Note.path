@@ -52,8 +52,24 @@
         "y": 5.56
       },
       "prevControl": {
-        "x": 2.500000000000001,
-        "y": 5.56
+        "x": 1.4255538145493416,
+        "y": 5.56010792107333
+      },
+      "nextControl": {
+        "x": 1.5744461854506584,
+        "y": 5.559892078926669
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 4.037206736633248,
+        "y": 5.562302316231041
+      },
+      "prevControl": {
+        "x": 5.03720673663325,
+        "y": 5.562302316231041
       },
       "nextControl": null,
       "isLocked": false,
@@ -99,7 +115,7 @@
     },
     {
       "name": "printEnd",
-      "waypointRelativePos": 3.0,
+      "waypointRelativePos": 4.0,
       "command": {
         "type": "parallel",
         "data": {
@@ -116,7 +132,7 @@
     },
     {
       "name": "shoot2",
-      "waypointRelativePos": 2.9499999999999997,
+      "waypointRelativePos": 3.75,
       "command": {
         "type": "parallel",
         "data": {
@@ -131,23 +147,6 @@
               "type": "named",
               "data": {
                 "name": "printAfterShoot"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "printRebound",
-      "waypointRelativePos": 1.7,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "printRebound"
               }
             }
           ]
@@ -174,6 +173,23 @@
     {
       "name": "arm",
       "waypointRelativePos": 0.0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "armPos"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "arm",
+      "waypointRelativePos": 1.35,
       "command": {
         "type": "parallel",
         "data": {

@@ -24,8 +24,8 @@ public class ClimberSubsystem extends SubsystemBase {
     }
 
     public void stopClimbing(){
-        leftMotor.set(-0.1);
-        rightMotor.set(0.1);
+        leftMotor.set(-0.01);
+        rightMotor.set(0.01);
     }
 
 }

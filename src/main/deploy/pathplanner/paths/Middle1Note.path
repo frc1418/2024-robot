@@ -16,12 +16,44 @@
     },
     {
       "anchor": {
-        "x": 2.573335003151488,
+        "x": 2.5,
         "y": 5.562302316231041
       },
       "prevControl": {
-        "x": 1.5733350031514868,
+        "x": 1.5536710609852626,
         "y": 5.562302316231041
+      },
+      "nextControl": {
+        "x": 3.4463289390147374,
+        "y": 5.562302316231041
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.4,
+        "y": 5.56115115811552
+      },
+      "prevControl": {
+        "x": 2.758227793442105,
+        "y": 5.561726737173281
+      },
+      "nextControl": {
+        "x": 2.0417722065578947,
+        "y": 5.56057557905776
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.5,
+        "y": 5.56
+      },
+      "prevControl": {
+        "x": 2.500000000000001,
+        "y": 5.56
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,7 +65,7 @@
   "eventMarkers": [
     {
       "name": "intake",
-      "waypointRelativePos": 0.25,
+      "waypointRelativePos": 1.0,
       "command": {
         "type": "parallel",
         "data": {
@@ -49,8 +81,8 @@
       }
     },
     {
-      "name": "shootClose",
-      "waypointRelativePos": 0.05,
+      "name": "shoot",
+      "waypointRelativePos": 0.5499999999999999,
       "command": {
         "type": "sequential",
         "data": {
@@ -58,7 +90,7 @@
             {
               "type": "named",
               "data": {
-                "name": "shootClose"
+                "name": "shoot"
               }
             }
           ]
@@ -67,7 +99,7 @@
     },
     {
       "name": "printEnd",
-      "waypointRelativePos": 1.0,
+      "waypointRelativePos": 3.0,
       "command": {
         "type": "parallel",
         "data": {
@@ -84,7 +116,7 @@
     },
     {
       "name": "shoot2",
-      "waypointRelativePos": 1.0,
+      "waypointRelativePos": 2.9499999999999997,
       "command": {
         "type": "parallel",
         "data": {
@@ -92,7 +124,7 @@
             {
               "type": "named",
               "data": {
-                "name": "shootFar"
+                "name": "shoot"
               }
             },
             {
@@ -107,7 +139,7 @@
     },
     {
       "name": "printRebound",
-      "waypointRelativePos": 0.45,
+      "waypointRelativePos": 1.7,
       "command": {
         "type": "parallel",
         "data": {
@@ -124,15 +156,32 @@
     },
     {
       "name": "wait",
-      "waypointRelativePos": 0.05,
+      "waypointRelativePos": 0.2,
       "command": {
-        "type": "sequential",
+        "type": "deadline",
         "data": {
           "commands": [
             {
               "type": "wait",
               "data": {
                 "waitTime": 5.0
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "arm",
+      "waypointRelativePos": 0.0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "armPos"
               }
             }
           ]
@@ -154,7 +203,7 @@
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": 0.0,
+    "rotation": 180.0,
     "velocity": 0
   },
   "useDefaultConstraints": false

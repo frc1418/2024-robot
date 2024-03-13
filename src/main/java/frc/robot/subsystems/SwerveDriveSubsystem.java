@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriverConstants;
@@ -41,6 +42,11 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     private final NetworkTableEntry ntBackLeftAngleEncoder = table.getEntry("backLeftAngleEncoder");
     private final NetworkTableEntry ntFrontRightAngleEncoder = table.getEntry("frontRightAngleEncoder");
     private final NetworkTableEntry ntFrontLeftAngleEncoder = table.getEntry("frontLeftAngleEncoder");
+
+    private final NetworkTableEntry ntBackRightSpeed = table.getEntry("backRightSpeed");
+    private final NetworkTableEntry ntBackLeftSpeed = table.getEntry("backLeftSpeed");
+    private final NetworkTableEntry ntFrontRightSpeed = table.getEntry("frontRightSpeed");
+    private final NetworkTableEntry ntFrontLeftSpeed = table.getEntry("frontLeftSpeed");
 
     private final NetworkTableEntry ntIsFieldCentric = table.getEntry("isFieldCentric");
 
@@ -159,6 +165,11 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
         ntOdometryPose.setString(odometry.getPose().toString());
 
+        ntBackLeftSpeed.setDouble(backLeft.getSpeed());
+        ntBackRightSpeed.setDouble(backRight.getSpeed());
+        ntFrontLeftSpeed.setDouble(frontLeft.getSpeed());
+        ntFrontRightSpeed.setDouble(frontRight.getSpeed());
+
         ntBackLeftAngleEncoder.setDouble(backLeft.getEncoderPosition());
         ntBackRightAngleEncoder.setDouble(backRight.getEncoderPosition());
         ntFrontLeftAngleEncoder.setDouble(frontLeft.getEncoderPosition());
@@ -170,6 +181,24 @@ public class SwerveDriveSubsystem extends SubsystemBase {
             fieldCentric = !fieldCentric;
             ntIsFieldCentric.setBoolean(fieldCentric);
         });
+    }
+
+    public Command robotCentricCommand()
+    {
+        return (new InstantCommand(() -> {
+            fieldCentric = false;
+            ntIsFieldCentric.setBoolean(fieldCentric);
+            // odometry.reset(null);
+        }));
+    }
+
+
+    public Command fieldCentricCommand()
+    {
+        return (new InstantCommand(() -> {
+            fieldCentric = true;
+            ntIsFieldCentric.setBoolean(fieldCentric);
+        }));
     }
 
     public Command resetFieldCentric() {

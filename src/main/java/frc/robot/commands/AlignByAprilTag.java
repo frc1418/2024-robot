@@ -52,7 +52,6 @@ public class AlignByAprilTag extends Command {
 
     }
 
-
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
@@ -105,8 +104,6 @@ public class AlignByAprilTag extends Command {
         System.out.println("END");
         this.swerveDrive.setFieldCentric(startedFieldCentric);
         swerveDrive.drive(0, 0, 0);
-        
-        
     }
 
     // Returns true when the command should end.
@@ -114,7 +111,4 @@ public class AlignByAprilTag extends Command {
     public boolean isFinished() {
         return false;
     }
-
-    
-    
 }

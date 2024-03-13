@@ -128,7 +128,7 @@ public class RobotContainer {
       backRightWheel, backLeftWheel, frontRightWheel, frontLeftWheel,
       DrivetrainConstants.SWERVE_KINEMATICS, odometry);
 
-    private final AlignByAprilTag alignAtAmpCenter = new AlignByAprilTag(swerveDrive, limelight, odometry, 0.03, -0.53, 0.9, 0.07, 0.1, 90, 0);
+    private final AlignByAprilTag alignAtAmpCenter = new AlignByAprilTag(swerveDrive, limelight, odometry, 0.03, -0.57, 0.9, 0.07, 0.1, 90, 0);
     private final AlignByAprilTag alignAtSpeakerCenter = new AlignByAprilTag(swerveDrive, limelight, odometry, 0.03, -1.33, 1, 0.04, 0.1, 0, 0);
     // private final AlignByAprilTag alignRightOfSpeaker = new AlignByAprilTag(swerveDrive, limelight, odometry,  1.08, -0.96, 1, 0.04, 0.1, 44, 44);
     private final AlignByAprilTag alignFarFromSpeakerCenter = new AlignByAprilTag(swerveDrive, limelight, odometry, -0.06, -2.40, 1, 0.04, 0.1, 0, 0);
@@ -226,11 +226,9 @@ public class RobotContainer {
    Trigger pivotAmpPreset = new Trigger(() -> altJoystick.getPOV() == 0);
    Trigger pivotCloseSpeakerPreset = new Trigger(() -> altJoystick.getPOV() == 90);
 
-   Trigger climberUp = new Trigger(() -> leftJoystick.getPOV() == 0);
-   Trigger climberDown = new Trigger(() -> leftJoystick.getPOV() == 180);
-   Trigger climberStop = new Trigger(() -> leftJoystick.getPOV() == -1);
-
-
+  //  Trigger climberUp = new Trigger(() -> leftJoystick.getPOV() == 0);
+  //  Trigger climberDown = new Trigger(() -> leftJoystick.getPOV() == 180);
+  //  Trigger climberStop = new Trigger(() -> leftJoystick.getPOV() == -1);
 
     JoystickButton intakeButton = new JoystickButton(altJoystick, 5);
     JoystickButton intakeOutButton =  new JoystickButton(altJoystick, 7);
@@ -258,7 +256,8 @@ public class RobotContainer {
       
     }, swerveDrive));
 
-    fieldCentricButton.onTrue(swerveDrive.toggleFieldCentric());
+    fieldCentricButton.onTrue(swerveDrive.robotCentricCommand());
+    fieldCentricButton.onFalse(swerveDrive.fieldCentricCommand());
 
     resetFieldCentricButton.onTrue(swerveDrive.resetFieldCentric());
 
@@ -335,7 +334,7 @@ public class RobotContainer {
     // }));
 
     pivotUpButton.onTrue(new InstantCommand(() -> {
-      pivotSubsystem.changeLockPos(-0.01);
+      pivotSubsystem.changeLockPos(-0.005);
     }));
 
     // pivotDownButton.onTrue(new InstantCommand(() -> {
@@ -343,36 +342,27 @@ public class RobotContainer {
     // }));
 
     pivotDownButton.onTrue(new InstantCommand(() -> {
-      pivotSubsystem.changeLockPos(0.01);
+      pivotSubsystem.changeLockPos(0.005);
     }));
 
-    //Constructs commands and binds them for climber
+    // Constructs commands and binds them for climber
     ClimbDownButton.onTrue(new InstantCommand(() -> {
       climberSubsystem.climb(-0.5);
   }, climberSubsystem));
 
-  ClimbDownButton.onFalse(new InstantCommand(() -> {
+    ClimbDownButton.onFalse(new InstantCommand(() -> {
       climberSubsystem.stopClimbing();
+      System.out.println("stop climbing");
   }, climberSubsystem));
 
-  ClimbUpButton.onTrue(new InstantCommand(() -> {
+    ClimbUpButton.onTrue(new InstantCommand(() -> {
       climberSubsystem.climb(0.5);
   }, climberSubsystem));
 
-  ClimbUpButton.onFalse(new InstantCommand(() -> {
+    ClimbUpButton.onFalse(new InstantCommand(() -> {
       climberSubsystem.stopClimbing();
+      System.out.println("stop climbing");
   }, climberSubsystem));
-
-  climberUp.onTrue(new InstantCommand(() -> {
-    System.out.println("climb up");
-  }));
-  climberStop.onTrue(new InstantCommand(() -> {
-    System.out.println("climb stop");
-  }));
-  climberDown.onTrue(new InstantCommand(() -> {
-    System.out.println("climb down");
-  }));
-
 
     //Constructs commands and binds them for intake
 
@@ -404,7 +394,7 @@ public class RobotContainer {
 
     pivotFarSpeakerPreset.onTrue(new InstantCommand(() -> {
       // System.out.println("pivotFarSpeakerPreset");
-      pivotSubsystem.setLockPos(0.8975);
+      pivotSubsystem.setLockPos(0.8999);
     }));
 
     pivotAmpPreset.onTrue(new InstantCommand(() -> {
@@ -491,7 +481,7 @@ public class RobotContainer {
    public Command setArmCommand()
    {
     return (new RunCommand(() -> {
-      pivotSubsystem.setLockPos(0.85);
+      pivotSubsystem.setLockPos(0.84);
       System.out.println("set arm");
     }));
    }
