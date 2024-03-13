@@ -1,0 +1,210 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 0.6370405525124085,
+        "y": 6.632683659352359
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 0.8591166093985527,
+        "y": 6.621986101952057
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.9445388994548884,
+        "y": 6.928941580391089
+      },
+      "prevControl": {
+        "x": 1.998209960440151,
+        "y": 6.928941580391089
+      },
+      "nextControl": {
+        "x": 3.890867838469626,
+        "y": 6.928941580391089
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.5661618988111217,
+        "y": 6.928941580391089
+      },
+      "prevControl": {
+        "x": 2.924389692253227,
+        "y": 6.929517159448849
+      },
+      "nextControl": {
+        "x": 2.2079341053690165,
+        "y": 6.928366001333329
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.575316748193616,
+        "y": 6.632683659352359
+      },
+      "prevControl": {
+        "x": 2.5753167481936172,
+        "y": 6.632683659352359
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "intake",
+      "waypointRelativePos": 1.0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "intake"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "shoot",
+      "waypointRelativePos": 0.5499999999999999,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "shoot"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "printEnd",
+      "waypointRelativePos": 3.0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "printAfter"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "shoot2",
+      "waypointRelativePos": 2.9499999999999997,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "shoot"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "printAfterShoot"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "printRebound",
+      "waypointRelativePos": 1.7,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "printRebound"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "wait",
+      "waypointRelativePos": 0.2,
+      "command": {
+        "type": "deadline",
+        "data": {
+          "commands": [
+            {
+              "type": "wait",
+              "data": {
+                "waitTime": 5.0
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "arm",
+      "waypointRelativePos": 0.0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "armPos"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 1.5,
+    "maxAcceleration": 1.5,
+    "maxAngularVelocity": 90.0,
+    "maxAngularAcceleration": 90.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 180.0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": {
+    "rotation": -125.19256314168086,
+    "velocity": 0
+  },
+  "useDefaultConstraints": false
+}

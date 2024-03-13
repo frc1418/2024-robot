@@ -18,13 +18,13 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 /** An example command that uses an example subsystem. */
-public class ChargeCommand extends SequentialCommandGroup {
+public class SideOneCommand extends SequentialCommandGroup {
 
-    private String TRAJECTORY_NAME = "Charge";
+    private String TRAJECTORY_NAME = "MiddleOneNote";
     SwerveDriveSubsystem swerveDrive;
     FeedSubsystem feedSubsystem;
 
-    public ChargeCommand(SwerveDriveSubsystem swerveDrive, FeedSubsystem feedSubsystem) {
+    public SideOneCommand(SwerveDriveSubsystem swerveDrive, FeedSubsystem feedSubsystem) {
       this.swerveDrive = swerveDrive;
       this.feedSubsystem = feedSubsystem;
 

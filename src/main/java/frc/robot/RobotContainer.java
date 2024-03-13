@@ -10,6 +10,8 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.AlignByAprilTag;
 import frc.robot.commands.autonomous.ChargeCommand;
+import frc.robot.commands.autonomous.MiddleOneNoteCommand;
+import frc.robot.commands.autonomous.MiddleTwoNoteCommand;
 import frc.robot.common.Odometry;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.FeedSubsystem;
@@ -53,7 +55,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class RobotContainer {
   // The robot's subsystems and commands are defined here
-  // private final SendableChooser<Command> autoChooser;
+  private final SendableChooser<Command> autoChooser;
 
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
@@ -134,7 +136,9 @@ public class RobotContainer {
     private final AlignByAprilTag alignFarFromSpeakerCenter = new AlignByAprilTag(swerveDrive, limelight, odometry, -0.06, -2.40, 1, 0.04, 0.1, 0, 0);
 
     private final ChargeCommand chargeCommand;
-    
+    private final MiddleOneNoteCommand middle1Command;
+    private final MiddleTwoNoteCommand middle2Command;
+
     SlewRateLimiter limitX = new SlewRateLimiter(6);
     SlewRateLimiter limitY = new SlewRateLimiter(6);
     //Limits shooter motor speed
@@ -167,12 +171,16 @@ public class RobotContainer {
     configureObjects();
 
     chargeCommand = new ChargeCommand(swerveDrive, feedSubsystem);
+    middle1Command = new MiddleOneNoteCommand(swerveDrive, feedSubsystem);
+    middle2Command = new MiddleTwoNoteCommand(swerveDrive, feedSubsystem);
 
      // Build an auto chooser. This will use Commands.none() as the default option.
-    //  autoChooser = AutoBuilder.buildAutoChooser();
-    //  autoChooser.setDefaultOption("Default Path", null);
-    //  autoChooser.addOption("Charge Command", chargeCommand);
-    //  SmartDashboard.putData("Auto Chooser", autoChooser);
+     autoChooser = AutoBuilder.buildAutoChooser();
+     autoChooser.setDefaultOption("Default Path", null);
+     autoChooser.addOption("Charge Command", chargeCommand);
+     autoChooser.addOption("Middle 1 Note Command", middle1Command);
+     autoChooser.addOption("Middle 2 Note Command", middle2Command);
+     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
   
   public void configureObjects() {
@@ -487,7 +495,7 @@ public class RobotContainer {
    }
 
    public Command getAutonomousCommand () {
-      // return autoChooser.getSelected();
-      return chargeCommand;
+      return autoChooser.getSelected();
+      // return chargeCommand;
   }
 }
