@@ -4,7 +4,9 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -12,10 +14,14 @@ public class ClimberSubsystem extends SubsystemBase {
 
     CANSparkMax leftMotor;
     CANSparkMax rightMotor;
+    RelativeEncoder leftMotorEncoder;
+    RelativeEncoder rightMotorEncoder;
 
     public ClimberSubsystem(CANSparkMax leftMotor, CANSparkMax rightMotor) {
         this.leftMotor = leftMotor;
         this.rightMotor = rightMotor;
+        leftMotorEncoder = this.leftMotor.getEncoder();
+        rightMotorEncoder = this.rightMotor.getEncoder();
     }
 
     public void climb(double speed) {
@@ -26,6 +32,12 @@ public class ClimberSubsystem extends SubsystemBase {
     public void stopClimbing(){
         leftMotor.set(-0.01);
         rightMotor.set(0.01);
+    }
+
+    public void setPosition (double leftPos, double rightPos)
+    {
+        leftMotorEncoder.setPosition(leftPos);
+        rightMotorEncoder.setPosition(rightPos);
     }
 
 }
