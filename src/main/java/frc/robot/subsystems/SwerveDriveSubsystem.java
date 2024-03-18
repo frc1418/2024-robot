@@ -120,7 +120,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         }
 
         speeds = new ChassisSpeeds(x, y, rot);
-        //TODO - check velocity percision
+        //TODO - check velocity precision
         // speeds = new ChassisSpeeds(-0.5, 0, 0);
 
         if (fieldCentric) {

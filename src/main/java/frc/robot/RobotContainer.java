@@ -28,15 +28,12 @@ import frc.robot.Constants.ClimbConstants;
 import frc.robot.subsystems.ClimberSubsystem;
 
 
-import java.util.concurrent.TimeUnit;
-
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -200,8 +197,6 @@ public class RobotContainer {
   }
   
   public void configureObjects() {
-    // resetMotors();
-
     //Configuring the swerve modules
     frontLeftWheel.getTurningEncoder().setInverted(true);
     frontRightWheel.getTurningEncoder().setInverted(true);
@@ -244,15 +239,16 @@ public class RobotContainer {
     JoystickButton pivotDownButton = new JoystickButton(altJoystick, 3);
 
     //altJoystick presets:
-   //0 is TOP!
-   Trigger pivotAllDownPreset = new Trigger(() -> altJoystick.getPOV() == 180);
-   Trigger pivotFarSpeakerPreset = new Trigger(() -> altJoystick.getPOV() == 270);
-   Trigger pivotAmpPreset = new Trigger(() -> altJoystick.getPOV() == 0);
-   Trigger pivotCloseSpeakerPreset = new Trigger(() -> altJoystick.getPOV() == 90);
+    //0 is TOP!
 
-  //  Trigger climberUp = new Trigger(() -> leftJoystick.getPOV() == 0);
-  //  Trigger climberDown = new Trigger(() -> leftJoystick.getPOV() == 180);
-  //  Trigger climberStop = new Trigger(() -> leftJoystick.getPOV() == -1);
+    Trigger pivotAllDownPreset = new Trigger(() -> altJoystick.getPOV() == 180);
+    Trigger pivotFarSpeakerPreset = new Trigger(() -> altJoystick.getPOV() == 270);
+    Trigger pivotAmpPreset = new Trigger(() -> altJoystick.getPOV() == 0);
+    Trigger pivotCloseSpeakerPreset = new Trigger(() -> altJoystick.getPOV() == 90);
+
+    //  Trigger climberUp = new Trigger(() -> leftJoystick.getPOV() == 0);
+    //  Trigger climberDown = new Trigger(() -> leftJoystick.getPOV() == 180);
+    //  Trigger climberStop = new Trigger(() -> leftJoystick.getPOV() == -1);
 
     JoystickButton intakeButton = new JoystickButton(altJoystick, 5);
     JoystickButton intakeOutButton =  new JoystickButton(altJoystick, 7);
@@ -262,16 +258,24 @@ public class RobotContainer {
     // JoystickButton alignRightOfSpeakerButton = new JoystickButton(rightJoystick, 3);
     JoystickButton alignFarFromSpeakerButton = new JoystickButton(rightJoystick, 4);
 
-    JoystickButton ClimbUpButton = new JoystickButton(leftJoystick, 5);
-    JoystickButton ClimbDownButton = new JoystickButton(leftJoystick, 6);
+    JoystickButton climbUpButton = new JoystickButton(leftJoystick, 5);
+    JoystickButton climbDownButton = new JoystickButton(leftJoystick, 6);
 
     //Constructs commands and binds them for swerve drive
     swerveDrive.setDefaultCommand(new RunCommand(() -> {
       if (robot.isTeleopEnabled()){
-        swerveDrive.drive(
-          -limitX.calculate(applyDeadband(leftJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND))*DriverConstants.speedMultiplier,
-          -limitY.calculate(applyDeadband(leftJoystick.getX(), DrivetrainConstants.DRIFT_DEADBAND))*DriverConstants.speedMultiplier,
-          applyDeadband(-rightJoystick.getX(), DrivetrainConstants.ROTATION_DEADBAND)*DriverConstants.angleMultiplier);
+        if (swerveDrive.getFieldCentric()) {
+          swerveDrive.drive(
+            -limitX.calculate(applyDeadband(leftJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND))*DriverConstants.speedMultiplier,
+            -limitY.calculate(applyDeadband(leftJoystick.getX(), DrivetrainConstants.DRIFT_DEADBAND))*DriverConstants.speedMultiplier,
+            applyDeadband(-rightJoystick.getX(), DrivetrainConstants.ROTATION_DEADBAND)*DriverConstants.angleMultiplier);
+        }
+        else {
+          swerveDrive.drive(
+            limitX.calculate(applyDeadband(leftJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND))*DriverConstants.speedMultiplier,
+            limitY.calculate(applyDeadband(leftJoystick.getX(), DrivetrainConstants.DRIFT_DEADBAND))*DriverConstants.speedMultiplier,
+            applyDeadband(-rightJoystick.getX(), DrivetrainConstants.ROTATION_DEADBAND)*DriverConstants.angleMultiplier);
+        }
       }
       else 
       {
@@ -295,10 +299,6 @@ public class RobotContainer {
       shooter.shoot(limitS.calculate(0));
     }, shooter));
 
-    // shooterButton.whileTrue(new RunCommand(() -> {
-    //   shooter.shoot(limitS.calculate(applyDeadband(-rightJoystick.getThrottle(), ShooterConstants.SHOOTER_DEADBAND)));
-    // }, shooter));
-
     shooterButtonFast.whileTrue(new RunCommand(() -> {
       shooter.shoot(limitS.calculate(applyDeadband(1.0, ShooterConstants.SHOOTER_DEADBAND)));  
     }, shooter));
@@ -313,17 +313,9 @@ public class RobotContainer {
       feedSubsystem.feed(0);
     }, feedSubsystem));
 
-    // feedInButton.whileTrue(new RunCommand(() -> {
-    //   feedSubsystem.feed(0.25);
-    // }, feedSubsystem));
-
     feedInButton.whileTrue(new RunCommand(() -> {
       feedSubsystem.feed(0.25);
     }, feedSubsystem));
-
-    // feedOutButton.whileTrue(new RunCommand(() -> {
-    //   feedSubsystem.feed(-0.1);
-    // }, feedSubsystem));
 
     feedOutButton.whileTrue(new RunCommand(() -> {
       feedSubsystem.feed(-0.1);
@@ -331,74 +323,32 @@ public class RobotContainer {
 
     //Constructs commands and binds them for pivot
 
-    pivotSubsystem.setDefaultCommand(new RunCommand(() -> {
-      // pivotSubsystem.setPivotPosition(pivotSubsystem.getLockPos());
-    }, pivotSubsystem));
-
-    // pivotButton.whileTrue(new RunCommand(() -> {
-    //   pivotSubsystem.setPivotPosition(pivotSubsystem.getTargetPos());
-    //   pivotSubsystem.setLockPos(MathUtil.clamp(pivotSubsystem.getTargetPos(),0.82, 0.972));
-    // }, pivotSubsystem));
-
-    // altPivotButton.whileTrue(new RunCommand(() -> {
-    //   pivotSubsystem.setPivotPosition(pivotSubsystem.getTargetPos());
-    //   pivotSubsystem.setLockPos(MathUtil.clamp(pivotSubsystem.getTargetPos(),0.82, 0.972));
-    // }, pivotSubsystem));
-
-    // allDownButton.onTrue(new InstantCommand(() -> {
-    //   pivotSubsystem.setPivotPosition(0.972);
-    // }));
-
-    // altAllDownButton.onTrue(new InstantCommand(() -> {
-    //   pivotSubsystem.setLockPos(0.972);
-    // }));
-
-    // pivotUpButton.onTrue(new InstantCommand(() -> {
-    //   pivotSubsystem.changeTargetPos(-0.01);
-    // }));
-
     pivotUpButton.onTrue(new InstantCommand(() -> {
       pivotSubsystem.changeLockPos(-0.005);
     }));
-
-    // pivotDownButton.onTrue(new InstantCommand(() -> {
-    //   pivotSubsystem.changeTargetPos(0.01);
-    // }));
 
     pivotDownButton.onTrue(new InstantCommand(() -> {
       pivotSubsystem.changeLockPos(0.005);
     }));
 
     // Constructs commands and binds them for climber
-    ClimbDownButton.onTrue(new InstantCommand(() -> {
+    climberSubsystem.setDefaultCommand(new RunCommand(() -> {
+      climberSubsystem.stopClimbing();
+    }, climberSubsystem));
+
+    climbDownButton.whileTrue(new InstantCommand(() -> {
       climberSubsystem.climb(-0.5);
-  }, climberSubsystem));
+    }, climberSubsystem));
 
-    ClimbDownButton.onFalse(new InstantCommand(() -> {
-      climberSubsystem.stopClimbing();
-      System.out.println("stop climbing");
-  }, climberSubsystem));
-
-    ClimbUpButton.onTrue(new InstantCommand(() -> {
+    climbUpButton.whileTrue(new InstantCommand(() -> {
       climberSubsystem.climb(0.5);
-  }, climberSubsystem));
-
-    ClimbUpButton.onFalse(new InstantCommand(() -> {
-      climberSubsystem.stopClimbing();
-      System.out.println("stop climbing");
-  }, climberSubsystem));
+    }, climberSubsystem));
 
     //Constructs commands and binds them for intake
 
     intakeSubsystem.setDefaultCommand(new RunCommand(() -> {
       intakeSubsystem.intake(0);
     }, intakeSubsystem));
-
-    // intakeButton.whileTrue(new RunCommand(() -> {
-    //   intakeSubsystem.intake(limitI.calculate((applyDeadband(-leftJoystick.getThrottle()/2, IntakeConstants.INTAKE_DEADBAND))));
-    //   feedSubsystem.feed(0.25);
-    //   pivotSubsystem.setLockPos(0.82);
-    // }, intakeSubsystem, feedSubsystem));
 
     intakeButton.whileTrue(new RunCommand(() -> {
       intakeSubsystem.intake(limitI.calculate(0.5));
@@ -412,22 +362,18 @@ public class RobotContainer {
     }, intakeSubsystem, feedSubsystem));
 
     pivotAllDownPreset.onTrue(new InstantCommand(() -> {
-      // System.out.println("pivotAllDownPreset");
       pivotSubsystem.setLockPos(0.999);
     }));
 
     pivotFarSpeakerPreset.onTrue(new InstantCommand(() -> {
-      // System.out.println("pivotFarSpeakerPreset");
       pivotSubsystem.setLockPos(0.8999);
     }));
 
     pivotAmpPreset.onTrue(new InstantCommand(() -> {
-      // System.out.println("pivotAmpPreset");
       pivotSubsystem.setLockPos(0.8956);
     }));
 
     pivotCloseSpeakerPreset.onTrue(new InstantCommand(() -> {
-      // System.out.println("pivotCloseSpeakerPreset");
       pivotSubsystem.setLockPos(0.8655);
     }));
 
@@ -444,16 +390,6 @@ public class RobotContainer {
       return 0;
     else return 
       input;
-  }
-
-  public void resetMotors() {
-    leftShooter.restoreFactoryDefaults();
-    rightShooter.restoreFactoryDefaults();
-    feedMotor.restoreFactoryDefaults();
-
-    pivotMotor.restoreFactoryDefaults();
-
-    intakeMotor.restoreFactoryDefaults();
   }
 
   public void coastDrive() {
@@ -490,7 +426,7 @@ public class RobotContainer {
     shooter.shoot(0); 
     // pivotSubsystem.setLockPos(0.82);
     System.out.println("intake");
-  }, intakeSubsystem, feedSubsystem));
+    }, intakeSubsystem, feedSubsystem));
    }
 
    public Command shootNoteCommand()
@@ -521,6 +457,5 @@ public class RobotContainer {
 
    public Command getAutonomousCommand () {
       return autoChooser.getSelected();
-      // return chargeCommand;
   }
 }
