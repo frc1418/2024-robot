@@ -336,11 +336,11 @@ public class RobotContainer {
       climberSubsystem.stopClimbing();
     }, climberSubsystem));
 
-    climbDownButton.whileTrue(new InstantCommand(() -> {
+    climbDownButton.whileTrue(new RunCommand(() -> {
       climberSubsystem.climb(-0.5);
     }, climberSubsystem));
 
-    climbUpButton.whileTrue(new InstantCommand(() -> {
+    climbUpButton.whileTrue(new RunCommand(() -> {
       climberSubsystem.climb(0.5);
     }, climberSubsystem));
 
