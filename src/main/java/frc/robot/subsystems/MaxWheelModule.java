@@ -27,11 +27,13 @@ public class MaxWheelModule {
     public MaxWheelModule(CANSparkMax angleMotor, CANSparkMax speedMotor) {
 
         this.angleMotor = angleMotor;
+        // this.angleMotor.restoreFactoryDefaults();
         this.speedMotor = speedMotor;
+        // this.speedMotor.restoreFactoryDefaults();
         this.turningEncoder =  angleMotor.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
 
         this.speedPIDController = this.speedMotor.getPIDController();
-        speedPIDController.setP(0);
+        speedPIDController.setP(0.001);
         speedPIDController.setI(0);
         speedPIDController.setD(0);
         speedPIDController.setFF(0.25);
@@ -41,7 +43,7 @@ public class MaxWheelModule {
         this.speedMotor.getEncoder().setVelocityConversionFactor(this.speedMotor.getEncoder().getPositionConversionFactor()/60.0);
 
 
-        this.anglePidController = new PIDController(1.5, 0, 0);
+        this.anglePidController = new PIDController(1.75, 0, 0);
         anglePidController.enableContinuousInput(0, 1);
         anglePidController.setTolerance(1.0/360);
     }
@@ -88,6 +90,11 @@ public class MaxWheelModule {
     public double getSpeed()
     {
         return speedMotor.getEncoder().getVelocity();
+    }
+
+    public void setSpeed(double speed)
+    {
+        speedMotor.set(speed);
     }
 
     public SparkAbsoluteEncoder getTurningEncoder(){

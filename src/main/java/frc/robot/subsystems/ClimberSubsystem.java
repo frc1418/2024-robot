@@ -6,7 +6,6 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ClimberSubsystem extends SubsystemBase {
@@ -20,7 +19,13 @@ public class ClimberSubsystem extends SubsystemBase {
     }
 
     public void climb(double speed) {
-        leftMotor.set(speed);
+        leftMotor.set(-speed);
         rightMotor.set(speed);
     }
+
+    public void stopClimbing(){
+        leftMotor.set(-0.01);
+        rightMotor.set(0.01);
+    }
+
 }

@@ -6,10 +6,18 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ShooterSubsystem extends SubsystemBase {
+  
+  private final NetworkTableInstance ntInstance = NetworkTableInstance.getDefault();
+  private final NetworkTable table = ntInstance.getTable("/components/arm");
+
+  private final NetworkTableEntry ntShooterSpeed = table.getEntry("shooterSpeed");
+
 
   private CANSparkMax leftWheel;
   private CANSparkMax rightWheel;
@@ -27,5 +35,15 @@ public class ShooterSubsystem extends SubsystemBase {
     leftWheel.set(speed);
     //Forward is counter-clockwise
     rightWheel.set(speed);
+  }
+
+  public double getSpeed()
+  {
+    return leftWheel.get();
+  }
+
+  @Override
+  public void periodic() {
+      ntShooterSpeed.setDouble(getSpeed());
   }
 }
