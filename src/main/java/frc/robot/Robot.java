@@ -69,6 +69,7 @@ public class Robot extends TimedRobot {
     m_robotContainer.getSwerveDriveSubsystem().resetLockRot();
     System.out.println("GET AUTO");
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    System.out.println(m_autonomousCommand);
     m_robotContainer.pivotSubsystem.setLockPos(0.85);
     System.out.println("AUTO GOT!");
 

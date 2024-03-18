@@ -8,23 +8,23 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.4910047710766396,
-        "y": 5.55160475883074
+        "x": 1.4912622761563639,
+        "y": 5.562302316231041
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.5,
+        "x": 2.7536497285957524,
         "y": 5.562302316231041
       },
       "prevControl": {
-        "x": 1.5536710609852626,
+        "x": 1.807320789581015,
         "y": 5.562302316231041
       },
       "nextControl": {
-        "x": 3.4463289390147374,
+        "x": 3.6999786676104898,
         "y": 5.562302316231041
       },
       "isLocked": false,
@@ -32,28 +32,28 @@
     },
     {
       "anchor": {
-        "x": 2.4,
-        "y": 5.56115115811552
+        "x": 3.309867566957356,
+        "y": 5.562302316231041
       },
       "prevControl": {
-        "x": 2.758227793442105,
-        "y": 5.561726737173281
+        "x": 3.668077374669185,
+        "y": 5.558666804615571
       },
       "nextControl": {
-        "x": 2.0417722065578947,
-        "y": 5.56057557905776
+        "x": 2.594190796714926,
+        "y": 5.569565800242712
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.5,
-        "y": 5.56
+        "x": 1.7044227838455681,
+        "y": 5.562302316231041
       },
       "prevControl": {
-        "x": 2.500000000000001,
-        "y": 5.56
+        "x": 2.7044227838455686,
+        "y": 5.562302316231041
       },
       "nextControl": null,
       "isLocked": false,
@@ -65,7 +65,7 @@
   "eventMarkers": [
     {
       "name": "intake",
-      "waypointRelativePos": 1.0,
+      "waypointRelativePos": 0.8999999999999999,
       "command": {
         "type": "parallel",
         "data": {
@@ -108,29 +108,6 @@
               "type": "named",
               "data": {
                 "name": "printAfter"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "shoot2",
-      "waypointRelativePos": 2.9499999999999997,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "shoot"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "printAfterShoot"
               }
             }
           ]

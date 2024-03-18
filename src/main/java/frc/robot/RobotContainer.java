@@ -9,7 +9,12 @@ import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.AlignByAprilTag;
+import frc.robot.commands.autonomous.BlueLeftOneCommand;
+import frc.robot.commands.autonomous.BlueRightOneCommand;
 import frc.robot.commands.autonomous.ChargeCommand;
+import frc.robot.commands.autonomous.MiddleOneNoteCommand;
+import frc.robot.commands.autonomous.MiddleTwoNoteCommand;
+import frc.robot.commands.autonomous.ShootCommand;
 import frc.robot.common.Odometry;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.FeedSubsystem;
@@ -53,7 +58,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class RobotContainer {
   // The robot's subsystems and commands are defined here
-  // private final SendableChooser<Command> autoChooser;
+  private final SendableChooser<Command> autoChooser;
 
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
@@ -134,7 +139,14 @@ public class RobotContainer {
     private final AlignByAprilTag alignFarFromSpeakerCenter = new AlignByAprilTag(swerveDrive, limelight, odometry, -0.06, -2.40, 1, 0.04, 0.1, 0, 0);
 
     private final ChargeCommand chargeCommand;
-    
+    private final MiddleOneNoteCommand middle1Command;
+    private final MiddleTwoNoteCommand middle2Command;
+    private final BlueLeftOneCommand blueLeftCommand;
+    private final BlueRightOneCommand blueRightCommand;
+    private final ShootCommand shootCommand;
+
+
+
     SlewRateLimiter limitX = new SlewRateLimiter(6);
     SlewRateLimiter limitY = new SlewRateLimiter(6);
     //Limits shooter motor speed
@@ -159,6 +171,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("intake", intakeNoteCommand());
     NamedCommands.registerCommand("shoot", shootNoteCommand());
     NamedCommands.registerCommand("armPos", setArmCommand());
+    NamedCommands.registerCommand("backFeed", backFeedCommand());
+
 
 
     // Configure the trigger bindings
@@ -167,12 +181,22 @@ public class RobotContainer {
     configureObjects();
 
     chargeCommand = new ChargeCommand(swerveDrive, feedSubsystem);
+    middle1Command = new MiddleOneNoteCommand(swerveDrive, feedSubsystem);
+    middle2Command = new MiddleTwoNoteCommand(swerveDrive, feedSubsystem);
+    blueLeftCommand = new BlueLeftOneCommand(swerveDrive, feedSubsystem);
+    blueRightCommand = new BlueRightOneCommand(swerveDrive, feedSubsystem);
+    shootCommand = new ShootCommand(swerveDrive, feedSubsystem);
 
      // Build an auto chooser. This will use Commands.none() as the default option.
-    //  autoChooser = AutoBuilder.buildAutoChooser();
-    //  autoChooser.setDefaultOption("Default Path", null);
-    //  autoChooser.addOption("Charge Command", chargeCommand);
-    //  SmartDashboard.putData("Auto Chooser", autoChooser);
+     autoChooser = AutoBuilder.buildAutoChooser();
+     autoChooser.setDefaultOption("Default Path", null);
+     autoChooser.addOption("Charge Command", chargeCommand);
+     autoChooser.addOption("Middle 1 Note Command", middle1Command);
+     autoChooser.addOption("Middle 2 Note Command", middle2Command);
+     autoChooser.addOption("Blue Left Command", blueLeftCommand);
+     autoChooser.addOption("Blue Right Command", blueRightCommand);
+     autoChooser.addOption("Shoot Command", shootCommand);
+     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
   
   public void configureObjects() {
@@ -463,6 +487,7 @@ public class RobotContainer {
     return (new RunCommand(() -> {
     intakeSubsystem.intake(0.5);
     feedSubsystem.feed(0.25);
+    shooter.shoot(0); 
     // pivotSubsystem.setLockPos(0.82);
     System.out.println("intake");
   }, intakeSubsystem, feedSubsystem));
@@ -477,6 +502,14 @@ public class RobotContainer {
       // pivotSubsystem.setLockPos(0.85);
     }, shooter));
    }
+   
+   public Command backFeedCommand()
+   {
+    return (new InstantCommand(() -> {
+      feedSubsystem.feed(-0.4);
+      System.out.println("backFeed");
+    }));
+   }
 
    public Command setArmCommand()
    {
@@ -487,7 +520,7 @@ public class RobotContainer {
    }
 
    public Command getAutonomousCommand () {
-      // return autoChooser.getSelected();
-      return chargeCommand;
+      return autoChooser.getSelected();
+      // return chargeCommand;
   }
 }

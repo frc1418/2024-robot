@@ -18,14 +18,13 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 /** An example command that uses an example subsystem. */
-public class ChargeCommand extends SequentialCommandGroup {
+public class ShootCommand extends SequentialCommandGroup {
 
-  //SET UP WITH SHOOTER TOWARDS US
-    private String TRAJECTORY_NAME = "Charge";
+    private String TRAJECTORY_NAME = "Shoot";
     SwerveDriveSubsystem swerveDrive;
     FeedSubsystem feedSubsystem;
 
-    public ChargeCommand(SwerveDriveSubsystem swerveDrive, FeedSubsystem feedSubsystem) {
+    public ShootCommand(SwerveDriveSubsystem swerveDrive, FeedSubsystem feedSubsystem) {
       this.swerveDrive = swerveDrive;
       this.feedSubsystem = feedSubsystem;
 
