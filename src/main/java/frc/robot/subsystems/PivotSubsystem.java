@@ -50,7 +50,6 @@ public class PivotSubsystem extends SubsystemBase {
 
     private ArmFeedforward armFeedforward = new ArmFeedforward(0, kG, 0);
 
-    private double targetPos;
     private double lockPos;
 
     private SlewRateLimiter limitP = new SlewRateLimiter(5);
@@ -62,7 +61,6 @@ public class PivotSubsystem extends SubsystemBase {
 
         pivotPidController.enableContinuousInput(0, 1);
 
-        targetPos = MathUtil.clamp(pivotEncoder.getPosition(), 0.796, 0.999);
         lockPos = MathUtil.clamp(pivotEncoder.getPosition(), 0.796, 0.999);
     }
 
@@ -89,18 +87,9 @@ public class PivotSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         ntPivotPosition.setDouble(pivotEncoder.getPosition());
-        ntTargetPivotPosition.setDouble(targetPos);
         ntLockPivotPosition.setDouble(lockPos);
 
         setPivotPosition(lockPos);
-    }
-
-    public void setTargetPos(double targetPos) {
-        this.targetPos = targetPos;
-    }
-
-    public double getTargetPos(){
-        return targetPos;
     }
 
     public void setLockPos(double lockPos) {
@@ -109,10 +98,6 @@ public class PivotSubsystem extends SubsystemBase {
 
     public double getLockPos() {
         return lockPos;
-    }
-
-    public void changeTargetPos(double val) {
-        targetPos = MathUtil.clamp(targetPos + val, 0.796, 0.999);
     }
 
     public void changeLockPos(double val) {
