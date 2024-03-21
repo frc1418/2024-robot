@@ -3,28 +3,28 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.2689287141904957,
-        "y": 5.562302316231041
+        "x": 1.14,
+        "y": 5.56
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.4912622761563639,
-        "y": 5.562302316231041
+        "x": 1.3623335619658687,
+        "y": 5.56
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.7536497285957524,
+        "x": 0.45,
         "y": 5.562302316231041
       },
       "prevControl": {
-        "x": 1.807320789581015,
+        "x": -0.4963289390147374,
         "y": 5.562302316231041
       },
       "nextControl": {
-        "x": 3.6999786676104898,
+        "x": 1.3963289390147366,
         "y": 5.562302316231041
       },
       "isLocked": false,
@@ -32,15 +32,15 @@
     },
     {
       "anchor": {
-        "x": 3.309867566957356,
+        "x": 3.015245771004935,
         "y": 5.562302316231041
       },
       "prevControl": {
-        "x": 3.668077374669185,
+        "x": 3.3734555787167637,
         "y": 5.558666804615571
       },
       "nextControl": {
-        "x": 2.594190796714926,
+        "x": 2.299569000762505,
         "y": 5.569565800242712
       },
       "isLocked": false,
@@ -48,28 +48,12 @@
     },
     {
       "anchor": {
-        "x": 1.7,
-        "y": 5.56
+        "x": 0.28911669244469446,
+        "y": 5.320438224581806
       },
       "prevControl": {
-        "x": 1.7100475418595091,
-        "y": 5.56
-      },
-      "nextControl": {
-        "x": 1.6899524581404908,
-        "y": 5.56
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 3.7694608255799635,
-        "y": 5.56
-      },
-      "prevControl": {
-        "x": 4.124902635835381,
-        "y": 5.556261972707489
+        "x": 0.2991642343042038,
+        "y": 5.320438224581806
       },
       "nextControl": null,
       "isLocked": false,
@@ -80,24 +64,7 @@
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "intake",
-      "waypointRelativePos": 0.8999999999999999,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "intake"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "shoot",
+      "name": "shootTwice",
       "waypointRelativePos": 0.5499999999999999,
       "command": {
         "type": "sequential",
@@ -106,58 +73,7 @@
             {
               "type": "named",
               "data": {
-                "name": "shoot"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "printEnd",
-      "waypointRelativePos": 4.0,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "printAfter"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "printRebound",
-      "waypointRelativePos": 1.7,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "printRebound"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "wait",
-      "waypointRelativePos": 0.2,
-      "command": {
-        "type": "deadline",
-        "data": {
-          "commands": [
-            {
-              "type": "wait",
-              "data": {
-                "waitTime": 5.0
+                "name": "shootTwice"
               }
             }
           ]
@@ -175,23 +91,6 @@
               "type": "named",
               "data": {
                 "name": "armPos"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "backFeed",
-      "waypointRelativePos": 3.75,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "backFeed"
               }
             }
           ]

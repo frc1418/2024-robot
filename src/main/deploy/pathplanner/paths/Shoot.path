@@ -32,7 +32,7 @@
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "shoot",
+      "name": "shootOnce",
       "waypointRelativePos": 0.9,
       "command": {
         "type": "parallel",
@@ -41,7 +41,7 @@
             {
               "type": "named",
               "data": {
-                "name": "shoot"
+                "name": "shootOnce"
               }
             }
           ]

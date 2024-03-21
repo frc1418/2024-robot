@@ -9,6 +9,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.WheelConstants;
 
 public class MaxWheelModule {
@@ -59,12 +60,12 @@ public class MaxWheelModule {
 	}
 
     //Final drive method, passes each wheel's states into the PID controllers and optimizes rotation
-    public void drive(SwerveModuleState state)
+    public void drive(SwerveModuleState state, boolean inAuto)
     {
         SwerveModuleState optimizedState = SwerveModuleState.optimize(state, Rotation2d.fromRotations(
             getEncoderPosition()
         ));
-
+        
         targetSpeed = optimizedState.speedMetersPerSecond;
 
         speedPIDController.setReference(targetSpeed, ControlType.kVelocity);

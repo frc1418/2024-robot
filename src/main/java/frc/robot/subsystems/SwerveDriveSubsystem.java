@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.common.Odometry;
 
@@ -53,7 +54,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     private final NetworkTable odometryTable = ntInstance.getTable("/common/Odometry");
     private final NetworkTableEntry ntOdometryPose = odometryTable.getEntry("odometryPose");
 
-    private PIDController rotationController = new PIDController(0.04, 0, 0); 
+    private PIDController rotationController = new PIDController(0.06, 0, 0); 
 
     private SwerveDriveKinematics kinematics;
     private Odometry odometry;
@@ -63,8 +64,10 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     private double lockedRot = 0;
     private ChassisSpeeds speeds = new ChassisSpeeds(0, 0, 0);
 
+    private RobotContainer robotContainer;
+
     public SwerveDriveSubsystem(MaxWheelModule backRight, MaxWheelModule backLeft, MaxWheelModule frontRight, MaxWheelModule frontLeft,
-            SwerveDriveKinematics kinematics, Odometry odometry) {
+            SwerveDriveKinematics kinematics, Odometry odometry, RobotContainer robotContainer) {
 
         this.backRight = backRight;
         this.backLeft = backLeft;
@@ -73,6 +76,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
         this.kinematics = kinematics;
         this.odometry = odometry;
+
+        this.robotContainer = robotContainer;
 
         this.ntIsFieldCentric.setBoolean(fieldCentric);
 
@@ -131,7 +136,17 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     
     // Second method passing to moduleStates
     public void drive(ChassisSpeeds speeds){
-        SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(speeds);
+        ChassisSpeeds newSpeeds = speeds;
+        if (robotContainer.getAuto()) {
+            newSpeeds = speeds.minus(new ChassisSpeeds(speeds.vxMetersPerSecond*2, 0, 0));
+        }
+        // ChassisSpeeds newSpeeds = speeds.times(0);
+        if (newSpeeds.omegaRadiansPerSecond != 0) {
+        System.out.println("rot: " + newSpeeds.omegaRadiansPerSecond);
+        }
+
+        SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(newSpeeds);
+
 
         drive(moduleStates);
     }
@@ -143,10 +158,10 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         SwerveModuleState backLeftState = moduleStates[2];
         SwerveModuleState backRightState = moduleStates[3];
 
-        frontLeft.drive(frontLeftState);
-        frontRight.drive(frontRightState);
-        backLeft.drive(backLeftState);
-        backRight.drive(backRightState);
+        frontLeft.drive(frontLeftState, robotContainer.getAuto());
+        frontRight.drive(frontRightState, robotContainer.getAuto());
+        backLeft.drive(backLeftState, robotContainer.getAuto());
+        backRight.drive(backRightState, robotContainer.getAuto());
     }
 
     //Locks the robot's angles to prevent movement

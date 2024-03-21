@@ -21,6 +21,8 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 public class ChargeCommand extends SequentialCommandGroup {
 
   //SET UP WITH SHOOTER TOWARDS US
+  // private String TRAJECTORY_NAME = "Charge";
+
     private String TRAJECTORY_NAME = "Charge";
     SwerveDriveSubsystem swerveDrive;
     FeedSubsystem feedSubsystem;
