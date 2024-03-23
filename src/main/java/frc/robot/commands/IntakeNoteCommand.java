@@ -22,7 +22,6 @@ public class IntakeNoteCommand extends SequentialCommandGroup{
             new RunCommand(()-> {
               intake.intake(0.5);
               feeder.feed(0.25);
-              System.out.println("intake");
             }, intake, feeder).withTimeout(4)
         );
     }

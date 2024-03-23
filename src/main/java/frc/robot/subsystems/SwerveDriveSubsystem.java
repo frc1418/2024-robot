@@ -54,7 +54,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     private final NetworkTable odometryTable = ntInstance.getTable("/common/Odometry");
     private final NetworkTableEntry ntOdometryPose = odometryTable.getEntry("odometryPose");
 
-    private PIDController rotationController = new PIDController(0.06, 0, 0); 
+    private PIDController rotationController = new PIDController(0.04, 0, 0);
+    private PIDController autoController = new PIDController(0.12, 0, 0);
 
     private SwerveDriveKinematics kinematics;
     private Odometry odometry;
@@ -113,7 +114,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
     //Initial drive method, maintains rotation and passes into ChassisSpeeds
     public void drive(double x, double y, double rot) {
-
         if(rot == 0){
             rot = rotationController.calculate(odometry.getHeading(), lockedRot);
         }
@@ -137,13 +137,21 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     // Second method passing to moduleStates
     public void drive(ChassisSpeeds speeds){
         ChassisSpeeds newSpeeds = speeds;
+
+        double ogRot = newSpeeds.omegaRadiansPerSecond;
+
+        if (newSpeeds.omegaRadiansPerSecond != 0) {
+            System.out.println("rot: " + ogRot);
+        }
         if (robotContainer.getAuto()) {
             newSpeeds = speeds.minus(new ChassisSpeeds(speeds.vxMetersPerSecond*2, 0, 0));
+            newSpeeds = newSpeeds.plus(new ChassisSpeeds(0, 0, autoController.calculate(odometry.getHeading(), lockedRot)));
+            System.out.println("Adjustment rot: " + (newSpeeds.omegaRadiansPerSecond-ogRot));
         }
-        // ChassisSpeeds newSpeeds = speeds.times(0);
-        if (newSpeeds.omegaRadiansPerSecond != 0) {
-        System.out.println("rot: " + newSpeeds.omegaRadiansPerSecond);
-        }
+
+        System.out.println("heading: " + odometry.getHeading());
+
+        System.out.println("locked rot: " + lockedRot);
 
         SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(newSpeeds);
 

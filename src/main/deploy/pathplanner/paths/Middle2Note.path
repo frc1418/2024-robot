@@ -16,31 +16,15 @@
     },
     {
       "anchor": {
-        "x": 0.45,
+        "x": 3.18,
         "y": 5.562302316231041
       },
       "prevControl": {
-        "x": -0.4963289390147374,
-        "y": 5.562302316231041
-      },
-      "nextControl": {
-        "x": 1.3963289390147366,
-        "y": 5.562302316231041
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 3.015245771004935,
-        "y": 5.562302316231041
-      },
-      "prevControl": {
-        "x": 3.3734555787167637,
+        "x": 3.5382098077118287,
         "y": 5.558666804615571
       },
       "nextControl": {
-        "x": 2.299569000762505,
+        "x": 2.46432322975757,
         "y": 5.569565800242712
       },
       "isLocked": false,
@@ -48,12 +32,12 @@
     },
     {
       "anchor": {
-        "x": 0.28911669244469446,
-        "y": 5.320438224581806
+        "x": 0.5217945759552234,
+        "y": 5.56
       },
       "prevControl": {
-        "x": 0.2991642343042038,
-        "y": 5.320438224581806
+        "x": 0.5318421178147328,
+        "y": 5.56
       },
       "nextControl": null,
       "isLocked": false,
@@ -65,7 +49,7 @@
   "eventMarkers": [
     {
       "name": "shootTwice",
-      "waypointRelativePos": 0.5499999999999999,
+      "waypointRelativePos": 0.3,
       "command": {
         "type": "sequential",
         "data": {
@@ -74,23 +58,6 @@
               "type": "named",
               "data": {
                 "name": "shootTwice"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "arm",
-      "waypointRelativePos": 0.0,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "armPos"
               }
             }
           ]

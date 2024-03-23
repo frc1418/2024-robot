@@ -141,7 +141,7 @@ public class RobotContainer {
     private final AlignByAprilTag alignFarFromSpeakerCenter = new AlignByAprilTag(swerveDrive, limelight, odometry, -0.06, -2.40, 1, 0.04, 0.1, 0, 0);
 
     //Auto Commands:
-    private final ShootOnceCommand shootOnceCommand = new ShootOnceCommand(shooter, feedSubsystem);
+    private final ShootOnceCommand shootOnceCommand = new ShootOnceCommand(shooter, feedSubsystem, pivotSubsystem);
     private final ShootTwiceCommand shootTwiceCommand = new ShootTwiceCommand(shooter, feedSubsystem, intakeSubsystem);
     private final IntakeNoteCommand intakeNoteCommand = new IntakeNoteCommand(intakeSubsystem, feedSubsystem);
 
@@ -180,10 +180,10 @@ public class RobotContainer {
 
     chargeCommand = new ChargeCommand(swerveDrive, feedSubsystem);
     middle1Command = new MiddleOneNoteCommand(swerveDrive, feedSubsystem);
-    middle2Command = new MiddleTwoNoteCommand(swerveDrive, feedSubsystem, shooter);
-    blueLeftCommand = new BlueLeftOneCommand(swerveDrive, feedSubsystem);
-    blueRightCommand = new BlueRightOneCommand(swerveDrive, feedSubsystem);
-    shootCommand = new ShootCommand(swerveDrive, feedSubsystem);
+    middle2Command = new MiddleTwoNoteCommand(swerveDrive, feedSubsystem, shooter, pivotSubsystem);
+    blueLeftCommand = new BlueLeftOneCommand(swerveDrive, feedSubsystem, shooter, pivotSubsystem);
+    blueRightCommand = new BlueRightOneCommand(swerveDrive, feedSubsystem, shooter, pivotSubsystem);
+    shootCommand = new ShootCommand(swerveDrive, feedSubsystem, shooter, pivotSubsystem);
 
      // Build an auto chooser. This will use Commands.none() as the default option.
      autoChooser = AutoBuilder.buildAutoChooser();
