@@ -9,6 +9,9 @@ import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.AlignByAprilTag;
+import frc.robot.commands.IntakeNoteCommand;
+import frc.robot.commands.ShootOnceCommand;
+import frc.robot.commands.ShootTwiceCommand;
 import frc.robot.commands.autonomous.BlueLeftOneCommand;
 import frc.robot.commands.autonomous.BlueRightOneCommand;
 import frc.robot.commands.autonomous.ChargeCommand;
@@ -27,7 +30,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.Constants.ClimbConstants;
 import frc.robot.subsystems.ClimberSubsystem;
 
-
+import com.fasterxml.jackson.annotation.JsonCreator.Mode;
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -60,6 +63,8 @@ public class RobotContainer {
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
     private final RobotBase robot;
+
+    private boolean inAuto = false;
 
     //Constructing the swerve wheel modules
 
@@ -128,21 +133,17 @@ public class RobotContainer {
 
     private SwerveDriveSubsystem swerveDrive = new SwerveDriveSubsystem(
       backRightWheel, backLeftWheel, frontRightWheel, frontLeftWheel,
-      DrivetrainConstants.SWERVE_KINEMATICS, odometry);
+      DrivetrainConstants.SWERVE_KINEMATICS, odometry, this);
 
     private final AlignByAprilTag alignAtAmpCenter = new AlignByAprilTag(swerveDrive, limelight, odometry, 0.03, -0.57, 0.9, 0.07, 0.1, 90, 0);
     private final AlignByAprilTag alignAtSpeakerCenter = new AlignByAprilTag(swerveDrive, limelight, odometry, 0.03, -1.33, 1, 0.04, 0.1, 0, 0);
     // private final AlignByAprilTag alignRightOfSpeaker = new AlignByAprilTag(swerveDrive, limelight, odometry,  1.08, -0.96, 1, 0.04, 0.1, 44, 44);
     private final AlignByAprilTag alignFarFromSpeakerCenter = new AlignByAprilTag(swerveDrive, limelight, odometry, -0.06, -2.40, 1, 0.04, 0.1, 0, 0);
 
-    private final ChargeCommand chargeCommand;
-    private final MiddleOneNoteCommand middle1Command;
-    private final MiddleTwoNoteCommand middle2Command;
-    private final BlueLeftOneCommand blueLeftCommand;
-    private final BlueRightOneCommand blueRightCommand;
-    private final ShootCommand shootCommand;
-
-
+    //Auto Commands:
+    private final ShootOnceCommand shootOnceCommand = new ShootOnceCommand(shooter, feedSubsystem, pivotSubsystem);
+    private final ShootTwiceCommand shootTwiceCommand = new ShootTwiceCommand(shooter, feedSubsystem, intakeSubsystem);
+    private final IntakeNoteCommand intakeNoteCommand = new IntakeNoteCommand(intakeSubsystem, feedSubsystem);
 
     SlewRateLimiter limitX = new SlewRateLimiter(6);
     SlewRateLimiter limitY = new SlewRateLimiter(6);
@@ -157,20 +158,20 @@ public class RobotContainer {
 
     CameraServer.startAutomaticCapture();
 
-    //Auto Test commands:
-    NamedCommands.registerCommand("print", new PrintCommand("print!"));
-    NamedCommands.registerCommand("printRight2NoteRed", new PrintCommand("righ2notered path!"));
-    NamedCommands.registerCommand("printLeft2Note", new PrintCommand("left2note path!"));
-    NamedCommands.registerCommand("printAfter", new PrintCommand("print at end!"));
-    NamedCommands.registerCommand("printAfterShoot", new PrintCommand("print after SHOOTER!"));
-    NamedCommands.registerCommand("printRebound", new PrintCommand("print after REBOUND!"));
-
-    NamedCommands.registerCommand("intake", intakeNoteCommand());
-    NamedCommands.registerCommand("shoot", shootNoteCommand());
+    //Auto Named Commands:
+    NamedCommands.registerCommand("intake", intakeNoteCommand);
+    NamedCommands.registerCommand("shootOnce", shootOnceCommand);
+    NamedCommands.registerCommand("shootTwice", shootTwiceCommand);
     NamedCommands.registerCommand("armPos", setArmCommand());
     NamedCommands.registerCommand("backFeed", backFeedCommand());
 
-
+    //Auto Paths:
+    final ChargeCommand chargeCommand;
+    final MiddleOneNoteCommand middle1Command;
+    final MiddleTwoNoteCommand middle2Command;
+    final BlueLeftOneCommand blueLeftCommand;
+    final BlueRightOneCommand blueRightCommand;
+    final ShootCommand shootCommand;
 
     // Configure the trigger bindings
     configureBindings();
@@ -179,10 +180,10 @@ public class RobotContainer {
 
     chargeCommand = new ChargeCommand(swerveDrive, feedSubsystem);
     middle1Command = new MiddleOneNoteCommand(swerveDrive, feedSubsystem);
-    middle2Command = new MiddleTwoNoteCommand(swerveDrive, feedSubsystem);
-    blueLeftCommand = new BlueLeftOneCommand(swerveDrive, feedSubsystem);
-    blueRightCommand = new BlueRightOneCommand(swerveDrive, feedSubsystem);
-    shootCommand = new ShootCommand(swerveDrive, feedSubsystem);
+    middle2Command = new MiddleTwoNoteCommand(swerveDrive, feedSubsystem, shooter, pivotSubsystem);
+    blueLeftCommand = new BlueLeftOneCommand(swerveDrive, feedSubsystem, shooter, pivotSubsystem);
+    blueRightCommand = new BlueRightOneCommand(swerveDrive, feedSubsystem, shooter, pivotSubsystem);
+    shootCommand = new ShootCommand(swerveDrive, feedSubsystem, shooter, pivotSubsystem);
 
      // Build an auto chooser. This will use Commands.none() as the default option.
      autoChooser = AutoBuilder.buildAutoChooser();
@@ -258,8 +259,8 @@ public class RobotContainer {
     // JoystickButton alignRightOfSpeakerButton = new JoystickButton(rightJoystick, 3);
     JoystickButton alignFarFromSpeakerButton = new JoystickButton(rightJoystick, 4);
 
-    JoystickButton climbUpButton = new JoystickButton(leftJoystick, 5);
-    JoystickButton climbDownButton = new JoystickButton(leftJoystick, 6);
+    JoystickButton climbUpButton = new JoystickButton(leftJoystick, 3);
+    JoystickButton climbDownButton = new JoystickButton(leftJoystick, 4);
 
     //Constructs commands and binds them for swerve drive
     swerveDrive.setDefaultCommand(new RunCommand(() -> {
@@ -412,32 +413,19 @@ public class RobotContainer {
     return swerveDrive;
   }
 
+  public void setAuto(boolean auto) {
+    inAuto = auto;
+  }
+
+  public boolean getAuto() {
+    return inAuto;
+  }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
    */
-  
-   public Command intakeNoteCommand()
-   {
-    return (new RunCommand(() -> {
-    intakeSubsystem.intake(0.5);
-    feedSubsystem.feed(0.25);
-    shooter.shoot(0); 
-    // pivotSubsystem.setLockPos(0.82);
-    System.out.println("intake");
-    }, intakeSubsystem, feedSubsystem));
-   }
-
-   public Command shootNoteCommand()
-   {
-    return (new RunCommand(() -> {
-      shooter.shoot(0.75); 
-      feedSubsystem.feed(0.25);
-      System.out.println("shooter");
-      // pivotSubsystem.setLockPos(0.85);
-    }, shooter));
-   }
    
    public Command backFeedCommand()
    {
@@ -450,8 +438,7 @@ public class RobotContainer {
    public Command setArmCommand()
    {
     return (new RunCommand(() -> {
-      pivotSubsystem.setLockPos(0.84);
-      System.out.println("set arm");
+      pivotSubsystem.setLockPos(0.855);
     }));
    }
 

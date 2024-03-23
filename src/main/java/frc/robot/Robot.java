@@ -72,6 +72,7 @@ public class Robot extends TimedRobot {
     System.out.println(m_autonomousCommand);
     m_robotContainer.pivotSubsystem.setLockPos(0.85);
     System.out.println("AUTO GOT!");
+    m_robotContainer.setAuto(true);
 
 
     // schedule the autonomous command (example)
@@ -90,6 +91,7 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+    m_robotContainer.setAuto(false);
     m_robotContainer.getOdometry().zeroHeading();
     m_robotContainer.getSwerveDriveSubsystem().resetLockRot();
     m_robotContainer.getOdometry().reset(new Pose2d(0, 0, Rotation2d.fromDegrees(0)));

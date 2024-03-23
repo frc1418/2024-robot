@@ -39,7 +39,7 @@ public final class Constants {
     public static final int BACK_LEFT_SPEED_ID = 2;
     public static final AnalogInput BACK_LEFT_ENCODER = new AnalogInput(2);
     public static final Translation2d BACK_LEFT_LOC = new Translation2d(-0.238125, 0.238125);
-    public static final double BACK_LEFT_ENCODER_OFFSET = 0.654;
+    public static final double BACK_LEFT_ENCODER_OFFSET = 0.844;
     
     public static final int FRONT_LEFT_ANGLE_ID = 3;
     public static final int FRONT_LEFT_SPEED_ID = 4;
